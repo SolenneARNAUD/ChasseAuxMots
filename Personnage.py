@@ -1,7 +1,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 
-class Personnage:
+class Personnage(object):
     " Classe correspondant au personnage du jeu vidéo."
 
     def __init__(self,X,Y,skin):
