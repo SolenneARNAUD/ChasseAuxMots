@@ -26,7 +26,7 @@ class Symbole(object):
 
     @state.setter
     def state(self, value):
-        if (value is bool):
+        if (isinstance(value, bool)):
             self.state = value
             
     @property
@@ -35,7 +35,7 @@ class Symbole(object):
 
     @couleur.setter
     def couleur(self, value):
-        if (value is COLORREF):
+        if (isinstance(value, COLORREF)):
             self.couleur = value
     
     @property
@@ -44,7 +44,7 @@ class Symbole(object):
 
     @symbole.setter
     def symbole(self, value):
-        if (value is str):
+        if (isinstance(value, str)):
             self.symbole = value
 
 
