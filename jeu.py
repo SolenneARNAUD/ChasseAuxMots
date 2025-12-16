@@ -18,11 +18,14 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_CENTIPEDE,
                               Donnees.OBSTACLE_DEPART_X,
                               Donnees.OBSTACLE_DEPART_Y,
                               Donnees.OBSTACLE_TYPE_CENTIPEDE)
-symbole = [Symbole.Symbole(Donnees.MOT_COULEUR, Donnees.MOT_SYMBOLE)]
 
-mot = Mot.Mot(Donnees.MOT_DEPART_X,
-              Donnees.MOT_DEPART_Y,
-              symbole)
+# création du mot directement depuis la chaîne définie dans Donnees
+mot = Mot.Mot.from_string(
+    Donnees.MOT_DEPART_X,
+    Donnees.MOT_DEPART_Y,
+    Donnees.MOT_SYMBOLE,
+    Donnees.MOT_COULEUR
+)
 
 clock = pygame.time.Clock()
 

@@ -1,4 +1,3 @@
-from pygame.sprite import Sprite
 import pygame as pg
 
 class Obstacles(object):
@@ -6,52 +5,59 @@ class Obstacles(object):
 
     def __init__(self, image, position_x, position_y, type):
         "Constructeur de la classe Obstacles."
-        # Initialisation des attributs
-        self.image = image
-        self.position_x = position_x
-        self.position_y = position_y
-        self.type = type # 0: à sauter, 1: en hauteur, 2: méchant
+        self._position_x = int(position_x)   # centre X
+        self._position_y = int(position_y)   # bottom Y
+        self.type = type  # 0: à sauter, 1: en hauteur, 2: méchant
 
-        # Charger l'image une seule fois
-        try:
-            self.image = pg.image.load(self.image).convert_alpha()
-        except Exception as e:
-            self.image = None
-            print(f"Erreur chargement image {self.image}: {e}")
-    
-    # Getter et Setter
-    def get_image(self):
-        "Renvoie l'image de l'obstacle."
-        return self.image
+        self.image = None
+        self.rect = None
+        self.set_image(image)
+
     def set_image(self, image):
-        "Modifie l'image de l'obstacle."
-        if image is Sprite:
+        if isinstance(image, str):
+            try:
+                self.image = pg.image.load(image).convert_alpha()
+                # midbottom => center X, bottom Y
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+            except Exception as e:
+                print(f"Erreur chargement image {image}: {e}")
+                self.image = None
+                self.rect = None
+        elif isinstance(image, pg.Surface):
             self.image = image
-    
-    def get_position_x(self):
-        "Renvoie la position en x de l'obstacle."
-        return self.position_x
-    def set_position_x(self, position_x):
-        "Modifie la position en x de l'obstacle."
-        if position_x is int:
-            self.position_x = position_x
+            self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+        else:
+            self.image = None
+            self.rect = None
 
-    def get_position_y(self):
-        "Renvoie la position en y de l'obstacle."
-        return self.position_y
-    def set_position_y(self, position_y):
-        "Modifie la position en y de l'obstacle."
-        if position_y is int:
-            self.position_y = position_y
+    @property
+    def position_x(self):
+        return self._position_x
 
-    def get_type(self):
-        "Renvoie le type de l'obstacle."
-        return self.type
-    def set_type(self, type):
-        "Modifie le type de l'obstacle."
-        if type is int:
-            self.type = type
-    
+    @position_x.setter
+    def position_x(self, value):
+        if isinstance(value, (int, float)):
+            self._position_x = int(value)
+            if self.rect:
+                self.rect.centerx = self._position_x
+
+    @property
+    def position_y(self):
+        "Retourne la coordonnée bottom (bas) de l'obstacle."
+        return self._position_y
+
+    @position_y.setter
+    def position_y(self, value):
+        if isinstance(value, (int, float)):
+            self._position_y = int(value)
+            if self.rect:
+                self.rect.bottom = self._position_y
+
     def afficher(self, screen):
-        "Affiche l'obstacle à l'écran."
-        screen.blit(self.image, (self.position_x, self.position_y))
+        if self.image and self.rect:
+            screen.blit(self.image, self.rect)
+        else:
+            # debug : petit rectangle positionné avec bottom = position_y
+            w, h = 32, 32
+            debug_rect = pg.Rect(self._position_x - w//2, self._position_y - h, w, h)
+            pg.draw.rect(screen, (255, 0, 0), debug_rect)
