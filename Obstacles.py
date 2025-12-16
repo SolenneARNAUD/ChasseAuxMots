@@ -1,4 +1,5 @@
 from pygame.sprite import Sprite
+import pygame as pg
 
 class Obstacles(object):
     "Classe correspondant aux obstacles du décor."
@@ -10,6 +11,13 @@ class Obstacles(object):
         self.position_x = position_x
         self.position_y = position_y
         self.type = type # 0: à sauter, 1: en hauteur, 2: méchant
+
+        # Charger l'image une seule fois
+        try:
+            self.image = pg.image.load(self.image).convert_alpha()
+        except Exception as e:
+            self.image = None
+            print(f"Erreur chargement image {self.image}: {e}")
     
     # Getter et Setter
     def get_image(self):
@@ -43,3 +51,7 @@ class Obstacles(object):
         "Modifie le type de l'obstacle."
         if type is int:
             self.type = type
+    
+    def afficher(self, screen):
+        "Affiche l'obstacle à l'écran."
+        screen.blit(self.image, (self.position_x, self.position_y))

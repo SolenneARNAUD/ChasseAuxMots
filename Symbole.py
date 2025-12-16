@@ -5,8 +5,8 @@ import string
 class Symbole(object):
     """
     Cette classe a pour objectif d'encoder les lettres/symboles
-    présent dans les mots. Les lettres/symboles doivent être 
-    indépendant car elles sont tapé une par une
+    prÃ©sent dans les mots. Les lettres/symboles doivent Ãªtre 
+    indÃ©pendant car elles sont tapÃ© une par une
     """
     
     def __init__(self, couleur, symbole):
@@ -14,39 +14,36 @@ class Symbole(object):
         Constructeur :
         Initialise les attributs de l'objet.
         """
-        self.state = True
-        self.couleur = couleur
-        self.symbole = symbole
+        self._state = True
+        self._couleur = couleur
+        self._symbole = symbole
     
 
 # ---------- GETTERS / SETTERS ----------
     @property
     def state(self):
-        return self.state
+        return self._state
 
     @state.setter
     def state(self, value):
         if (isinstance(value, bool)):
-            self.state = value
+            self._state = value
             
     @property
     def couleur(self):
-        return self.couleur
-
+        return self._couleur
     @couleur.setter
     def couleur(self, value):
         if (isinstance(value, COLORREF)):
-            self.couleur = value
+            self._couleur = value
     
     @property
     def symbole(self):
-        return self.symbole
-
+        return self._symbole
     @symbole.setter
     def symbole(self, value):
         if (isinstance(value, str)):
-            self.symbole = value
-
+            self._symbole = value
 
 
 

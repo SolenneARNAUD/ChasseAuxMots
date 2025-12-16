@@ -10,6 +10,13 @@ class Personnage(object):
         self.position_x = X
         self.position_y = Y
         self.skin = skin
+
+        # Charger l'image une seule fois
+        try:
+            self.image = pg.image.load(self.skin).convert_alpha()
+        except Exception as e:
+            self.image = None
+            print(f"Erreur chargement image {self.skin}: {e}")
     
     # Getter et Setter
     def get_position_x(self):
@@ -35,3 +42,7 @@ class Personnage(object):
         "Modifie le skin du personnage."
         if skin is Sprite:
             self.skin = skin
+    
+    def afficher(self, screen):
+        "Affiche le personnage à l'écran."
+        screen.blit(self.image, (self.position_x, self.position_y))

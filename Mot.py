@@ -1,5 +1,5 @@
 import Symbole
-
+import pygame as pg
 
 class Mot(object):
     """
@@ -12,49 +12,60 @@ class Mot(object):
         Constructeur :
         Initialise les attributs de l'objet.
         """
-        self.state = True
-        self.position_x = x
-        self.position_y = y
-        self.symboles = symboles
+        self._state = True
+        self._position_x = x
+        self._position_y = y
+        self._symboles = []
+        self._symboles = symboles
     
 
 # ---------- GETTERS / SETTERS ----------
     @property
     def state(self):
-        return self.state
+        return self._state
 
     @state.setter
     def state(self, value):
         if (isinstance(value, bool)):
-            self.state = value
+            self._state = value
             
     @property
     def position_x(self):
-        return self.position_x
-
+        return self._position_x
     @position_x.setter
     def position_x(self, value):
         if (isinstance(value, int)):
-            self.position_x = value
-
+            self._position_x = value
     @property
     def position_y(self):
-        return self.position_y
+        return self._position_y
 
     @position_y.setter
-    def positiposition_yon_x(self, value):
+    def position_y(self, value):
         if (isinstance(value, int)):
             self.position_y = value
     
     @property
     def symbole(self):
-        return self.symbole
+        return self._symbole
 
-    @symboles.setter
-    def symboles(self, value):
-        if (isinstance(value, list)):
-            if(isinstance(elem, Symbole) for elem in value):
-                self.symbole = value
+    # @symboles.setter
+    # def symboles(self, value):
+    #     if (isinstance(value, list)):
+    #         if(isinstance(elem, Symbole) for elem in value):
+    #             self.symbole = value
+    
+    def afficher(self, screen):
+        """
+        Affiche le mot dans la fenêtre pygame en affichant chaque symbole
+        """
+        decalage = 0
+        font = pg.font.Font(None, 36)
+        for symbole in self._symboles:
+            # Afficher chaque symbole à la position correcte
+            symbole_surface = font.render(symbole._symbole, True, symbole._couleur)
+            screen.blit(symbole_surface, (self._position_x + decalage, self._position_y))
+            decalage += symbole_surface.get_width()  # Mettre à jour le décalage pour le prochain symbole
 
 
 
