@@ -6,6 +6,7 @@ import Obstacles
 import Mot
 import Symbole
 import Sol  
+import BaseDonnees
 pygame.init()
 
 fenetre = Fenetre.Fenetre()
@@ -37,6 +38,15 @@ clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+
+    # Implémentation des mots
+    if mot._state==false:
+       compteur=1 #compteur ++
+       #bd(niveau[compteur] devient le nouveau mot -> utiliser la méthode from_string
+
+
+
+        
 
     # Affichage des éléments
     
