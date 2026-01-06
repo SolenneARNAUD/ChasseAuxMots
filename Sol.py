@@ -12,28 +12,38 @@ class Sol(object):
         position_x: centre X
         position_y: bottom Y
         """
-        self._position_x = int(position_x)
+        self._position_x = int(position_x) # centre X
         self._position_y = int(position_y)
-        self.image = None
-        self.rect = None
+        self._image = None
+        self._rect = None
         self.set_image(image)
+
+        # Redimensionner l'image en conservant le ratio (utiliser la Surface chargée)
+        if self._image:
+            w, h = self._image.get_size()
+            if w > 0:
+                scale = Donnees.WIDTH / w
+                new_size = (int(w * scale), int(h * scale))
+                self._image = pg.transform.smoothscale(self._image, new_size)
+            # Mettre à jour le rect après le redimensionnement
+            self._rect = self._image.get_rect(midbottom=(self._position_x, self._position_y))
 
     def set_image(self, image):
         if isinstance(image, str):
             try:
-                self.image = pg.image.load(image).convert_alpha()
+                self._image = pg.image.load(image).convert_alpha()
                 # midbottom => center X, bottom Y
-                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+                self._rect = self._image.get_rect(midbottom=(self._position_x, self._position_y))
             except Exception as e:
                 print(f"Erreur chargement image {image}: {e}")
-                self.image = None
-                self.rect = None
+                self._image = None
+                self._rect = None
         elif isinstance(image, pg.Surface):
-            self.image = image
-            self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+            self._image = image
+            self._rect = self._image.get_rect(midbottom=(self._position_x, self._position_y))
         else:
-            self.image = None
-            self.rect = None
+            self._image = None
+            self._rect = None
 
     @property
     def position_x(self):
@@ -43,8 +53,8 @@ class Sol(object):
     def position_x(self, value):
         if isinstance(value, (int, float)):
             self._position_x = int(value)
-            if self.rect:
-                self.rect.centerx = self._position_x
+            if self._rect:
+                self._rect.centerx = self._position_x
 
     @property
     def position_y(self):
@@ -55,12 +65,12 @@ class Sol(object):
     def position_y(self, value):
         if isinstance(value, (int, float)):
             self._position_y = int(value)
-            if self.rect:
-                self.rect.bottom = self._position_y
+            if self._rect:
+                self._rect.bottom = self._position_y
 
     def afficher(self, screen):
-        if self.image and self.rect:
-            screen.blit(self.image, self.rect)
+        if self._image and self._rect:
+            screen.blit(self._image, self._rect)
         else:
             # debug : petit rectangle positionné avec bottom = position_y
             debug_rect = pg.Rect(0, 0, 50, 20)

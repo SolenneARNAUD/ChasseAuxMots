@@ -11,10 +11,14 @@ pygame.init()
 fenetre = Fenetre.Fenetre()
 screen = pygame.display.set_mode(fenetre.size)
 
+sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
+                    Donnees.SOL_DEPART_X,
+                    Donnees.SOL_DEPART_Y)
+
 
 man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
                             Donnees.PERSONNAGE_DEPART_Y,
-                            Donnees.PERSONNAGE_SKIN)
+                            Donnees.PERSONNAGE_SKIN) # Changer position Y par WHEIGHT - 2/3 * hauteursprite
 mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_CENTIPEDE,
                               Donnees.OBSTACLE_DEPART_X,
                               Donnees.OBSTACLE_DEPART_Y,
@@ -28,9 +32,6 @@ mot = Mot.Mot.from_string(
     Donnees.MOT_COULEUR
 )
 
-sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
-                    Donnees.SOL_DEPART_X,
-                    Donnees.SOL_DEPART_Y)
 
 clock = pygame.time.Clock()
 
