@@ -21,3 +21,8 @@ MOT_DEPART_X = WIDTH * 2/3
 MOT_DEPART_Y = HEIGHT * 2/3 - 50
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'éàùçâêîôûäëïöüÿæœ'  # Exemple de mot avec des caractères spéciaux
+
+# Sol
+SOL_DEPART_X = 0
+SOL_DEPART_Y = HEIGHT
+SOL_SKIN = "images/Sol/Terre.png"

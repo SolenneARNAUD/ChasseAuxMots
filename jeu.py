@@ -5,6 +5,7 @@ import Personnage
 import Obstacles
 import Mot
 import Symbole
+import Sol  
 pygame.init()
 
 fenetre = Fenetre.Fenetre()
@@ -27,6 +28,10 @@ mot = Mot.Mot.from_string(
     Donnees.MOT_COULEUR
 )
 
+sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
+                    Donnees.SOL_DEPART_X,
+                    Donnees.SOL_DEPART_Y)
+
 clock = pygame.time.Clock()
 
 while True:
@@ -34,10 +39,13 @@ while True:
         if event.type == pygame.QUIT: sys.exit()
 
     # Affichage des éléments
+    
     screen.fill(fenetre.couleur_fond)
+    sol_gauche.afficher(screen)
     man.afficher(screen)
     mechant.afficher(screen)
     mot.afficher(screen)
+    
 
     # Mise à jour de l'affichage
     pygame.display.flip()
