@@ -20,4 +20,4 @@ TAILLE_POLICE = 36
 MOT_DEPART_X = WIDTH * 2/3
 MOT_DEPART_Y = HEIGHT * 2/3 - 50
 MOT_COULEUR = (255, 255, 255)
-MOT_SYMBOLE = 'test'
+MOT_SYMBOLE = 'éàùçâêîôûäëïöüÿæœ'  # Exemple de mot avec des caractères spéciaux
