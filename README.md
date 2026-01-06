@@ -1,6 +1,4 @@
-```markdown
 # ChasseAuxMots
-```
 
 ## Environnement (Windows)
 
@@ -30,4 +28,3 @@ setup_env.ps1
 ```
 
 Le fichier `requirements.txt` contient les dépendances du projet.
-# ChasseAuxMots
