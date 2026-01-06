@@ -41,7 +41,7 @@ while True:
         if event.type == pygame.QUIT: sys.exit()
 
     # Implémentation des mots
-    if mot._state==false:
+    if mot._state==False:
        compteur=1 #compteur ++
        #bd(niveau[compteur] devient le nouveau mot -> utiliser la méthode from_string
 
