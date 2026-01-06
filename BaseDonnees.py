@@ -54,6 +54,6 @@ mots={
         ]
     }
 
-df = pd.DataFrame(mots)
+df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
 
 
