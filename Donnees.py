@@ -7,7 +7,7 @@ FPS = 60
 # Personnage
 PERSONNAGE_DEPART_X = WIDTH/6
 PERSONNAGE_DEPART_Y = HEIGHT * 2/3
-PERSONNAGE_SKIN = "images/Man/Man/Man.png"
+PERSONNAGE_SKIN = "images/Man/Viking/viking_attaque_1.png"
 PERSONNAGE_HEIGHT = 120
 
 # Obstacles
