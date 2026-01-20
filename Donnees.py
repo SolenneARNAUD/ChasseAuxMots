@@ -22,7 +22,7 @@ TAILLE_POLICE = 36
 MOT_DEPART_X = WIDTH * 2/3
 MOT_DEPART_Y = HEIGHT * 2/3 - 50
 MOT_COULEUR = (255, 255, 255)
-MOT_SYMBOLE = 'Début'  # Exemple de mot avec des caractères spéciaux
+MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
 
 # Sol
 SOL_DEPART_X = WIDTH / 2
