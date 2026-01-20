@@ -32,10 +32,11 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_CENTIPEDE,
 # création du mot directement depuis la base de donnée
 compteur = 0
 niveau="niveau2"
+num_dino=1
 liste_mots=BaseDonnees.df["niveau2"].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
-    sol_gauche.get_rect().y - 30,
+    sol_gauche.get_rect().y - 100,
     Donnees.MOT_SYMBOLE,
     Donnees.MOT_COULEUR
 )
@@ -53,7 +54,7 @@ while True:
         liste_mots=BaseDonnees.df[niveau].dropna().tolist()
         mot = Mot.Mot.from_string(
                 Donnees.MOT_DEPART_X,
-                sol_gauche.get_rect().y - 30,
+                sol_gauche.get_rect().y - 100,
                 liste_mots[compteur],
                 Donnees.MOT_COULEUR)
         
@@ -64,6 +65,17 @@ while True:
     sol_droite.defiler(Donnees.SOL_VITESSE)
  
     # Affichage des éléments
+    if num_dino==4:
+        num_dino=1
+    else:
+        num_dino=num_dino+1
+    
+    sprite_obstacle="images/Mechant/dino"+str(num_dino)+".png"
+    print(num_dino)
+    mechant = Obstacles.Obstacles(sprite_obstacle,
+                              Donnees.OBSTACLE_DEPART_X,
+                              sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
+                              Donnees.OBSTACLE_TYPE_CENTIPEDE)
     
     #screen.fill(fenetre.couleur_fond)
     fenetre.afficher_fond(screen)
