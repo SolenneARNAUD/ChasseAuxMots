@@ -30,12 +30,13 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_CENTIPEDE,
                               Donnees.OBSTACLE_TYPE_CENTIPEDE)
 
 # création du mot directement depuis la base de donnée
-compteur = 1
+compteur = 0
+niveau="niveau2"
 liste_mots=BaseDonnees.df["niveau2"].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 30,
-    liste_mots[compteur],
+    Donnees.MOT_SYMBOLE,
     Donnees.MOT_COULEUR
 )
 
@@ -48,9 +49,14 @@ while True:
 
     # Implémentation des mots
     if mot._state==False:
-       compteur=1 #compteur ++
-       #bd(niveau[compteur] devient le nouveau mot -> utiliser la méthode from_string
-
+        compteur=compteur+1 
+        liste_mots=BaseDonnees.df[niveau].dropna().tolist()
+        mot = Mot.Mot.from_string(
+                Donnees.MOT_DEPART_X,
+                sol_gauche.get_rect().y - 30,
+                liste_mots[compteur],
+                Donnees.MOT_COULEUR)
+        
 
 
     # Faire défiler le sol
