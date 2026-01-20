@@ -1,4 +1,5 @@
 import pygame as pg
+import Donnees
 
 class Personnage(object):
     " Classe correspondant au personnage du jeu vidéo."
@@ -14,6 +15,12 @@ class Personnage(object):
         # Charger l'image
         try:
             self.image = pg.image.load(self._skin).convert_alpha()
+            # Redimensionner à une hauteur fixe
+            w, h = self.image.get_size()
+            if h > 0:
+                scale = Donnees.PERSONNAGE_HEIGHT / h
+                new_size = (int(w * scale), int(h * scale))
+                self.image = pg.transform.smoothscale(self.image, new_size)
             # midbottom => center X, bottom Y
             self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
             # Si on demande un alignement sur le bas d'un autre sprite, l'appliquer tout de suite

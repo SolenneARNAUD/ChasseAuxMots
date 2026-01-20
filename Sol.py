@@ -78,3 +78,10 @@ class Sol(object):
             pg.draw.rect(screen, (255, 0, 0), debug_rect)
     def get_rect(self):
         return self._rect
+    
+    def defiler(self, vitesse):
+        """Fait défiler le sol vers la gauche à la vitesse donnée."""
+        self.position_x -= vitesse
+        # Si le sol est complètement hors de l'écran à gauche, le repositionner à droite
+        if self._rect and self._rect.right < 0:
+            self.position_x += 2 * Donnees.WIDTH  # Repositionner à droite de l'écran

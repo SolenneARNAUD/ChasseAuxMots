@@ -5,15 +5,17 @@ COULEUR_FOND = (100, 0, 0)
 FPS = 60
 
 # Personnage
-PERSONNAGE_DEPART_X = WIDTH/3
+PERSONNAGE_DEPART_X = WIDTH/6
 PERSONNAGE_DEPART_Y = HEIGHT * 2/3
-PERSONNAGE_SKIN = "images/Man/Man.png"
+PERSONNAGE_SKIN = "images/Man/Man/Man.png"
+PERSONNAGE_HEIGHT = 120
 
 # Obstacles
 OBSTACLE_DEPART_X = WIDTH * 2/3
 OBSTACLE_DEPART_Y = HEIGHT * 2/3
 OBSTACLE_SKIN_CENTIPEDE = "images/Centipede/Centipede.png"
 OBSTACLE_TYPE_CENTIPEDE = 2  # Méchant
+OBSTACLE_HEIGHT = 120
 
 # Mots
 TAILLE_POLICE = 36
@@ -29,3 +31,6 @@ SOL_SKIN = "images/Sol/Terre.png"
 
 # Fond
 FOND_SKIN = "images/Fond/volcan.jpg"
+
+# Vitesse de défilement du sol
+SOL_VITESSE = 2

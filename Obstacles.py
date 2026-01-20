@@ -1,4 +1,5 @@
 import pygame as pg
+import Donnees
 
 class Obstacles(object):
     "Classe correspondant aux obstacles du décor."
@@ -17,6 +18,12 @@ class Obstacles(object):
         if isinstance(image, str):
             try:
                 self.image = pg.image.load(image).convert_alpha()
+                # Redimensionner à une hauteur fixe
+                w, h = self.image.get_size()
+                if h > 0:
+                    scale = Donnees.OBSTACLE_HEIGHT / h
+                    new_size = (int(w * scale), int(h * scale))
+                    self.image = pg.transform.smoothscale(self.image, new_size)
                 # midbottom => center X, bottom Y
                 self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
             except Exception as e:

@@ -17,6 +17,10 @@ sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
                     Donnees.SOL_DEPART_X,
                     Donnees.SOL_DEPART_Y)
 
+sol_droite = Sol.Sol(Donnees.SOL_SKIN,
+                     Donnees.SOL_DEPART_X + Donnees.WIDTH,
+                     Donnees.SOL_DEPART_Y)
+
 man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
                             sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                             Donnees.PERSONNAGE_SKIN) # Changer position Y par WHEIGHT - 2/3 * hauteursprite
@@ -47,16 +51,20 @@ while True:
 
 
 
-        
-
+    # Faire défiler le sol
+    sol_gauche.defiler(Donnees.SOL_VITESSE)
+    sol_droite.defiler(Donnees.SOL_VITESSE)
+ 
     # Affichage des éléments
     
     #screen.fill(fenetre.couleur_fond)
     fenetre.afficher_fond(screen)
     sol_gauche.afficher(screen)
+    sol_droite.afficher(screen)
     man.afficher(screen)
     mechant.afficher(screen)
     mot.afficher(screen)
+
     
 
     # Mise à jour de l'affichage
