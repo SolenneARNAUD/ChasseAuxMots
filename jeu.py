@@ -29,11 +29,13 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_CENTIPEDE,
                               sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                               Donnees.OBSTACLE_TYPE_CENTIPEDE)
 
-# création du mot directement depuis la chaîne définie dans Donnees
+# création du mot directement depuis la base de donnée
+compteur = 1
+liste_mots=BaseDonnees.df["niveau2"].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 30,
-    Donnees.MOT_SYMBOLE,
+    liste_mots[compteur],
     Donnees.MOT_COULEUR
 )
 
