@@ -1,7 +1,7 @@
 
 # Fenêtre de jeu
 WIDTH, HEIGHT = 1000, 500
-COULEUR_FOND = (0, 0, 0)
+COULEUR_FOND = (100, 0, 0)
 FPS = 60
 
 # Personnage
@@ -26,3 +26,6 @@ MOT_SYMBOLE = 'OK'  # Exemple de mot avec des caractères spéciaux
 SOL_DEPART_X = WIDTH / 2
 SOL_DEPART_Y = HEIGHT
 SOL_SKIN = "images/Sol/Terre.png"
+
+# Fond
+FOND_SKIN = "images/Fond/volcan.jpg"
