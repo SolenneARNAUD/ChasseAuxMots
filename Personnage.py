@@ -79,3 +79,22 @@ class Personnage(object):
         "Affiche le personnage (center X, bottom Y) à l'écran."
         if self.image and self.rect:
             screen.blit(self.image, self.rect)
+
+    def check_collision(self, obstacle):
+        """Vérifie s'il y a collision entre le personnage et un obstacle.
+        
+        Args:
+            obstacle: L'objet obstacle à vérifier
+        
+        Returns:
+            True si collision détectée, False sinon
+        """
+        # Vérifier que les rect existent et sont valides
+        if self.rect is None or not hasattr(obstacle, 'rect') or obstacle.rect is None:
+            return False
+        
+        # Créer une copie du rect du personnage réduite pour diminuer la tolérance
+        # On diminue la taille de 10 pixels de chaque côté (20 pixels au total par dimension)
+        rect_tolerance = self.rect.inflate(-20, -20)
+        # Vérifier la collision avec la zone élargie
+        return rect_tolerance.colliderect(obstacle.rect)

@@ -52,6 +52,7 @@ mot = Mot.Mot.from_string(
 #################### Boucle principale ########################
 
 clock = pygame.time.Clock()
+game_over = False
 
 while True:
     events = pygame.event.get()          
@@ -59,10 +60,20 @@ while True:
         if event.type == pygame.QUIT: 
             sys.exit()
 
+    # Si collision détectée, afficher écran noir et arrêter le jeu
+    if man.check_collision(mechant):
+        game_over = True
+
+    if game_over:
+        screen.fill((0, 0, 0))  # Remplir l'écran en noir
+        pygame.display.flip()
+        clock.tick(Donnees.FPS)
+        continue
+
     # Traitement des entrées clavier pour le mot
     mot.process_input(events)
 
-    # Génération d'un nouveau mot si le mot actuel est complété
+    # Génération d'un nouveau mot et respawn du méchant si le mot actuel est complété
     if not mot._state:
         compteur_mot += 1 
         liste_mots = BaseDonnees.df[niveau].dropna().tolist()
@@ -71,6 +82,18 @@ while True:
             sol_gauche.get_rect().y - 100,
             liste_mots[compteur_mot],
             Donnees.MOT_COULEUR)
+        
+        # Respawn du méchant
+        num_img = 1
+        frame_counter = 0
+        print('avant chargement')
+        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
+                                      Donnees.OBSTACLE_DEPART_X,
+                                      sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
+                                      Donnees.OBSTACLE_TYPE,
+                                      Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
+                                      Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
+        print('apres chargement')
 
     # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
@@ -83,10 +106,10 @@ while True:
     frame_counter += 1
     if frame_counter >= mechant.animation_delay:
         frame_counter = 0
-        if num_img == 1:
-            num_img = mechant.nb_images
+        if num_img == mechant.nb_images:
+            num_img = 1
         else:
-            num_img = num_img - 1
+            num_img = num_img + 1
         
         # Mise à jour de l'image du méchant
         sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
