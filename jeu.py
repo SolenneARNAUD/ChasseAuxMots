@@ -86,14 +86,19 @@ while True:
         # Respawn du méchant
         num_img = 1
         frame_counter = 0
+
         print('avant chargement')
-        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
+        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
                                       Donnees.OBSTACLE_DEPART_X,
                                       sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                                       Donnees.OBSTACLE_TYPE,
                                       Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
                                       Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
         print('apres chargement')
+
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # Il faut ajouter des temps mort entre les frame de sol pour qu'il defile a une vitesse correcte
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
