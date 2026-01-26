@@ -121,7 +121,7 @@ class Mot(object):
                 char = str(event.unicode).lower()
                 
                 # Ignorer les touches mortes (accents seuls) et les caracteres non imprimables
-                if not char or char in '^`~"' or (ord(char) < 32 and ord(char) != 9):
+                if not char or char in '^`~"¨' or (ord(char) < 32 and ord(char) != 9):
                     continue
                 
                 if self._state and self._symboles:
