@@ -70,3 +70,17 @@ class Obstacles(object):
             w, h = 32, 32
             debug_rect = pg.Rect(self._position_x - w//2, self._position_y - h, w, h)
             pg.draw.rect(screen, (255, 0, 0), debug_rect)
+
+    def update_position(self, velocity):
+        """Déplace l'obstacle à une vitesse donnée et réinitialise s'il sort de l'écran."""
+        self._position_x -= velocity
+        if self.rect:
+            self.rect.centerx = self._position_x
+        
+        # Réinitialiser la position si l'obstacle sort de l'écran
+        if self._position_x < -100:
+            self._position_x = Donnees.WIDTH + 100
+            if self.rect:
+                self.rect.centerx = self._position_x
+        
+        return self._position_x

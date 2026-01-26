@@ -105,3 +105,47 @@ class Mot(object):
         """
         symboles = cls.conversion_symbole(chaine, couleur)
         return cls(x, y, symboles)
+
+    def process_input(self, events, reset_on_error=True):
+        """Surveille le clavier et met à jour l'état du mot.
+        Lorsque la lettre du mot est tapée, elle devient grise.
+        
+        Args:
+            events: Les événements pygame
+            reset_on_error: Si True, réinitialise le mot si une mauvaise lettre est tapée
+        """
+        for event in events:
+            if event.type == pg.KEYDOWN:
+                char = str(event.unicode)
+                if self._state and self._symboles:
+                    # Trouver le premier symbole non gris
+                    found = False
+                    for symbole in self._symboles:
+                        if symbole._couleur != (128, 128, 128):
+                            # Vérifier si le caractère correspond à ce symbole
+                            if symbole._symbole.lower() == char:
+                                symbole._couleur = (128, 128, 128)
+                                print(f"Symbole {symbole._symbole} trouve!")
+                                found = True
+                            break
+                    
+                    # Si la lettre est fausse et reset_on_error est True
+                    if not found and reset_on_error:
+                        for symbole in self._symboles:
+                            symbole._couleur = Donnees.MOT_COULEUR
+                        print("Lettre incorrecte! Mot reinitialise.")
+                    
+                    # Vérifier si tous les symboles sont gris (mot complété)
+                    if all(symbole._couleur == (128, 128, 128) for symbole in self._symboles):
+                        self._state = False
+                        print("Mot complete!")
+
+    def update_position(self, velocity):
+        """Déplace le mot à une vitesse donnée et réinitialise s'il sort de l'écran."""
+        self._position_x -= velocity
+        
+        # Réinitialiser la position si le mot sort de l'écran
+        if self._position_x < -100:
+            self._position_x = Donnees.WIDTH + 100
+        
+        return self._position_x

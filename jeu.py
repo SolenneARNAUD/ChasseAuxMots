@@ -7,12 +7,14 @@ import Mot
 import Symbole
 import Sol  
 import BaseDonnees
+
 pygame.init()
 
 # Créer le screen AVANT la fenêtre (nécessaire pour .convert())
 screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
 fenetre = Fenetre.Fenetre(Donnees.FOND_SKIN)
 
+# Initialisation des sols
 sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
                     Donnees.SOL_DEPART_X,
                     Donnees.SOL_DEPART_Y)
@@ -21,67 +23,31 @@ sol_droite = Sol.Sol(Donnees.SOL_SKIN,
                      Donnees.SOL_DEPART_X + Donnees.WIDTH,
                      Donnees.SOL_DEPART_Y)
 
+# Initialisation du personnage
 man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
                             sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                            Donnees.PERSONNAGE_SKIN) # Changer position Y par WHEIGHT - 2/3 * hauteursprite
+                            Donnees.PERSONNAGE_SKIN)
+
+# Initialisation du méchant
 mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
                               Donnees.OBSTACLE_DEPART_X,
                               sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                              Donnees.OBSTACLE_TYPE,7, 7)
+                              Donnees.OBSTACLE_TYPE,
+                              Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
+                              Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
 
-# création du mot directement depuis la base de donnée
+# Initialisation des mots
 compteur_mot = 0
-niveau="niveau2"
-num_img=1
-frame_counter = 0  # Compteur pour contrôler la vitesse d'animation du dino
-mechant_x = Donnees.OBSTACLE_DEPART_X  # Position X du méchant
-mot_x = Donnees.MOT_DEPART_X  # Position X du mot
-liste_mots=BaseDonnees.df["niveau2"].dropna().tolist()
+niveau = "niveau2"
+num_img = 1
+frame_counter = 0
+liste_mots = BaseDonnees.df["niveau2"].dropna().tolist()
 mot = Mot.Mot.from_string(
-    mot_x,
+    Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 100,
     Donnees.MOT_SYMBOLE,
     Donnees.MOT_COULEUR
 )
-
-#### !! Attention !!! ####
-# Rmq state_mot : on peut le faire dans n'importe quel ordre
-
-def state_mot(mot, events, reset_on_error=True): 
-    """Surveille le clavier et met à jour l'état du mot. 
-    Lorsque la lettre du mot est tapée, elle devient grise.
-    
-    Args:
-        mot: L'objet mot à surveiller
-        events: Les événements pygame
-        reset_on_error: Si True, réinitialise le mot si une mauvaise lettre est tapée
-    """
-    for event in events:                            # parcourir les événements passés en paramètre
-        if event.type == pygame.KEYDOWN:            # vérifier si une touche est appuyée
-            char = str(event.unicode)           # obtenir le caractère de la touche (minuscule)
-            if mot._state and mot.symboles:         # vérifier qu'il reste des symboles
-                # Trouver le premier symbole non gris
-                found = False
-                for symbole in mot.symboles:
-                    if symbole._couleur != (128, 128, 128):
-                        # Vérifier si le caractère correspond à ce symbole
-                        if symbole._symbole.lower() == char:
-                            symbole._couleur = (128, 128, 128)
-                            print(f"Symbole {symbole._symbole} trouve!")
-                            found = True
-                        break
-                
-                # Si la lettre est fausse et reset_on_error est True
-                if not found and reset_on_error:
-                    for symbole in mot.symboles:
-                        symbole._couleur = Donnees.MOT_COULEUR  # Réinitialiser la couleur
-                    print("Lettre incorrecte! Mot reinitialise.")
-                
-                # Vérifier si tous les symboles sont gris (mot complété)
-                if all(symbole._couleur == (128, 128, 128) for symbole in mot.symboles):
-                    mot._state = False  # Marquer le mot comme complété
-                    print("Mot complete!")
-
 
 #################### Boucle principale ########################
 
@@ -92,40 +58,28 @@ while True:
     for event in events:
         if event.type == pygame.QUIT: 
             sys.exit()
-        if event.type == pygame.KEYDOWN:
-            print(f"Touche detectee: {event.unicode}")
 
-    # Implémentation des mots
-    if mot._state==False:
-        compteur_mot=compteur_mot+1 
-        liste_mots=BaseDonnees.df[niveau].dropna().tolist()
-        mot_x = Donnees.MOT_DEPART_X  # Réinitialiser la position X du mot
+    # Traitement des entrées clavier pour le mot
+    mot.process_input(events)
+
+    # Génération d'un nouveau mot si le mot actuel est complété
+    if not mot._state:
+        compteur_mot += 1 
+        liste_mots = BaseDonnees.df[niveau].dropna().tolist()
         mot = Mot.Mot.from_string(
-                mot_x,
-                sol_gauche.get_rect().y - 100,
-                liste_mots[compteur_mot],
-                Donnees.MOT_COULEUR)
-    state_mot(mot, events)  # Passer les événements à la fonction
+            Donnees.MOT_DEPART_X,
+            sol_gauche.get_rect().y - 100,
+            liste_mots[compteur_mot],
+            Donnees.MOT_COULEUR)
 
-
-    # Faire défiler le sol
+    # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
     sol_droite.defiler(Donnees.SOL_VITESSE)
     
-    # Déplacement du mot et du méchant à la vitesse du sol
-    mot_x -= Donnees.SOL_VITESSE
-    mechant_x -= Donnees.SOL_VITESSE
-    
-    # Réinitialiser les positions si ils sortent de l'écran
-    if mot_x < -100:
-        mot_x = Donnees.WIDTH + 100
-    if mechant_x < -100:
-        mechant_x = Donnees.WIDTH + 100
-    
-    # Mettre à jour la position X du mot
-    mot.position_x = mot_x
- 
-    # Gestion de l'animation de l'obstacle
+    mot.update_position(Donnees.SOL_VITESSE)
+    mechant.update_position(Donnees.SOL_VITESSE)
+
+    # Gestion de l'animation du méchant
     frame_counter += 1
     if frame_counter >= mechant.animation_delay:
         frame_counter = 0
@@ -133,22 +87,18 @@ while True:
             num_img = mechant.nb_images
         else:
             num_img = num_img - 1
-    
-    sprite_obstacle=Donnees.OBSTACLE_SKIN_DINO_VOLANT+str(num_img)+".png"
-    mechant = Obstacles.Obstacles(sprite_obstacle,
-                              mechant_x,
-                              sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                              Donnees.OBSTACLE_TYPE)
-    
-    #screen.fill(fenetre.couleur_fond)
+        
+        # Mise à jour de l'image du méchant
+        sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
+        mechant.set_image(sprite_obstacle)
+
+    # Affichage des éléments
     fenetre.afficher_fond(screen)
     sol_gauche.afficher(screen)
     sol_droite.afficher(screen)
     man.afficher(screen)
     mechant.afficher(screen)
     mot.afficher(screen)
-
-    
 
     # Mise à jour de l'affichage
     pygame.display.flip()
