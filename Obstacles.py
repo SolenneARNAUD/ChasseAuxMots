@@ -4,11 +4,13 @@ import Donnees
 class Obstacles(object):
     "Classe correspondant aux obstacles du décor."
 
-    def __init__(self, image, position_x, position_y, type):
+    def __init__(self, image, position_x, position_y, type, animation_delay = 5, nb_images=4):
         "Constructeur de la classe Obstacles."
         self._position_x = int(position_x)   # centre X
         self._position_y = int(position_y)   # bottom Y
         self.type = type  # 0: à sauter, 1: en hauteur, 2: méchant
+        self.animation_delay = animation_delay
+        self.nb_images = nb_images
 
         self.image = None
         self.rect = None
