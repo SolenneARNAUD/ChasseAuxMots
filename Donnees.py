@@ -13,7 +13,8 @@ PERSONNAGE_HEIGHT = 120
 # Obstacles
 OBSTACLE_DEPART_X = WIDTH * 2/3
 OBSTACLE_DEPART_Y = HEIGHT * 2/3
-OBSTACLE_SKIN = "images/Mechant/dino1.png"
+OBSTACLE_SKIN_DINO = "images/Mechant/dino"
+OBSTACLE_SKIN_DINO_VOLANT = "images/Mechant/dino_volant"
 OBSTACLE_TYPE = 2  # Méchant
 OBSTACLE_HEIGHT = 120
 
@@ -28,7 +29,7 @@ MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
 SOL_DEPART_X = WIDTH / 2
 SOL_DEPART_Y = HEIGHT
 SOL_SKIN = "images/Sol/Terre.png"
-SOL_VITESSE = 2
+SOL_VITESSE = 1
 
 # Fond
 FOND_SKIN = "images/Fond/volcan.jpg"

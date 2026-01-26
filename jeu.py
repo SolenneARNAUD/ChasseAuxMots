@@ -24,19 +24,21 @@ sol_droite = Sol.Sol(Donnees.SOL_SKIN,
 man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
                             sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                             Donnees.PERSONNAGE_SKIN) # Changer position Y par WHEIGHT - 2/3 * hauteursprite
-mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN,
+mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
                               Donnees.OBSTACLE_DEPART_X,
                               sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                              Donnees.OBSTACLE_TYPE)
+                              Donnees.OBSTACLE_TYPE,7, 7)
 
 # création du mot directement depuis la base de donnée
 compteur_mot = 0
 niveau="niveau2"
 num_img=1
 frame_counter = 0  # Compteur pour contrôler la vitesse d'animation du dino
+mechant_x = Donnees.OBSTACLE_DEPART_X  # Position X du méchant
+mot_x = Donnees.MOT_DEPART_X  # Position X du mot
 liste_mots=BaseDonnees.df["niveau2"].dropna().tolist()
 mot = Mot.Mot.from_string(
-    Donnees.MOT_DEPART_X,
+    mot_x,
     sol_gauche.get_rect().y - 100,
     Donnees.MOT_SYMBOLE,
     Donnees.MOT_COULEUR
@@ -97,8 +99,9 @@ while True:
     if mot._state==False:
         compteur_mot=compteur_mot+1 
         liste_mots=BaseDonnees.df[niveau].dropna().tolist()
+        mot_x = Donnees.MOT_DEPART_X  # Réinitialiser la position X du mot
         mot = Mot.Mot.from_string(
-                Donnees.MOT_DEPART_X,
+                mot_x,
                 sol_gauche.get_rect().y - 100,
                 liste_mots[compteur_mot],
                 Donnees.MOT_COULEUR)
@@ -108,6 +111,19 @@ while True:
     # Faire défiler le sol
     sol_gauche.defiler(Donnees.SOL_VITESSE)
     sol_droite.defiler(Donnees.SOL_VITESSE)
+    
+    # Déplacement du mot et du méchant à la vitesse du sol
+    mot_x -= Donnees.SOL_VITESSE
+    mechant_x -= Donnees.SOL_VITESSE
+    
+    # Réinitialiser les positions si ils sortent de l'écran
+    if mot_x < -100:
+        mot_x = Donnees.WIDTH + 100
+    if mechant_x < -100:
+        mechant_x = Donnees.WIDTH + 100
+    
+    # Mettre à jour la position X du mot
+    mot.position_x = mot_x
  
     # Gestion de l'animation de l'obstacle
     frame_counter += 1
@@ -118,9 +134,9 @@ while True:
         else:
             num_img = num_img - 1
     
-    sprite_obstacle="images/Mechant/dino"+str(num_img)+".png"
+    sprite_obstacle=Donnees.OBSTACLE_SKIN_DINO_VOLANT+str(num_img)+".png"
     mechant = Obstacles.Obstacles(sprite_obstacle,
-                              Donnees.OBSTACLE_DEPART_X,
+                              mechant_x,
                               sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                               Donnees.OBSTACLE_TYPE)
     
