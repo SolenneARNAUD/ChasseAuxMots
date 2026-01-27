@@ -38,10 +38,10 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
 
 # Initialisation des mots
 compteur_mot = 0
-niveau = "niveau2"
+niveau = "niveau3"
 num_img = 1
 frame_counter = 0
-liste_mots = BaseDonnees.df["niveau2"].dropna().tolist()
+liste_mots = BaseDonnees.df["niveau3"].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 100,

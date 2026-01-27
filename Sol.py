@@ -12,8 +12,8 @@ class Sol(object):
         position_x: centre X
         position_y: bottom Y
         """
-        self._position_x = int(position_x) # centre X
-        self._position_y = int(position_y)
+        self._position_x = float(position_x) # centre X
+        self._position_y = float(position_y)
         self._image = None
         self._rect = None
         self.set_image(image)
@@ -51,10 +51,10 @@ class Sol(object):
 
     @position_x.setter
     def position_x(self, value):
-        if isinstance(value, (int, float)):
-            self._position_x = int(value)
-            if self._rect:
-                self._rect.centerx = self._position_x
+        self._position_x = value 
+        if self._rect:
+            # round() est plus précis pour le placement de sprites
+            self._rect.centerx = round(self._position_x)
 
     @property
     def position_y(self):
