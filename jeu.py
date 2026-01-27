@@ -38,7 +38,7 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
 
 # Initialisation des mots
 compteur_mot = 0
-total_mots = 10
+total_mots = 3
 niveau = 3
 num_img = 1
 frame_counter = 0
@@ -66,18 +66,17 @@ while True:
         game_over = True
 
     if game_over:
-        #fenetre.afficher_game_over(screen)
-        fenetre.set_image(Donnees.FOND_GAME_OVER)
+        fenetre.afficher_game_over(screen)
+        pygame.display.flip()
+        continue
+
+    # Niveau réussi
+    if compteur_mot >= total_mots:
         fenetre.afficher_fond(screen)
-        font = pygame.font.Font(None, 72)
-        taille_bandeau = 100
-        bandeau = pygame.Surface((Donnees.WIDTH, taille_bandeau))
-        bandeau.fill((0, 0, 0))  # Fond noir
-        bandeau.set_alpha(150)   # Transparence
-        texte_surface = font.render("GAME OVER", True, (255, 0, 0))
-        rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
-        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
-        screen.blit(texte_surface, rect)
+        sol_gauche.afficher(screen)
+        sol_droite.afficher(screen)
+        man.afficher(screen)
+        fenetre.afficher_niveau_reussi(screen)
         pygame.display.flip()
         continue
 

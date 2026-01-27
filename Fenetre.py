@@ -43,9 +43,25 @@ class Fenetre(object):
         screen.blit(texte_surface, (10, 10))
 
     def afficher_game_over(self, screen):
-        font = pg.font.Font(None, 72)
         self.set_image(Donnees.FOND_GAME_OVER)
         self.afficher_fond(screen)
-        texte_surface = font.render("GAME OVER", True, (0, 0, 0))
+        font = pg.font.Font(None, 72)
+        taille_bandeau = 100
+        bandeau = pg.Surface((Donnees.WIDTH, taille_bandeau))
+        bandeau.fill((0, 0, 0))  # Fond noir
+        bandeau.set_alpha(150)   # Transparence
+        texte_surface = font.render("GAME OVER", True, (255, 0, 0))
         rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
+        screen.blit(texte_surface, rect)
+    
+    def afficher_niveau_reussi(self, screen):
+        font = pg.font.Font(None, 72)
+        taille_bandeau = 100
+        bandeau = pg.Surface((Donnees.WIDTH, taille_bandeau))
+        bandeau.fill((0, 0, 0))  # Fond noir
+        bandeau.set_alpha(150)   # Transparence
+        texte_surface = font.render("Niveau Réussi!", True, (255, 255, 255))
+        rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
         screen.blit(texte_surface, rect)
