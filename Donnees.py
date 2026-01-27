@@ -35,7 +35,7 @@ SOL_SKIN = "images/Sol/Terre.png"
 SOL_VITESSE = 0.5
 # Fond
 FOND_SKIN = "images/Fond/volcan.jpg"
+FOND_GAME_OVER = "images/Fond/volcan_erruption.jpg"
 
 # Bandeau
 BANDEAU_TEXTE = "Niveau "
-

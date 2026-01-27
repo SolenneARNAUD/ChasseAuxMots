@@ -42,3 +42,10 @@ class Fenetre(object):
         screen.blit(fond, (0, 0))
         screen.blit(texte_surface, (10, 10))
 
+    def afficher_game_over(self, screen):
+        font = pg.font.Font(None, 72)
+        self.set_image(Donnees.FOND_GAME_OVER)
+        self.afficher_fond(screen)
+        texte_surface = font.render("GAME OVER", True, (0, 0, 0))
+        rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+        screen.blit(texte_surface, rect)

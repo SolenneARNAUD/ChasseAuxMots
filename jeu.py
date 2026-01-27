@@ -66,9 +66,19 @@ while True:
         game_over = True
 
     if game_over:
-        screen.fill((0, 0, 0))  # Remplir l'écran en noir
+        #fenetre.afficher_game_over(screen)
+        fenetre.set_image(Donnees.FOND_GAME_OVER)
+        fenetre.afficher_fond(screen)
+        font = pygame.font.Font(None, 72)
+        taille_bandeau = 100
+        bandeau = pygame.Surface((Donnees.WIDTH, taille_bandeau))
+        bandeau.fill((0, 0, 0))  # Fond noir
+        bandeau.set_alpha(150)   # Transparence
+        texte_surface = font.render("GAME OVER", True, (255, 0, 0))
+        rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
+        screen.blit(texte_surface, rect)
         pygame.display.flip()
-        clock.tick(Donnees.FPS)
         continue
 
     # Traitement des entrées clavier pour le mot
