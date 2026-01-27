@@ -36,4 +36,6 @@ SOL_VITESSE = 0.5
 # Fond
 FOND_SKIN = "images/Fond/volcan.jpg"
 
+# Bandeau
+BANDEAU_TEXTE = "Niveau "
 

@@ -38,10 +38,11 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
 
 # Initialisation des mots
 compteur_mot = 0
-niveau = "niveau3"
+total_mots = 10
+niveau = 3
 num_img = 1
 frame_counter = 0
-liste_mots = BaseDonnees.df["niveau3"].dropna().tolist()
+liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 100,
@@ -76,7 +77,7 @@ while True:
     # Génération d'un nouveau mot et respawn du méchant si le mot actuel est complété
     if not mot._state:
         compteur_mot += 1 
-        liste_mots = BaseDonnees.df[niveau].dropna().tolist()
+        liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
         mot = Mot.Mot.from_string(
             Donnees.MOT_DEPART_X,
             sol_gauche.get_rect().y - 100,
@@ -95,10 +96,6 @@ while True:
                                       Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
                                       Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
         print('apres chargement')
-
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # Il faut ajouter des temps mort entre les frame de sol pour qu'il defile a une vitesse correcte
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
@@ -127,6 +124,7 @@ while True:
     man.afficher(screen)
     mechant.afficher(screen)
     mot.afficher(screen)
+    fenetre.afficher_bandeau(screen, niveau, compteur_mot, total_mots)
 
     # Mise à jour de l'affichage
     pygame.display.flip()
