@@ -29,7 +29,8 @@ man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
                             Donnees.PERSONNAGE_SKIN)
 
 # Initialisation du méchant
-mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
+num_img = 1
+mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
                               Donnees.OBSTACLE_DEPART_X,
                               sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                               Donnees.OBSTACLE_TYPE,
@@ -38,8 +39,7 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
 
 # Initialisation des mots
 compteur_mot = 0
-total_mots = 3
-num_img = 1
+total_mots = 10
 frame_counter = 0
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
@@ -52,6 +52,7 @@ mot = Mot.Mot.from_string(
 
 clock = pygame.time.Clock()
 game_over = False
+jeu_demarre = False
 niveau = None
 
 while niveau is None:
@@ -72,6 +73,9 @@ while True:
     for event in events:
         if event.type == pygame.QUIT: 
             sys.exit()
+        
+        if event.type == pygame.KEYDOWN:
+            jeu_demarre = True
 
     # GAME OVER : Si collision détectée, afficher écran noir et arrêter le jeu
     if man.check_collision(mechant):
@@ -116,23 +120,24 @@ while True:
                                       Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
 
     # Mise à jour des positions (déplacement avec le sol)
-    sol_gauche.defiler(Donnees.SOL_VITESSE)
-    sol_droite.defiler(Donnees.SOL_VITESSE)
-    mot.update_position(Donnees.SOL_VITESSE)
-    mechant.update_position(Donnees.SOL_VITESSE)
+    if jeu_demarre:
+        sol_gauche.defiler(Donnees.SOL_VITESSE)
+        sol_droite.defiler(Donnees.SOL_VITESSE)
+        mot.update_position(Donnees.SOL_VITESSE)
+        mechant.update_position(Donnees.SOL_VITESSE)
 
-    # Gestion de l'animation du méchant
-    frame_counter += 1
-    if frame_counter >= mechant.animation_delay:
-        frame_counter = 0
-        if num_img == mechant.nb_images:
-            num_img = 1
-        else:
-            num_img = num_img + 1
-        
-        # Mise à jour de l'image du méchant
-        sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
-        mechant.set_image(sprite_obstacle)
+        # Gestion de l'animation du méchant
+        frame_counter += 1
+        if frame_counter >= mechant.animation_delay:
+            frame_counter = 0
+            if num_img == mechant.nb_images:
+                num_img = 1
+            else:
+                num_img = num_img + 1
+            
+            # Mise à jour de l'image du méchant
+            sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
+            mechant.set_image(sprite_obstacle)
 
     # Affichage des éléments
     fenetre.afficher_fond(screen)
