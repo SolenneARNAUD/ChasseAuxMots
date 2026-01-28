@@ -50,7 +50,7 @@ class Fenetre(object):
         bandeau = pg.Surface((Donnees.WIDTH, taille_bandeau))
         bandeau.fill((0, 0, 0))  # Fond noir
         bandeau.set_alpha(150)   # Transparence
-        texte_surface = font.render("GAME OVER", True, (255, 0, 0))
+        texte_surface = font.render("GAME OVER", True, (255, 255, 255))
         rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
         screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
         screen.blit(texte_surface, rect)
@@ -65,3 +65,57 @@ class Fenetre(object):
         rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
         screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
         screen.blit(texte_surface, rect)
+
+def fenetre_niveau(screen, events):
+    """
+    Affiche la fenêtre de sélection des niveaux.
+    Retourne le numéro du niveau cliqué (1 à 5) ou None.
+    """
+
+    screen.fill(Donnees.COULEUR_FOND)
+
+    font = pg.font.Font(None, 48)
+
+    # Paramètres des carrés
+    taille = 100    # Taille des carrés
+    espacement = 30 # Espacement entre les carrés
+
+    largeur_totale = Donnees.NB_NIVEAUX * taille + (Donnees.NB_NIVEAUX - 1) * espacement # Calcul de la largeur totale
+    start_x = (Donnees.WIDTH - largeur_totale) // 2 # Position de départ en X
+    y = Donnees.HEIGHT // 2 - taille // 2           # Position en Y
+
+    rectangles = [] # Liste des rectangles des niveaux
+
+    for i in range(Donnees.NB_NIVEAUX):
+        rect = pg.Rect(
+            start_x + i * (taille + espacement),
+            y,
+            taille,
+            taille
+        )
+        rectangles.append(rect) # Stockage du rectangle
+
+        # Dessin du carré
+        pg.draw.rect(screen, (200, 200, 200), rect) # Fond blanc gris
+        pg.draw.rect(screen, (0, 0, 0), rect, 3) # Bordure noire
+
+        # Numéro du niveau
+        texte = font.render(str(i + 1), True, (0, 0, 0))
+        texte_rect = texte.get_rect(center=rect.center)
+        screen.blit(texte, texte_rect)
+
+    pg.display.flip()
+
+    # Gestion des clics
+    for event in events: 
+        if event.type == pg.QUIT:
+            pg.quit()
+            exit()
+
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            position = event.pos
+            for i, rect in enumerate(rectangles):
+                if rect.collidepoint(position):
+                    return i + 1
+    return None
+

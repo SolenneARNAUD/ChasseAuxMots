@@ -39,10 +39,8 @@ mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT,
 # Initialisation des mots
 compteur_mot = 0
 total_mots = 3
-niveau = 3
 num_img = 1
 frame_counter = 0
-liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
     sol_gauche.get_rect().y - 100,
@@ -54,14 +52,28 @@ mot = Mot.Mot.from_string(
 
 clock = pygame.time.Clock()
 game_over = False
+niveau = None
 
+while niveau is None:
+    
+    events = pygame.event.get() 
+    for event in events:
+        if event.type == pygame.QUIT:
+            sys.exit()
+
+    # Fenetre de sélection des niveaux
+    niveau = Fenetre.fenetre_niveau(screen, events) 
+    clock.tick(60)
+
+# Entrée dans le niveau sélectionné
 while True:
+
     events = pygame.event.get()          
     for event in events:
         if event.type == pygame.QUIT: 
             sys.exit()
 
-    # Si collision détectée, afficher écran noir et arrêter le jeu
+    # GAME OVER : Si collision détectée, afficher écran noir et arrêter le jeu
     if man.check_collision(mechant):
         game_over = True
 
@@ -70,7 +82,7 @@ while True:
         pygame.display.flip()
         continue
 
-    # Niveau réussi
+    # Niveau réussi : Si tous les mots ont été complétés, afficher écran de réussite
     if compteur_mot >= total_mots:
         fenetre.afficher_fond(screen)
         sol_gauche.afficher(screen)
@@ -96,20 +108,16 @@ while True:
         # Respawn du méchant
         num_img = 1
         frame_counter = 0
-
-        print('avant chargement')
         mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
                                       Donnees.OBSTACLE_DEPART_X,
                                       sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                                       Donnees.OBSTACLE_TYPE,
                                       Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
                                       Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
-        print('apres chargement')
 
     # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
     sol_droite.defiler(Donnees.SOL_VITESSE)
-    
     mot.update_position(Donnees.SOL_VITESSE)
     mechant.update_position(Donnees.SOL_VITESSE)
 

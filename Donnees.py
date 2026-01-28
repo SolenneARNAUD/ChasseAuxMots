@@ -1,7 +1,7 @@
 
 # Fenêtre de jeu
 WIDTH, HEIGHT = 1000, 500
-COULEUR_FOND = (100, 0, 0)
+COULEUR_FOND = (173,216,230)  # Bleu clair
 FPS = 60
 
 # Personnage
@@ -39,3 +39,6 @@ FOND_GAME_OVER = "images/Fond/volcan_erruption.jpg"
 
 # Bandeau
 BANDEAU_TEXTE = "Niveau "
+
+# Niveaux
+NB_NIVEAUX = 5
