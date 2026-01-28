@@ -11,6 +11,14 @@ class Personnage(object):
         self._skin = skin
         self.image = None
         self.rect = None
+        
+        # Animation du personnage
+        self._is_animating = False
+        self._animation_frame = 0
+        self._animation_delay = 5  # nb frames avant changement sprite
+        self._frame_counter = 0
+        self._animation_frames = []  # liste des chemins des sprites pour l'animation
+        self._skin_base = skin  # conserve le skin par défaut
 
         # Charger l'image
         try:
@@ -75,6 +83,31 @@ class Personnage(object):
             self.image = skin
             self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
 
+    def set_skin_preserve_size(self, skin):
+        """Charge un nouveau sprite en conservant la taille actuelle du personnage."""
+        if isinstance(skin, str):
+            # Conserver la taille actuelle
+            current_size = None
+            if self.rect:
+                current_size = self.rect.size
+            
+            self._skin = skin
+            try:
+                self.image = pg.image.load(self._skin).convert_alpha()
+                
+                # Si on a une taille précédente, appliquer la même taille
+                if current_size:
+                    self.image = pg.transform.smoothscale(self.image, current_size)
+                
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+            except Exception as e:
+                self.image = None
+                self.rect = None
+                print(f"Erreur chargement image {self._skin}: {e}")
+        elif isinstance(skin, pg.Surface):
+            self.image = skin
+            self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+
     def afficher(self, screen):
         "Affiche le personnage (center X, bottom Y) à l'écran."
         if self.image and self.rect:
@@ -98,3 +131,40 @@ class Personnage(object):
         rect_tolerance = self.rect.inflate(-20, -20)
         # Vérifier la collision avec la zone élargie
         return rect_tolerance.colliderect(obstacle.rect)
+
+    def start_animation(self, animation_frames, animation_delay=5):
+        """Démarre une animation du personnage.
+        
+        Args:
+            animation_frames: Liste des chemins des sprites (ex: ["images/Man/Viking/viking_1.png", ...])
+            animation_delay: Nombre de frames avant de changer de sprite
+        """
+        self._animation_frames = animation_frames
+        self._animation_delay = animation_delay
+        self._animation_frame = 0
+        self._frame_counter = 0
+        self._is_animating = True
+
+    def update_animation(self):
+        """Met à jour l'animation en cours. À appeler à chaque frame."""
+        if not self._is_animating or not self._animation_frames:
+            return
+        
+        self._frame_counter += 1
+        if self._frame_counter >= self._animation_delay:
+            self._frame_counter = 0
+            self._animation_frame += 1
+            
+            # Si on a terminé l'animation, revenir au sprite par défaut
+            if self._animation_frame >= len(self._animation_frames):
+                self._is_animating = False
+                self._animation_frame = 0
+                self.set_skin_preserve_size(self._skin_base)
+            else:
+                # Charger le prochain sprite en conservant la taille
+                sprite_path = self._animation_frames[self._animation_frame]
+                self.set_skin_preserve_size(sprite_path)
+
+    def is_animating(self):
+        """Retourne True si une animation est en cours."""
+        return self._is_animating

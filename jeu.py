@@ -42,6 +42,14 @@ total_mots = 3
 niveau = 3
 num_img = 1
 frame_counter = 0
+mot_state_precedent = True  # Suivre l'état précédent du mot
+
+# État de la séquence d'attaque
+mechant_move_to_man = False  # Le méchant se déplace vers le man
+animation_in_progress = False  # Animation du man en cours
+delai_nouveau_mot = 0  # Délai avant d'afficher le nouveau mot
+distance_mechant_man = 150  # Distance entre le méchant et le man
+
 liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
 mot = Mot.Mot.from_string(
     Donnees.MOT_DEPART_X,
@@ -83,28 +91,78 @@ while True:
     # Traitement des entrées clavier pour le mot
     mot.process_input(events)
 
-    # Génération d'un nouveau mot et respawn du méchant si le mot actuel est complété
-    if not mot._state:
-        compteur_mot += 1 
-        liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
-        mot = Mot.Mot.from_string(
-            Donnees.MOT_DEPART_X,
-            sol_gauche.get_rect().y - 100,
-            liste_mots[compteur_mot],
-            Donnees.MOT_COULEUR)
-        
-        # Respawn du méchant
-        num_img = 1
-        frame_counter = 0
+    # Vérifier si le mot vient de passer de True à False (mot complété)
+    if mot_state_precedent and not mot._state:
+        # Le mot vient d'être complété ! Activer le déplacement du méchant
+        compteur_mot += 1
+        mechant_move_to_man = True
+        animation_in_progress = False
+        delai_nouveau_mot = 0
+    
+    # Mettre à jour l'état précédent
+    mot_state_precedent = mot._state
 
-        print('avant chargement')
-        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
-                                      Donnees.OBSTACLE_DEPART_X,
-                                      sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                                      Donnees.OBSTACLE_TYPE,
-                                      Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
-                                      Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
-        print('apres chargement')
+    # Gestion du déplacement du méchant vers le man
+    if mechant_move_to_man:
+        distance_x = -man.position_x + mechant.position_x
+        
+        # Vérifier si le méchant est arrivé à la distance désirée du man
+        if abs(distance_x) <= distance_mechant_man:
+            mechant.position_x = man.position_x + distance_mechant_man 
+            mechant_move_to_man = False
+            animation_in_progress = True
+            print(mechant.position_x)
+            
+            # Lancer l'animation du man
+            animation_frames = [
+                "images/Man/Viking/viking_attaque_1.png",
+                "images/Man/Viking/viking_attaque_2.png",
+                "images/Man/Viking/viking_attaque_3.png",
+                "images/Man/Viking/viking_attaque_4.png",
+                "images/Man/Viking/viking_attaque_5.png"
+            ]
+            man.start_animation(animation_frames, animation_delay=8)
+        else:
+            # Déplacer le méchant vers le man
+            mechant.position_x -= 3
+            print(mechant.position_x,"déplacemnt")
+    
+    # Bloquer le méchant à la bonne position pendant l'animation
+    if animation_in_progress and not mechant_move_to_man:
+        # Déterminer si le méchant doit être à gauche ou à droite du man
+        mechant.position_x = man.position_x + distance_mechant_man
+        print(mechant.position_x, man.position_x)
+    
+    # Gestion du délai et du respawn après animation
+    if animation_in_progress:
+        # Vérifier si l'animation est terminée
+        if not man.is_animating():
+            # L'animation est finie, commencer le délai
+            delai_nouveau_mot += 1
+            
+            # Si le délai est écoulé (30 frames = 0.5 secondes à 60 FPS)
+            if delai_nouveau_mot >= 30:
+                # Créer le nouveau mot et respawn du méchant
+                if compteur_mot < total_mots:
+                    liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
+                    mot = Mot.Mot.from_string(
+                        Donnees.MOT_DEPART_X,
+                        sol_gauche.get_rect().y - 100,
+                        liste_mots[compteur_mot],
+                        Donnees.MOT_COULEUR)
+                    
+                    # Respawn du méchant
+                    num_img = 1
+                    frame_counter = 0
+                    mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
+                                                  Donnees.OBSTACLE_DEPART_X,
+                                                  sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
+                                                  Donnees.OBSTACLE_TYPE,
+                                                  Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
+                                                  Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
+                
+                animation_in_progress = False
+                delai_nouveau_mot = 0
 
     # Mise à jour des positions (déplacement avec le sol)
     sol_gauche.defiler(Donnees.SOL_VITESSE)
@@ -125,6 +183,9 @@ while True:
         # Mise à jour de l'image du méchant
         sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
         mechant.set_image(sprite_obstacle)
+    
+    # Mise à jour de l'animation du personnage
+    man.update_animation()
 
     # Affichage des éléments
     fenetre.afficher_fond(screen)
