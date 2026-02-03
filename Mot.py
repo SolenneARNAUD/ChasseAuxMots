@@ -115,7 +115,12 @@ class Mot(object):
         Args:
             events: Les evenements pygame
             reset_on_error: Si True, reinitialise le mot si une mauvaise lettre est tapee
+        
+        Returns:
+            tuple: (erreur_commise, caracteres_corrects) - 1/0 pour erreur, nombre de caractères tapés correctement
         """
+        erreur = 0
+        caracteres_corrects = 0
         for event in events:
             if event.type == pg.KEYDOWN:
                 char = str(event.unicode).lower()
@@ -136,16 +141,20 @@ class Mot(object):
                             if symbole_normalized == char_normalized:
                                 symbole._couleur = (128, 128, 128)
                                 found = True
+                                caracteres_corrects += 1
                             break
                     
                     # Si la lettre est fausse et reset_on_error est True
                     if not found and reset_on_error:
                         for symbole in self._symboles:
                             symbole._couleur = Donnees.MOT_COULEUR
+                        erreur = 1
                     
                     # Verifier si tous les symboles sont gris (mot complete)
                     if all(symbole._couleur == (128, 128, 128) for symbole in self._symboles):
                         self._state = False
+        
+        return erreur, caracteres_corrects
 
     def update_position(self, velocity):
         """Déplace le mot à une vitesse donnée et réinitialise s'il sort de l'écran."""

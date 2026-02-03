@@ -66,6 +66,41 @@ class Fenetre(object):
         screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
         screen.blit(texte_surface, rect)
 
+    def afficher_stats_fin_niveau(self, screen, mots_reussis, vitesse_wpm, erreurs):
+        """Affiche les statistiques de fin de niveau."""
+        # Fond semi-transparent
+        overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
+        overlay.fill((0, 0, 0))
+        overlay.set_alpha(180)
+        screen.blit(overlay, (0, 0))
+        
+        font_titre = pg.font.Font(None, 60)
+        font_stats = pg.font.Font(None, 40)
+        
+        # Titre
+        titre = font_titre.render("Statistiques du niveau", True, (255, 255, 255))
+        titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 150))
+        screen.blit(titre, titre_rect)
+        
+        # Stats
+        y_offset = 250
+        line_height = 50
+        
+        stat1 = font_stats.render(f"Mots réussis: {mots_reussis}", True, (255, 255, 255))
+        screen.blit(stat1, (Donnees.WIDTH // 2 - 150, y_offset))
+        
+        stat2 = font_stats.render(f"Vitesse: {vitesse_wpm:.1f} WPM", True, (255, 255, 255))
+        screen.blit(stat2, (Donnees.WIDTH // 2 - 150, y_offset + line_height))
+        
+        stat3 = font_stats.render(f"Erreurs: {erreurs}", True, (255, 255, 255))
+        screen.blit(stat3, (Donnees.WIDTH // 2 - 150, y_offset + 2 * line_height))
+        
+        # Message pour retourner au menu
+        menu = font_stats.render("Appuyez sur Échap pour retourner au menu", True, (200, 200, 200))
+        menu_rect = menu.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 60))
+        screen.blit(menu, menu_rect)
+
+
 def fenetre_niveau(screen, events):
     """
     Affiche la fenêtre de sélection des niveaux.
