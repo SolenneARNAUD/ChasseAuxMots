@@ -43,6 +43,7 @@ total_mots = 10
 frame_counter = 0
 
 mot_state_precedent = True  # Suivre l'état précédent du mot
+mot_visible = True  # Contrôle la visibilité du mot
 
 # État de la séquence d'attaque
 mechant_move_to_man = False  # Le méchant se déplace vers le man
@@ -117,6 +118,7 @@ while True:
         mechant_move_to_man = True
         animation_in_progress = False
         delai_nouveau_mot = 0
+        mot_visible = False  # Cacher le mot dès qu'il est complété
     
         # Génération d'un nouveau mot et respawn du méchant si le mot actuel est complété
         mot = Mot.Mot.from_string(
@@ -199,6 +201,7 @@ while True:
                 
                 animation_in_progress = False
                 delai_nouveau_mot = 0
+                mot_visible = True  # Réafficher le mot après l'animation et le délai
 
     # Mise à jour des positions (déplacement avec le sol)
     if jeu_demarre:
@@ -230,7 +233,8 @@ while True:
     sol_droite.afficher(screen)
     man.afficher(screen)
     mechant.afficher(screen)
-    mot.afficher(screen)
+    if mot_visible:
+        mot.afficher(screen)
     fenetre.afficher_bandeau(screen, niveau, compteur_mot, total_mots)
 
     # Mise à jour de l'affichage
