@@ -171,11 +171,11 @@ while True:
                 liste_mots[compteur_mot],
                 Donnees.MOT_COULEUR)
             
-            # Respawn du méchant
+            # Respawn du méchant à sa position actuelle 
             num_img = 1
             frame_counter = 0
             mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
-                                          Donnees.OBSTACLE_DEPART_X,
+                                          mechant.position_x,  # Utiliser la position actuelle du méchant
                                           sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                                           Donnees.OBSTACLE_TYPE,
                                           Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
