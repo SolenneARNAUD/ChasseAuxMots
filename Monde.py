@@ -100,6 +100,10 @@ class Monde(object):
         return self.mot
     
     def get_liste_mots(self):
+        "Renvoie la liste des mots du niveau."
+        return self.liste_mots
+    
+    def get_liste_mots(self):
         "Renvoie la liste des mots du monde."
         return self.liste_mots
     

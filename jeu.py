@@ -118,7 +118,7 @@ while True:
             # Génération d'un nouveau mot (seulement si ce n'est pas le dernier)
             if monde.get_compteur_mot() < monde.get_total_mots():
                 mot = Mot.Mot.from_string(
-                    mechant.position_x + Donnees.OBSTACLE_HEIGHT / 2,
+                    Donnees.MOT_DEPART_X + 80,
                     sol_gauche.get_rect().y - 100,
                     liste_mots[monde.get_compteur_mot()],
                     Donnees.MOT_COULEUR)

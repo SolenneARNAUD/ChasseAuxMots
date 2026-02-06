@@ -56,4 +56,11 @@ mots={
 
 df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
 
+# mechant = {
+#     "dino_volant":7,
+#     "dino":4,
+#     "rock_round":12
+# }
+
+# mechant = pd.DataFrame(mechant)
 
