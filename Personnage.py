@@ -168,3 +168,8 @@ class Personnage(object):
     def is_animating(self):
         """Retourne True si une animation est en cours."""
         return self._is_animating
+    
+    def initialisation_personnage(self):
+        """Réinitialise la position du personnage à sa position de départ."""
+        self.position_x = self._position_x
+        self.position_y = self._position_y

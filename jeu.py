@@ -1,68 +1,16 @@
 import sys, pygame
 import Fenetre
 import Donnees
-import Personnage
-import Obstacles
 import Mot
-import Symbole
-import Sol  
 import BaseDonnees
+import Monde
+import Obstacles
 
 pygame.init()
 
 # Créer le screen AVANT la fenêtre (nécessaire pour .convert())
 screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
 fenetre = Fenetre.Fenetre(Donnees.FOND_SKIN)
-
-# Initialisation des sols
-sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
-                    Donnees.SOL_DEPART_X,
-                    Donnees.SOL_DEPART_Y)
-
-sol_droite = Sol.Sol(Donnees.SOL_SKIN,
-                     Donnees.SOL_DEPART_X + Donnees.WIDTH,
-                     Donnees.SOL_DEPART_Y)
-
-# Initialisation du personnage
-man = Personnage.Personnage(Donnees.PERSONNAGE_DEPART_X,
-                            sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                            Donnees.PERSONNAGE_SKIN)
-
-# Initialisation du méchant
-num_img = 1
-mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
-                              Donnees.OBSTACLE_DEPART_X,
-                              sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                              Donnees.OBSTACLE_TYPE,
-                              Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
-                              Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
-
-# Initialisation des mots
-compteur_mot = 0
-total_mots = 10
-frame_counter = 0
-
-mot_state_precedent = True  # Suivre l'état précédent du mot
-mot_visible = True  # Contrôle la visibilité du mot
-
-# État de la séquence d'attaque
-mechant_move_to_man = False  # Le méchant se déplace vers le man
-animation_in_progress = False  # Animation du man en cours
-delai_nouveau_mot = 0  # Délai avant d'afficher le nouveau mot
-distance_mechant_man = 150  # Distance entre le méchant et le man
-
-# Statistiques de jeu
-nb_erreurs = 0  # Nombre d'erreurs commises
-temps_debut = None  # Temps de début du jeu
-total_caracteres = 0  # Nombre total de caractères tapés correctement
-vitesse_finale = None  # Vitesse finale calculée une seule fois
-
-mot = Mot.Mot.from_string(
-    Donnees.MOT_DEPART_X,
-    sol_gauche.get_rect().y - 100,
-    Donnees.MOT_SYMBOLE,
-    Donnees.MOT_COULEUR
-)
 
 #################### Boucle principale ########################
 
@@ -82,6 +30,35 @@ while True:
         # Fenetre de sélection des niveaux
         niveau = Fenetre.fenetre_niveau(screen, events) 
         clock.tick(60)
+
+    # Initialisation du monde après la sélection du niveau
+    monde = Monde.Monde()
+    monde.initialiser_niveau(niveau)
+    
+    sol_gauche = monde.get_sol_gauche()
+    sol_droite = monde.get_sol_droite()
+    man = monde.get_personnage()
+    mechant = monde.get_mechant()
+    mot = monde.get_mot()
+    
+    # Initialisation des variables de jeu
+    compteur_mot = 0
+    total_mots = 10
+    frame_counter = 0
+    num_img = 1
+
+    mot_state_precedent = True
+    mot_visible = True
+
+    mechant_move_to_man = False
+    animation_in_progress = False
+    delai_nouveau_mot = 0
+    distance_mechant_man = 150
+
+    nb_erreurs = 0
+    temps_debut = None
+    total_caracteres = 0
+    vitesse_finale = None
 
     # Entrée dans le niveau sélectionné
     while True:

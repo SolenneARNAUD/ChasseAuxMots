@@ -153,4 +153,3 @@ def fenetre_niveau(screen, events):
                 if rect.collidepoint(position):
                     return i + 1
     return None
-
