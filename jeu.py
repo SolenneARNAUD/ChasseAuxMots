@@ -40,25 +40,9 @@ while True:
     man = monde.get_personnage()
     mechant = monde.get_mechant()
     mot = monde.get_mot()
+    liste_mots = monde.get_liste_mots()
     
-    # Initialisation des variables de jeu
-    compteur_mot = 0
-    total_mots = 10
-    frame_counter = 0
-    num_img = 1
-
-    mot_state_precedent = True
-    mot_visible = True
-
-    mechant_move_to_man = False
-    animation_in_progress = False
-    delai_nouveau_mot = 0
-    distance_mechant_man = 150
-
-    nb_erreurs = 0
-    temps_debut = None
-    total_caracteres = 0
-    vitesse_finale = None
+    jeu_demarre = False
 
     # Entrée dans le niveau sélectionné
     while True:
@@ -70,8 +54,8 @@ while True:
             
             if event.type == pygame.KEYDOWN:
                 jeu_demarre = True
-                if temps_debut is None:
-                    temps_debut = pygame.time.get_ticks()  # En millisecondes
+                if monde.get_temps_debut() is None:
+                    monde.set_temps_debut(pygame.time.get_ticks())  # En millisecondes
 
         # GAME OVER : Si collision détectée, afficher écran noir et arrêter le jeu
         if man.check_collision(mechant):
@@ -83,19 +67,20 @@ while True:
             continue
 
         # Niveau réussi : Si tous les mots ont été complétés, afficher écran de réussite
-        if compteur_mot >= total_mots:
+        if monde.get_compteur_mot() >= monde.get_total_mots():
             # Calculer les statistiques une seule fois
-            if vitesse_finale is None:
+            if monde.get_vitesse_finale() is None:
                 temps_fin = pygame.time.get_ticks()
-                temps_total_ms = temps_fin - temps_debut
+                temps_total_ms = temps_fin - monde.get_temps_debut()
                 temps_total_min = temps_total_ms / 60000.0  # Convertir en minutes
-                vitesse_finale = compteur_mot / temps_total_min if temps_total_min > 0 else 0
+                vitesse_calc = monde.get_compteur_mot() / temps_total_min if temps_total_min > 0 else 0
+                monde.set_vitesse_finale(vitesse_calc)
             
             fenetre.afficher_fond(screen)
             sol_gauche.afficher(screen)
             sol_droite.afficher(screen)
             man.afficher(screen)
-            fenetre.afficher_stats_fin_niveau(screen, compteur_mot, vitesse_finale, nb_erreurs)
+            fenetre.afficher_stats_fin_niveau(screen, monde.get_compteur_mot(), monde.get_vitesse_finale(), monde.get_nb_erreurs())
             pygame.display.flip()
             
             # Attendre une touche pour continuer
@@ -108,18 +93,7 @@ while True:
                         if event.key == pygame.K_ESCAPE:
                             # Retourner au menu de sélection de niveau
                             niveau = None
-                            # Remettre à zéro toutes les variables
-                            compteur_mot = 0
-                            nb_erreurs = 0
-                            total_caracteres = 0
-                            vitesse_finale = None
-                            temps_debut = None
                             jeu_demarre = False
-                            mot_state_precedent = True
-                            mot_visible = True
-                            mechant_move_to_man = False
-                            animation_in_progress = False
-                            delai_nouveau_mot = 0
                             game_over = False
                             attente = False
                         # Ignorer les autres touches
@@ -127,50 +101,50 @@ while True:
 
         # Traitement des entrées clavier pour le mot
         erreur, caracteres_corrects = mot.process_input(events)
-        nb_erreurs += erreur
-        total_caracteres += caracteres_corrects
+        if erreur:
+            monde.set_nb_erreurs(monde.get_nb_erreurs() + erreur)
+        monde.increment_total_caracteres(caracteres_corrects)
 
 
         # Vérifier si le mot vient de passer de True à False (mot complété)
-        if mot_state_precedent and not mot._state:
+        if monde.get_mot_state_precedent() and not mot._state:
             # Le mot vient d'être complété ! Activer le déplacement du méchant
-            compteur_mot += 1
-            liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
-            mechant_move_to_man = True
-            animation_in_progress = False
-            delai_nouveau_mot = 0
-            mot_visible = False  # Cacher le mot dès qu'il est complété
+            monde.set_compteur_mot(monde.get_compteur_mot() + 1)
+            monde.set_mechant_move_to_man(True)
+            monde.set_animation_in_progress(False)
+            monde.set_delai_nouveau_mot(0)
+            monde.set_mot_visible(False)
         
-            # Génération d'un nouveau mot et respawn du méchant si le mot actuel est complété
-            mot = Mot.Mot.from_string(
-                Donnees.MOT_DEPART_X,
-                sol_gauche.get_rect().y - 100,
-                liste_mots[compteur_mot],
-                Donnees.MOT_COULEUR)
+            # Génération d'un nouveau mot (seulement si ce n'est pas le dernier)
+            if monde.get_compteur_mot() < monde.get_total_mots():
+                mot = Mot.Mot.from_string(
+                    mechant.position_x + Donnees.OBSTACLE_HEIGHT / 2,
+                    sol_gauche.get_rect().y - 100,
+                    liste_mots[monde.get_compteur_mot()],
+                    Donnees.MOT_COULEUR)
             
             # Respawn du méchant à sa position actuelle 
-            num_img = 1
-            frame_counter = 0
-            mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
-                                          mechant.position_x,  # Utiliser la position actuelle du méchant
+            monde.set_num_img(1)
+            monde.set_frame_counter(0)
+            mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + "1.png",
+                                          mechant.position_x,
                                           sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                                           Donnees.OBSTACLE_TYPE,
                                           Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
                                           Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
 
         # Mettre à jour l'état précédent
-        mot_state_precedent = mot._state
+        monde.set_mot_state_precedent(mot._state)
 
         # Gestion du déplacement du méchant vers le man
-        if mechant_move_to_man:
+        if monde.get_mechant_move_to_man():
             distance_x = -man.position_x + mechant.position_x
             
             # Vérifier si le méchant est arrivé à la distance désirée du man
-            if abs(distance_x) <= distance_mechant_man:
-                mechant.position_x = man.position_x + distance_mechant_man 
-                mechant_move_to_man = False
-                animation_in_progress = True
-                print(mechant.position_x)
+            if abs(distance_x) <= monde.get_distance_mechant_man():
+                mechant.position_x = man.position_x + monde.get_distance_mechant_man()
+                monde.set_mechant_move_to_man(False)
+                monde.set_animation_in_progress(True)
                 
                 # Lancer l'animation du man
                 animation_frames = [
@@ -184,45 +158,34 @@ while True:
             else:
                 # Déplacer le méchant vers le man
                 mechant.position_x -= 3
-                print(mechant.position_x,"déplacemnt")
         
-        # Bloquer le méchant à la bonne position pendant l'animation
-        if animation_in_progress and not mechant_move_to_man:
-            # Déterminer si le méchant doit être à gauche ou à droite du man
-            mechant.position_x = man.position_x + distance_mechant_man
-            print(mechant.position_x, man.position_x)
+        # Blocker le méchant à la bonne position pendant l'animation
+        if monde.get_animation_in_progress() and not monde.get_mechant_move_to_man():
+            mechant.position_x = man.position_x + monde.get_distance_mechant_man()
         
         # Gestion du délai et du respawn après animation
-        if animation_in_progress:
+        if monde.get_animation_in_progress():
             # Vérifier si l'animation est terminée
             if not man.is_animating():
                 # L'animation est finie, commencer le délai
-                delai_nouveau_mot += 1
+                monde.set_delai_nouveau_mot(monde.get_delai_nouveau_mot() + 1)
                 
                 # Si le délai est écoulé (30 frames = 0.5 secondes à 60 FPS)
-                if delai_nouveau_mot >= 30:
-                    # Créer le nouveau mot et respawn du méchant
-                    if compteur_mot < total_mots:
-                        liste_mots = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
-                        mot = Mot.Mot.from_string(
-                            Donnees.MOT_DEPART_X,
-                            sol_gauche.get_rect().y - 100,
-                            liste_mots[compteur_mot],
-                            Donnees.MOT_COULEUR)
-                        
-                        # Respawn du méchant
-                        num_img = 1
-                        frame_counter = 0
-                        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png",
+                if monde.get_delai_nouveau_mot() >= 30:
+                    # Respawn du méchant à sa position de départ pour le prochain mot
+                    if monde.get_compteur_mot() < monde.get_total_mots():
+                        monde.set_num_img(1)
+                        monde.set_frame_counter(0)
+                        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + "1.png",
                                                       Donnees.OBSTACLE_DEPART_X,
                                                       sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
                                                       Donnees.OBSTACLE_TYPE,
                                                       Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
                                                       Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
                     
-                    animation_in_progress = False
-                    delai_nouveau_mot = 0
-                    mot_visible = True  # Réafficher le mot après l'animation et le délai
+                    monde.set_animation_in_progress(False)
+                    monde.set_delai_nouveau_mot(0)
+                    monde.set_mot_visible(True)
 
         # Mise à jour des positions (déplacement avec le sol)
         if jeu_demarre:
@@ -232,16 +195,19 @@ while True:
             mechant.update_position(Donnees.SOL_VITESSE)
 
             # Gestion de l'animation du méchant
-            frame_counter += 1
+            frame_counter = monde.get_frame_counter() + 1
+            monde.set_frame_counter(frame_counter)
+            
             if frame_counter >= mechant.animation_delay:
-                frame_counter = 0
+                monde.set_frame_counter(0)
+                num_img = monde.get_num_img()
                 if num_img == mechant.nb_images:
-                    num_img = 1
+                    monde.set_num_img(1)
                 else:
-                    num_img = num_img + 1
+                    monde.set_num_img(num_img + 1)
                 
                 # Mise à jour de l'image du méchant
-                sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(num_img) + ".png"
+                sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(monde.get_num_img()) + ".png"
                 mechant.set_image(sprite_obstacle)
 
             # Mise à jour de l'animation du personnage
@@ -254,9 +220,9 @@ while True:
         sol_droite.afficher(screen)
         man.afficher(screen)
         mechant.afficher(screen)
-        if mot_visible:
+        if monde.get_mot_visible():
             mot.afficher(screen)
-        fenetre.afficher_bandeau(screen, niveau, compteur_mot, total_mots)
+        fenetre.afficher_bandeau(screen, niveau, monde.get_compteur_mot(), monde.get_total_mots())
 
         # Mise à jour de l'affichage
         pygame.display.flip()
