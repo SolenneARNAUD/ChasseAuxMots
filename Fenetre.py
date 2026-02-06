@@ -89,7 +89,7 @@ class Fenetre(object):
         stat1 = font_stats.render(f"Mots réussis: {mots_reussis}", True, (255, 255, 255))
         screen.blit(stat1, (Donnees.WIDTH // 2 - 150, y_offset))
         
-        stat2 = font_stats.render(f"Vitesse: {vitesse_wpm:.1f} WPM", True, (255, 255, 255))
+        stat2 = font_stats.render(f"Vitesse: {vitesse_wpm:.1f} mots/min", True, (255, 255, 255))
         screen.blit(stat2, (Donnees.WIDTH // 2 - 150, y_offset + line_height))
         
         stat3 = font_stats.render(f"Erreurs: {erreurs}", True, (255, 255, 255))
