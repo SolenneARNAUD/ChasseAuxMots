@@ -56,11 +56,27 @@ mots={
 
 df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
 
-# mechant = {
-#     "dino_volant":7,
-#     "dino":4,
-#     "rock_round":12
-# }
-
-# mechant = pd.DataFrame(mechant)
+OBSTACLES_CONFIG = {
+    "dino_volant": {
+        "chemin_base": "images/Mechant/dino_volant",
+        "nb_images": 7,
+        "animation_delay": 7,
+        "hauteur": 120,
+        "type": 2
+    },
+    "dino": {
+        "chemin_base": "images/Mechant/dino",
+        "nb_images": 4,
+        "animation_delay": 5,
+        "hauteur": 100,
+        "type": 2
+    },
+    "rock_round": {
+        "chemin_base": "images/Mechant/rock_round",
+        "nb_images": 12,
+        "animation_delay": 8,
+        "hauteur": 80,
+        "type": 0
+    }
+}
 
