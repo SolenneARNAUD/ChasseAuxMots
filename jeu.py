@@ -114,16 +114,8 @@ while True:
             monde.set_animation_in_progress(False)
             monde.set_delai_nouveau_mot(0)
             monde.set_mot_visible(False)
-        
-            # Génération d'un nouveau mot (seulement si ce n'est pas le dernier)
-            if monde.get_compteur_mot() < monde.get_total_mots():
-                mot = Mot.Mot.from_string(
-                    Donnees.MOT_DEPART_X + 80,
-                    sol_gauche.get_rect().y - 100,
-                    liste_mots[monde.get_compteur_mot()],
-                    Donnees.MOT_COULEUR)
             
-            # NE PAS créer de nouvel obstacle ici ! On garde l'obstacle actuel pour l'animation
+            # NE PAS créer de nouveau mot ni obstacle ici ! On le fera après l'animation
 
         # Mettre à jour l'état précédent
         monde.set_mot_state_precedent(mot._state)
@@ -164,11 +156,18 @@ while True:
                 
                 # Si le délai est écoulé (30 frames = 0.5 secondes à 60 FPS)
                 if monde.get_delai_nouveau_mot() >= 30:
-                    # Respawn du méchant à sa position de départ pour le prochain mot
+                    # Respawn du méchant ET du mot à leur position de départ pour le prochain mot
                     if monde.get_compteur_mot() < monde.get_total_mots():
                         monde.set_num_img(1)
                         monde.set_frame_counter(0)
                         mechant = monde.creer_obstacle(monde.get_compteur_mot())
+                        
+                        # Créer le nouveau mot au-dessus du nouvel obstacle
+                        mot = Mot.Mot.from_string(
+                            Donnees.MOT_DEPART_X,
+                            sol_gauche.get_rect().y - 100,
+                            liste_mots[monde.get_compteur_mot()],
+                            Donnees.MOT_COULEUR)
                     
                     monde.set_animation_in_progress(False)
                     monde.set_delai_nouveau_mot(0)
