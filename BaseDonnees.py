@@ -61,7 +61,6 @@ mots={
 
 df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
 
-
 OBSTACLES_CONFIG = {
     "dino_volant": {
         "chemin_base": "images/Mechant/dino_volant",
@@ -85,7 +84,6 @@ OBSTACLES_CONFIG = {
         "type": 0
     }
 }
-
 
 # DataFrame pour enregistrer les joueurs
 def charger_joueurs():

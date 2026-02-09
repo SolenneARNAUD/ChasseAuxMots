@@ -215,15 +215,7 @@ while True:
                     liste_mots[monde.get_compteur_mot()],
                     Donnees.MOT_COULEUR)
             
-            # Respawn du méchant à sa position actuelle 
-            monde.set_num_img(1)
-            monde.set_frame_counter(0)
-            mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + "1.png",
-                                          mechant.position_x,
-                                          sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                                          Donnees.OBSTACLE_TYPE,
-                                          Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
-                                          Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
+            # NE PAS créer de nouvel obstacle ici ! On garde l'obstacle actuel pour l'animation
 
         # Mettre à jour l'état précédent
         monde.set_mot_state_precedent(mot._state)
@@ -268,12 +260,7 @@ while True:
                     if monde.get_compteur_mot() < monde.get_total_mots():
                         monde.set_num_img(1)
                         monde.set_frame_counter(0)
-                        mechant = Obstacles.Obstacles(Donnees.OBSTACLE_SKIN_DINO_VOLANT + "1.png",
-                                                      Donnees.OBSTACLE_DEPART_X,
-                                                      sol_gauche.get_rect().y+sol_gauche.get_rect().height/4,
-                                                      Donnees.OBSTACLE_TYPE,
-                                                      Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
-                                                      Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
+                        mechant = monde.creer_obstacle(monde.get_compteur_mot())
                     
                     monde.set_animation_in_progress(False)
                     monde.set_delai_nouveau_mot(0)
@@ -298,8 +285,8 @@ while True:
                 else:
                     monde.set_num_img(num_img + 1)
                 
-                # Mise à jour de l'image du méchant
-                sprite_obstacle = Donnees.OBSTACLE_SKIN_DINO_VOLANT + str(monde.get_num_img()) + ".png"
+                # Mise à jour de l'image du méchant avec le chemin de l'obstacle actuel
+                sprite_obstacle = f"{monde.get_obstacle_actuel_config()['chemin_base']}{monde.get_num_img()}.png"
                 mechant.set_image(sprite_obstacle)
 
             # Mise à jour de l'animation du personnage
