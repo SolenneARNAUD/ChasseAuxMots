@@ -1,4 +1,9 @@
 import pandas as pd
+import os
+from datetime import datetime
+
+# Fichier de sauvegarde des joueurs
+FICHIER_JOUEURS = "joueurs.csv"
 
 mots={
     "niveau1": [
@@ -79,4 +84,123 @@ OBSTACLES_CONFIG = {
         "type": 0
     }
 }
+
+# DataFrame pour enregistrer les joueurs
+def charger_joueurs():
+    """Charge les joueurs depuis le fichier CSV s'il existe, sinon crée un DataFrame vide"""
+    colonnes_attendues = [
+        'Nom', 
+        'Prénom', 
+        'Date_Inscription',
+        'Nb_Parties', 
+        'Mots_Réussis_Total',
+        'Vitesse_Moyenne_WPM',
+        'Erreurs_Total'
+    ]
+    
+    if os.path.exists(FICHIER_JOUEURS):
+        df = pd.read_csv(FICHIER_JOUEURS)
+        
+        # Migration : Ajouter les colonnes manquantes
+        for col in colonnes_attendues:
+            if col not in df.columns:
+                if col == 'Mots_Réussis_Total':
+                    df[col] = 0
+                elif col == 'Vitesse_Moyenne_WPM':
+                    df[col] = 0.0
+                elif col == 'Erreurs_Total':
+                    df[col] = 0
+                elif col == 'Date_Inscription':
+                    df[col] = ''
+                else:
+                    df[col] = ''
+        
+        return df
+    else:
+        return pd.DataFrame(columns=colonnes_attendues)
+
+df_joueurs = charger_joueurs()
+
+def sauvegarder_joueurs():
+    """Sauvegarde le DataFrame des joueurs dans un fichier CSV"""
+    global df_joueurs
+    df_joueurs.to_csv(FICHIER_JOUEURS, index=False)
+
+def ajouter_joueur(nom, prenom):
+    """Ajoute un nouveau joueur au DataFrame et sauvegarde"""
+    global df_joueurs
+    
+    # Vérifier si le joueur existe déjà
+    joueur_existant = df_joueurs[
+        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
+        (df_joueurs['Prénom'].str.lower() == prenom.lower())
+    ]
+    
+    if not joueur_existant.empty:
+        # Le joueur existe déjà
+        return False, "Ce joueur existe déjà!"
+    
+    # Ajouter le nouveau joueur
+    nouvelle_ligne = {
+        'Nom': nom.capitalize(),
+        'Prénom': prenom.capitalize(),
+        'Date_Inscription': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'Nb_Parties': 0,
+        'Mots_Réussis_Total': 0,
+        'Vitesse_Moyenne_WPM': 0.0,
+        'Erreurs_Total': 0
+    }
+    df_joueurs = pd.concat([df_joueurs, pd.DataFrame([nouvelle_ligne])], ignore_index=True)
+    sauvegarder_joueurs()
+    return True, "Joueur créé avec succès!"
+
+def joueur_existe(nom, prenom):
+    """Vérifie si un joueur existe"""
+    return not df_joueurs[
+        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
+        (df_joueurs['Prénom'].str.lower() == prenom.lower())
+    ].empty
+
+def get_joueur(nom, prenom):
+    """Récupère les données d'un joueur"""
+    joueur = df_joueurs[
+        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
+        (df_joueurs['Prénom'].str.lower() == prenom.lower())
+    ]
+    if not joueur.empty:
+        return joueur.iloc[0]
+    return None
+
+def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
+    """Met à jour les statistiques du joueur après une partie"""
+    global df_joueurs
+    mask = (df_joueurs['Nom'].str.lower() == nom.lower()) & (df_joueurs['Prénom'].str.lower() == prenom.lower())
+    if mask.any():
+        idx = df_joueurs[mask].index[0]
+        
+        # Récupérer les anciennes stats
+        nb_parties_ancien = df_joueurs.loc[idx, 'Nb_Parties']
+        mots_reussis_ancien = df_joueurs.loc[idx, 'Mots_Réussis_Total']
+        vitesse_ancienne = df_joueurs.loc[idx, 'Vitesse_Moyenne_WPM']
+        erreurs_ancien = df_joueurs.loc[idx, 'Erreurs_Total']
+        
+        # Calculer les nouvelles statistiques
+        nb_parties_nouveau = nb_parties_ancien + 1
+        mots_reussis_nouveau = mots_reussis_ancien + mots_reussis
+        
+        # Calculer la moyenne de vitesse
+        if nb_parties_ancien == 0:
+            vitesse_nouvelle = vitesse_wpm
+        else:
+            vitesse_nouvelle = (vitesse_ancienne * nb_parties_ancien + vitesse_wpm) / nb_parties_nouveau
+        
+        erreurs_nouveau = erreurs_ancien + nb_erreurs
+        
+        # Mettre à jour les valeurs
+        df_joueurs.loc[idx, 'Nb_Parties'] = nb_parties_nouveau
+        df_joueurs.loc[idx, 'Mots_Réussis_Total'] = mots_reussis_nouveau
+        df_joueurs.loc[idx, 'Vitesse_Moyenne_WPM'] = round(vitesse_nouvelle, 2)
+        df_joueurs.loc[idx, 'Erreurs_Total'] = erreurs_nouveau
+        
+        sauvegarder_joueurs()
 

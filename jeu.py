@@ -12,6 +12,62 @@ pygame.init()
 screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
 fenetre = Fenetre.Fenetre(Donnees.FOND_SKIN)
 
+# Menu d'entrée du joueur - Boucle jusqu'à ce qu'un joueur valide soit sélectionné
+joueur_valide = False
+nom_joueur = None
+prenom_joueur = None
+
+while not joueur_valide:
+    # Afficher le menu de choix
+    choix = Fenetre.fenetre_menu_joueur(screen)
+    
+    if choix == "nouveau":
+        # Créer un nouveau joueur
+        while True:
+            nom, prenom = Fenetre.fenetre_joueur(screen)
+            succes, message = BaseDonnees.ajouter_joueur(nom, prenom)
+            
+            if succes:
+                nom_joueur = nom
+                prenom_joueur = prenom
+                joueur_valide = True
+                print(f"✓ Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                break
+            else:
+                # Le joueur existe déjà - afficher message et revenir au choix
+                screen.fill(Donnees.COULEUR_FOND)
+                font = pygame.font.Font(None, 48)
+                font_small = pygame.font.Font(None, 36)
+                
+                texte_erreur = font.render(message, True, (255, 0, 0))
+                texte_retry = font_small.render("Appuyez sur une touche pour continuer...", True, (0, 0, 0))
+                
+                screen.blit(texte_erreur, (Donnees.WIDTH // 2 - 200, Donnees.HEIGHT // 2 - 30))
+                screen.blit(texte_retry, (Donnees.WIDTH // 2 - 180, Donnees.HEIGHT // 2 + 40))
+                pygame.display.flip()
+                
+                # Attendre une touche
+                en_attente = True
+                while en_attente:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            sys.exit()
+                        if event.type == pygame.KEYDOWN:
+                            en_attente = False
+                break
+    
+    elif choix == "existant":
+        # Charger un joueur existant
+        result = Fenetre.fenetre_charger_joueur(screen)
+        
+        if result is not None:
+            nom_joueur, prenom_joueur = result
+            joueur_valide = True
+            print(f"✓ Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+        # else: retourner au menu de choix
+
+print(BaseDonnees.df_joueurs)
+
 #################### Boucle principale ########################
 
 while True:
@@ -64,7 +120,35 @@ while True:
         if game_over:
             fenetre.afficher_game_over(screen)
             pygame.display.flip()
-            continue
+            
+            # Enregistrer les stats même en cas de défaite
+            temps_fin = pygame.time.get_ticks()
+            temps_total_ms = temps_fin - monde.get_temps_debut()
+            temps_total_min = temps_total_ms / 60000.0
+            vitesse_défaite = monde.get_compteur_mot() / temps_total_min if temps_total_min > 0 else 0
+            
+            BaseDonnees.update_stats_joueur(
+                nom_joueur,
+                prenom_joueur,
+                mots_reussis=monde.get_compteur_mot(),
+                vitesse_wpm=vitesse_défaite,
+                nb_erreurs=monde.get_nb_erreurs()
+            )
+            
+            # Attendre une touche pour retourner au menu
+            retour_menu = False
+            while not retour_menu:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                    if event.type == pygame.KEYDOWN:
+                        retour_menu = True
+            
+            # Retourner au menu de sélection de niveau
+            niveau = None
+            jeu_demarre = False
+            game_over = False
+            break
 
         # Niveau réussi : Si tous les mots ont été complétés, afficher écran de réussite
         if monde.get_compteur_mot() >= monde.get_total_mots():
@@ -91,6 +175,14 @@ while True:
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
+                            # Enregistrer les stats du joueur avant de retourner au menu
+                            BaseDonnees.update_stats_joueur(
+                                nom_joueur, 
+                                prenom_joueur,
+                                mots_reussis=monde.get_compteur_mot(),
+                                vitesse_wpm=monde.get_vitesse_finale(),
+                                nb_erreurs=monde.get_nb_erreurs()
+                            )
                             # Retourner au menu de sélection de niveau
                             niveau = None
                             jeu_demarre = False
