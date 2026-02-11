@@ -73,7 +73,7 @@ class Monde(object):
         
         # Initialisation du premier mot à afficher (positionné au-dessus du méchant)
         self.mot = Mot.Mot.from_string(
-            Donnees.MOT_DEPART_X,
+            Donnees.MOT_DEPART_X_PREMIER,  # Le premier mot spawn dans la fenêtre
             self.sol_gauche.get_rect().y - 100,
             self.liste_mots[0],
             Donnees.MOT_COULEUR)
@@ -97,9 +97,12 @@ class Monde(object):
         self.obstacle_actuel_type = obstacle_type
         self.obstacle_actuel_config = config
         
+        # Le premier obstacle spawn dans la fenêtre, les autres hors écran
+        position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
+        
         return Obstacles.Obstacles(
             f"{config['chemin_base']}1.png",
-            Donnees.OBSTACLE_DEPART_X,
+            position_x,
             self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
             config['type'],
             config['animation_delay'],
