@@ -31,7 +31,7 @@ while not joueur_valide:
                 nom_joueur = nom
                 prenom_joueur = prenom
                 joueur_valide = True
-                print(f"✓ Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                print(f"Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
                 break
             else:
                 # Le joueur existe déjà - afficher message et revenir au choix
@@ -63,7 +63,7 @@ while not joueur_valide:
         if result is not None:
             nom_joueur, prenom_joueur = result
             joueur_valide = True
-            print(f"✓ Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+            print(f"Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
         # else: retourner au menu de choix
 
 print(BaseDonnees.df_joueurs)
@@ -87,6 +87,14 @@ while True:
         niveau = Fenetre.fenetre_niveau(screen, events) 
         clock.tick(60)
 
+    # Après la sélection du niveau, afficher le menu de réglage de la vitesse
+    # Utilise la fenêtre de saisie que l'on a dans Fenetre.fenetre_vitesse
+    vitesse_wpm = Fenetre.fenetre_vitesse(screen, default_wpm=40, joueur=(nom_joueur, prenom_joueur))
+    if vitesse_wpm is None:
+        # Annulé -> revenir à la sélection de niveau
+        niveau = None
+        continue
+
     # Initialisation du monde après la sélection du niveau
     monde = Monde.Monde()
     monde.initialiser_niveau(niveau)
@@ -99,6 +107,18 @@ while True:
     liste_mots = monde.get_liste_mots()
     
     jeu_demarre = False
+    # Calcul simple de la vitesse basé sur une WPM de référence (40 WPM)
+    try:
+        base_wpm = 40.0
+        multiplier = float(vitesse_wpm) / base_wpm
+    except Exception:
+        multiplier = 1.0
+
+    # Appliquer la nouvelle vitesse du sol/mots (0.5 est la valeur de base dans Donnees.py)
+    Donnees.SOL_VITESSE = 0.5 * multiplier
+
+    # Vitesse du méchant (pixels par frame) adaptée
+    mechant_step = max(1, int(3 * multiplier))
 
     # Entrée dans le niveau sélectionné
     while True:
@@ -240,8 +260,11 @@ while True:
                 ]
                 man.start_animation(animation_frames, animation_delay=8)
             else:
-                # Déplacer le méchant vers le man
-                mechant.position_x -= 3
+                # Déplacer le méchant vers le man (vitesse adaptée au réglage)
+                try:
+                    mechant.position_x -= mechant_step
+                except NameError:
+                    mechant.position_x -= 3
         
         # Blocker le méchant à la bonne position pendant l'animation
         if monde.get_animation_in_progress() and not monde.get_mechant_move_to_man():
@@ -267,6 +290,45 @@ while True:
                     monde.set_mot_visible(True)
 
         # Mise à jour des positions (déplacement avec le sol)
+        if jeu_demarre:
+            sol_gauche.defiler(Donnees.SOL_VITESSE)
+            sol_droite.defiler(Donnees.SOL_VITESSE)
+            mot.update_position(Donnees.SOL_VITESSE)
+            mechant.update_position(Donnees.SOL_VITESSE)
+
+            # Gestion de l'animation du méchant
+            frame_counter = monde.get_frame_counter() + 1
+            monde.set_frame_counter(frame_counter)
+            
+            if frame_counter >= mechant.animation_delay:
+                monde.set_frame_counter(0)
+                num_img = monde.get_num_img()
+                if num_img == mechant.nb_images:
+                    monde.set_num_img(1)
+                else:
+                    monde.set_num_img(num_img + 1)
+                
+                # Mise à jour de l'image du méchant avec le chemin de l'obstacle actuel
+                sprite_obstacle = f"{monde.get_obstacle_actuel_config()['chemin_base']}{monde.get_num_img()}.png"
+                mechant.set_image(sprite_obstacle)
+
+            # Mise à jour de l'animation du personnage
+            man.update_animation()
+
+
+        # Affichage des éléments
+        fenetre.afficher_fond(screen)
+        sol_gauche.afficher(screen)
+        sol_droite.afficher(screen)
+        man.afficher(screen)
+        mechant.afficher(screen)
+        if monde.get_mot_visible():
+            mot.afficher(screen)
+        fenetre.afficher_bandeau(screen, niveau, monde.get_compteur_mot(), monde.get_total_mots())
+
+        # Mise à jour de l'affichage
+        pygame.display.flip()
+        clock.tick(Donnees.FPS)
         if jeu_demarre:
             sol_gauche.defiler(Donnees.SOL_VITESSE)
             sol_droite.defiler(Donnees.SOL_VITESSE)

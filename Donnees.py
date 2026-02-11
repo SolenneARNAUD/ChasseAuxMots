@@ -37,7 +37,7 @@ MOT_DEPART_X = WIDTH * 2/3
 MOT_DEPART_Y = HEIGHT * 2/3 - 50
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
-TOTAL_MOTS = 10
+TOTAL_MOTS = 2
 
 # Sol
 SOL_DEPART_X = WIDTH / 2

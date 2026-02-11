@@ -155,6 +155,117 @@ def fenetre_niveau(screen, events):
     return None
 
 
+def fenetre_vitesse(screen, default_wpm=40, joueur=None):
+    """Affiche une petite fenêtre pour saisir la vitesse (mots par minute).
+    Retourne un int (10-200) ou None si annulé.
+    """
+    import pygame as pg
+    import BaseDonnees
+
+    min_wpm = 10
+    max_wpm = 200
+    # Commencer avec une zone vide (l'utilisateur tapera la valeur)
+    wpm_str = ''
+
+    # Tenter de récupérer stats joueur si fourni
+    moyenne = None
+    derniere = None
+    try:
+        if joueur is not None:
+            nom_j, prenom_j = joueur
+            j = BaseDonnees.get_joueur(nom_j, prenom_j)
+            if j is not None:
+                try:
+                    moyenne = float(j.get('Vitesse_Moyenne_WPM', 0.0))
+                except Exception:
+                    moyenne = None
+                try:
+                    derniere = float(j.get('Derniere_Vitesse_WPM', 0.0))
+                except Exception:
+                    derniere = None
+    except Exception:
+        moyenne = None
+        derniere = None
+
+    clock = pg.time.Clock()
+    while True:
+        events = pg.event.get()
+        for event in events:
+            if event.type == pg.QUIT:
+                pg.quit()
+                exit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    try:
+                        val = int(wpm_str) if wpm_str != '' else int(default_wpm)
+                    except Exception:
+                        val = int(default_wpm)
+                    val = max(min_wpm, min(max_wpm, val))
+                    # Sauvegarder la dernière valeur entrée pour le joueur si fourni
+                    if joueur is not None:
+                        try:
+                            import BaseDonnees
+                            nom_j, prenom_j = joueur
+                            BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val)
+                            derniere = float(val)
+                            print(f"Enregistré dernière vitesse {val} WPM pour {prenom_j} {nom_j}")
+                        except Exception:
+                            pass
+                    return int(val)
+                if event.key == pg.K_ESCAPE:
+                    return None
+                if event.key == pg.K_BACKSPACE:
+                    wpm_str = wpm_str[:-1]
+                else:
+                    ch = event.unicode
+                    if ch.isdigit() and len(wpm_str) < 3:
+                        if wpm_str == '0':
+                            wpm_str = ch
+                        else:
+                            wpm_str += ch
+
+        # Affichage simple
+        screen.fill(Donnees.COULEUR_FOND)
+        font_titre = pg.font.Font(None, 48)
+        font_val = pg.font.Font(None, 44)
+        font_info = pg.font.Font(None, 24)
+
+        titre = font_titre.render("Réglage de la vitesse des mots", True, (0, 0, 0))
+        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, 80))
+
+        # Zone de saisie
+        box_w, box_h = 240, 64
+        box_rect = pg.Rect(Donnees.WIDTH//2 - box_w//2, Donnees.HEIGHT//2 - box_h//2, box_w, box_h)
+        pg.draw.rect(screen, (255,255,255), box_rect)
+        pg.draw.rect(screen, (0,0,0), box_rect, 2)
+
+        # N'afficher rien si l'utilisateur n'a encore rien saisi
+        display_val = wpm_str
+        val_text = font_val.render(display_val, True, (0,0,0))
+        screen.blit(val_text, (box_rect.x + 10, box_rect.y + box_h//2 - val_text.get_height()//2))
+
+        label = font_info.render("mots par minutes", True, (0,0,0))
+        screen.blit(label, (box_rect.right + 10, box_rect.y + box_h//2 - label.get_height()//2))
+
+        info = font_info.render("Entrez un nombre puis Entrée (Échap pour annuler)", True, (50,50,50))
+        screen.blit(info, (Donnees.WIDTH//2 - info.get_width()//2, Donnees.HEIGHT - 80))
+
+        range_text = font_info.render(f"Plage: {min_wpm} - {max_wpm}", True, (80,80,80))
+        rx = Donnees.WIDTH//2 - range_text.get_width()//2 - 120
+        ry = Donnees.HEIGHT - 40
+        screen.blit(range_text, (rx, ry))
+
+        # Afficher uniquement la dernière valeur entrée (si disponible) à côté de la plage
+        if derniere is not None:
+            d = font_info.render(f"Dernière valeur entrée: {derniere:.0f}", True, (60,60,60))
+            dx = rx + range_text.get_width() + 20
+            dy = ry
+            screen.blit(d, (dx, dy))
+
+        pg.display.flip()
+        clock.tick(30)
+
+
 def fenetre_menu_joueur(screen):
     """
     Affiche un menu pour choisir entre créer un nouveau joueur ou en charger un existant.

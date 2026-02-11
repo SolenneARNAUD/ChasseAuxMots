@@ -1,2 +1,3 @@
-Nom,Prénom,Date_Inscription,Nb_Parties,Score_Total,Mots_Réussis_Total,Vitesse_Moyenne_WPM,Erreurs_Total
-Kapfer,Vincent,2026-02-09 11:06:44,1,0,10,14.6,1
+Nom,Prénom,Date_Inscription,Nb_Parties,Score_Total,Mots_Réussis_Total,Vitesse_Moyenne_WPM,Erreurs_Total,Derniere_Vitesse_WPM
+Kapfer,Vincent,2026-02-09 11:06:44,12,0.0,92,14.57,19,200.0
+Test,Test,2026-02-11 09:32:49,0,,0,0.0,0,0.0
