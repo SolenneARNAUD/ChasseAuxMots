@@ -21,7 +21,8 @@ PERSONNAGE_SKIN = resource_path("images/Man/Viking/viking_attaque_1.png")
 PERSONNAGE_HEIGHT = 120
 
 # Obstacles
-OBSTACLE_DEPART_X = WIDTH * 2/3
+OBSTACLE_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran
+OBSTACLE_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier obstacle (dans la fenêtre)
 OBSTACLE_DEPART_Y = HEIGHT * 2/3
 OBSTACLE_SKIN_DINO = resource_path("images/Mechant/dino")
 OBSTACLE_NIMAGES_DINO = 4
@@ -33,11 +34,12 @@ OBSTACLE_HEIGHT = 120
 
 # Mots
 TAILLE_POLICE = 36
-MOT_DEPART_X = WIDTH * 2/3
+MOT_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran
+MOT_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier mot (dans la fenêtre)
 MOT_DEPART_Y = HEIGHT * 2/3 - 50
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
-TOTAL_MOTS = 10
+TOTAL_MOTS = 2
 
 # Sol
 SOL_DEPART_X = WIDTH / 2

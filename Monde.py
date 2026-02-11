@@ -16,7 +16,10 @@ class Monde(object):
         self.sol_gauche = None
         self.sol_droite = None
         self.personnage = None
-        self.mechant = None
+        self.obstacle_actuel_type = None
+        self.obstacle_actuel_config = None
+
+    
         self.mot = None
         self.total_mots = None
         self.liste_mots = None
@@ -57,26 +60,54 @@ class Monde(object):
             self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
             Donnees.PERSONNAGE_SKIN)
         
-        # Initialisation du méchant
-        self.mechant = Obstacles.Obstacles(
-            Donnees.OBSTACLE_SKIN_DINO_VOLANT + "1.png",
-            Donnees.OBSTACLE_DEPART_X,
-            self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
-            Donnees.OBSTACLE_TYPE,
-            Donnees.OBSTACLE_VIMAGES_DINO_VOLANT,
-            Donnees.OBSTACLE_NIMAGES_DINO_VOLANT)
-        
-        # Initialisation de la liste des mots
+        # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
         self.total_mots = Donnees.TOTAL_MOTS
         all_words = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
         self.liste_mots = random.sample(all_words, min(Donnees.TOTAL_MOTS, len(all_words)))
         
+        # Initialiser la liste d'obstacles aléatoires
+        self.liste_obstacles = self.initialiser_liste_obstacles()
+
+        # Créer le premier obstacle
+        self.mechant = self.creer_obstacle(0)  # Index 0 pour le premier
+        
         # Initialisation du premier mot à afficher (positionné au-dessus du méchant)
         self.mot = Mot.Mot.from_string(
-            Donnees.MOT_DEPART_X,
+            Donnees.MOT_DEPART_X_PREMIER,  # Le premier mot spawn dans la fenêtre
             self.sol_gauche.get_rect().y - 100,
             self.liste_mots[0],
             Donnees.MOT_COULEUR)
+        
+    def initialiser_liste_obstacles(self):
+        """Génère une liste aléatoire d'obstacles pour le niveau."""
+        obstacles_types = list(BaseDonnees.OBSTACLES_CONFIG.keys())
+        self.liste_obstacles = [random.choice(obstacles_types) 
+                            for _ in range(self.total_mots)]
+        return self.liste_obstacles
+    
+    def creer_obstacle(self, index):
+        """Crée un obstacle basé sur l'index dans la liste."""
+        if index >= len(self.liste_obstacles):
+            return None
+        
+        obstacle_type = self.liste_obstacles[index]
+        config = BaseDonnees.OBSTACLES_CONFIG[obstacle_type]
+        
+        # Stocker la configuration de l'obstacle actuel
+        self.obstacle_actuel_type = obstacle_type
+        self.obstacle_actuel_config = config
+        
+        # Le premier obstacle spawn dans la fenêtre, les autres hors écran
+        position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
+        
+        return Obstacles.Obstacles(
+            f"{config['chemin_base']}1.png",
+            position_x,
+            self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
+            config['type'],
+            config['animation_delay'],
+            config['nb_images']
+        )
     
     # Getter et Setter
     def get_sol_gauche(self):
@@ -188,3 +219,9 @@ class Monde(object):
     
     def set_vitesse_finale(self, value):
         self.vitesse_finale = value
+    
+    def get_obstacle_actuel_config(self):
+        return self.obstacle_actuel_config
+    
+    def get_obstacle_actuel_type(self):
+        return self.obstacle_actuel_type

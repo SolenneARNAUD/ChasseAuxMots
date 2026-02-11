@@ -136,7 +136,6 @@ mots={
 
 df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
 
-
 OBSTACLES_CONFIG = {
     "dino_volant": {
         "chemin_base": "images/Mechant/dino_volant",
@@ -161,7 +160,6 @@ OBSTACLES_CONFIG = {
     }
 }
 
-
 # DataFrame pour enregistrer les joueurs
 def charger_joueurs():
     """Charge les joueurs depuis le fichier CSV s'il existe, sinon crée un DataFrame vide"""
@@ -172,6 +170,7 @@ def charger_joueurs():
         'Nb_Parties', 
         'Mots_Réussis_Total',
         'Vitesse_Moyenne_WPM',
+        'Derniere_Vitesse_WPM',
         'Erreurs_Total'
     ]
     
@@ -193,6 +192,8 @@ def charger_joueurs():
                 if col == 'Mots_Réussis_Total':
                     df[col] = 0
                 elif col == 'Vitesse_Moyenne_WPM':
+                    df[col] = 0.0
+                elif col == 'Derniere_Vitesse_WPM':
                     df[col] = 0.0
                 elif col == 'Erreurs_Total':
                     df[col] = 0
@@ -278,6 +279,7 @@ def ajouter_joueur(nom, prenom):
         'Nb_Parties': 0,
         'Mots_Réussis_Total': 0,
         'Vitesse_Moyenne_WPM': 0.0,
+        'Derniere_Vitesse_WPM': 40.0,
         'Erreurs_Total': 0
     }
     
@@ -405,6 +407,7 @@ def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
         df_joueurs.loc[idx, 'Nb_Parties'] = nb_parties_nouveau
         df_joueurs.loc[idx, 'Mots_Réussis_Total'] = mots_reussis_nouveau
         df_joueurs.loc[idx, 'Vitesse_Moyenne_WPM'] = round(vitesse_nouvelle, 2)
+        # Ne pas modifier 'Derniere_Vitesse_WPM' ici : conserver la valeur saisie
         df_joueurs.loc[idx, 'Erreurs_Total'] = erreurs_nouveau
         
         # Tenter de sauvegarder (ne crash pas si échec)
@@ -413,4 +416,17 @@ def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
             print("ATTENTION: Les statistiques n'ont pas pu être sauvegardées!")
         return succes
     return False
+
+
+def set_derniere_vitesse(nom, prenom, valeur):
+    """Enregistre la dernière valeur de vitesse entrée pour le joueur."""
+    global df_joueurs
+    mask = (df_joueurs['Nom'].str.lower() == nom.lower()) & (df_joueurs['Prénom'].str.lower() == prenom.lower())
+    if mask.any():
+        idx = df_joueurs[mask].index[0]
+        try:
+            df_joueurs.loc[idx, 'Derniere_Vitesse_WPM'] = float(valeur)
+            sauvegarder_joueurs()
+        except Exception:
+            pass
 
