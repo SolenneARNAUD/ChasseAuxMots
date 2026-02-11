@@ -1,4 +1,11 @@
-import sys, pygame
+import sys
+import os
+
+# Désactiver la redirection stdout/stderr de pygame pour éviter les conflits de descripteurs
+os.environ['SDL_VIDEODRIVER'] = 'windows'
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
+import pygame
 import Fenetre
 import Donnees
 import Mot
@@ -31,7 +38,7 @@ while not joueur_valide:
                 nom_joueur = nom
                 prenom_joueur = prenom
                 joueur_valide = True
-                print(f"✓ Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                print(f"Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
                 break
             else:
                 # Le joueur existe déjà - afficher message et revenir au choix
@@ -63,7 +70,7 @@ while not joueur_valide:
         if result is not None:
             nom_joueur, prenom_joueur = result
             joueur_valide = True
-            print(f"✓ Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+            print(f"Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
         # else: retourner au menu de choix
 
 print(BaseDonnees.df_joueurs)
