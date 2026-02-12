@@ -28,9 +28,11 @@ class Jeu:
         self.jeu_demarre = False    # Indique si le jeu a commencé (pour démarrer le défilement)
         self.niveau = None          # Niveau sélectionné par le joueur
         self.monde = None           # Monde actuel du jeu
-        # Ne pas réinitialiser vitesse_wpm ici pour conserver la valeur entre les niveaux
-        if not hasattr(self, 'vitesse_wpm'):
-            self.vitesse_wpm = None     # Vitesse de frappe choisie par le joueur
+        # Ne pas réinitialiser vitesse_pourcentage et reset_on_error ici pour conserver les valeurs entre les niveaux
+        if not hasattr(self, 'vitesse_pourcentage'):
+            self.vitesse_pourcentage = None     # Vitesse (en %) choisie par le joueur
+        if not hasattr(self, 'reset_on_error'):
+            self.reset_on_error = True          # Réinitialiser le mot en cas d'erreur
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
@@ -40,11 +42,11 @@ class Jeu:
             if event.type == pygame.QUIT:
                 sys.exit()
     
-    def appliquer_vitesse(self, vitesse_wpm):
+    def appliquer_vitesse(self, vitesse_pourcentage):
         """Applique la vitesse configurée au jeu."""
-        # Calcul du multiplicateur de vitesse
+        # Calcul du multiplicateur de vitesse (100% = multiplicateur de 1.0)
         try:
-            self.multiplier = float(vitesse_wpm) / Donnees.VITESSE_WPM_BASE
+            self.multiplier = float(vitesse_pourcentage) / 100.0
         except Exception:
             self.multiplier = 1.0
         
@@ -169,7 +171,7 @@ class Jeu:
                 return self.gerer_niveau_reussi()
             
             # Traitement des entrées clavier pour le mot
-            erreur, caracteres_corrects = self.mot.process_input(events)
+            erreur, caracteres_corrects = self.mot.process_input(events, reset_on_error=self.reset_on_error)
             if erreur:
                 self.monde.set_nb_erreurs(self.monde.get_nb_erreurs() + erreur)
             self.monde.increment_total_caracteres(caracteres_corrects)
@@ -284,14 +286,15 @@ class Jeu:
             self.initialiser_variables()
             
             # Fenêtre des niveaux (et paramètres)
-            self.niveau, self.vitesse_wpm = Fenetre.fenetre_niveau(
+            self.niveau, self.vitesse_pourcentage, self.reset_on_error = Fenetre.fenetre_niveau(
                 self.screen, 
                 joueur=(self.nom_joueur, self.prenom_joueur),
-                vitesse_par_defaut=self.vitesse_wpm
+                vitesse_par_defaut=self.vitesse_pourcentage,
+                reset_on_error_defaut=self.reset_on_error
             )
             
             # Appliquer la vitesse configurée
-            self.appliquer_vitesse(self.vitesse_wpm)
+            self.appliquer_vitesse(self.vitesse_pourcentage)
             
             # Initialisation du monde
             self.initialiser_monde()

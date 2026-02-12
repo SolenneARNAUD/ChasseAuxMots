@@ -144,11 +144,13 @@ class Mot(object):
                                 caracteres_corrects += 1
                             break
                     
-                    # Si la lettre est fausse et reset_on_error est True
-                    if not found and reset_on_error:
-                        for symbole in self._symboles:
-                            symbole._couleur = Donnees.MOT_COULEUR
+                    # Si la lettre est fausse : toujours compter l'erreur
+                    if not found:
                         erreur = 1
+                        # Réinitialiser le mot uniquement si reset_on_error est True
+                        if reset_on_error:
+                            for symbole in self._symboles:
+                                symbole._couleur = Donnees.MOT_COULEUR
                     
                     # Verifier si tous les symboles sont gris (mot complete)
                     if all(symbole._couleur == (128, 128, 128) for symbole in self._symboles):

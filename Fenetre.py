@@ -35,81 +35,77 @@ class Fenetre(object):
             screen.fill(self.couleur_fond)
     
     def afficher_bandeau(self, screen, niveau, n_mots, total_mots):
-        fond = pg.Surface((Donnees.WIDTH, 40))
-        fond.fill((0, 0, 0))  # Fond noir
-        fond.set_alpha(150)   # Transparence
-        font = pg.font.Font(None, 36)
-        texte_surface = font.render(self.bandeau + str(niveau) + "          |         Mot n°" + str(n_mots) + "/" + str(total_mots), True, (255, 255, 255))
+        fond = pg.Surface((Donnees.WIDTH, Donnees.BANDEAU_HAUTEUR))
+        fond.fill(Donnees.COULEUR_NOIR)
+        fond.set_alpha(Donnees.BANDEAU_ALPHA)
+        font = pg.font.Font(None, Donnees.BANDEAU_POLICE_TAILLE)
+        texte_surface = font.render(self.bandeau + str(niveau) + "          |         Mot n°" + str(n_mots) + "/" + str(total_mots), True, Donnees.COULEUR_BLANC)
         screen.blit(fond, (0, 0))
-        screen.blit(texte_surface, (10, 10))
+        screen.blit(texte_surface, (Donnees.BANDEAU_MARGIN, Donnees.BANDEAU_MARGIN))
 
     def afficher_game_over(self, screen):
         self.set_image(Donnees.FOND_GAME_OVER)
         self.afficher_fond(screen)
-        font = pg.font.Font(None, 72)
-        taille_bandeau = 100
-        bandeau = pg.Surface((Donnees.WIDTH, taille_bandeau))
-        bandeau.fill((0, 0, 0))  # Fond noir
-        bandeau.set_alpha(150)   # Transparence
-        texte_surface = font.render("GAME OVER", True, (255, 255, 255))
+        font = pg.font.Font(None, Donnees.GAME_OVER_POLICE_TAILLE)
+        bandeau = pg.Surface((Donnees.WIDTH, Donnees.GAME_OVER_BANDEAU_HAUTEUR))
+        bandeau.fill(Donnees.COULEUR_NOIR)
+        bandeau.set_alpha(Donnees.GAME_OVER_ALPHA)
+        texte_surface = font.render("GAME OVER", True, Donnees.COULEUR_BLANC)
         rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
-        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
+        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - Donnees.GAME_OVER_BANDEAU_HAUTEUR//2))
         screen.blit(texte_surface, rect)
     
     def afficher_niveau_reussi(self, screen):
-        font = pg.font.Font(None, 72)
-        taille_bandeau = 100
-        bandeau = pg.Surface((Donnees.WIDTH, taille_bandeau))
-        bandeau.fill((0, 0, 0))  # Fond noir
-        bandeau.set_alpha(150)   # Transparence
-        texte_surface = font.render("Niveau Réussi!", True, (255, 255, 255))
+        font = pg.font.Font(None, Donnees.GAME_OVER_POLICE_TAILLE)
+        bandeau = pg.Surface((Donnees.WIDTH, Donnees.GAME_OVER_BANDEAU_HAUTEUR))
+        bandeau.fill(Donnees.COULEUR_NOIR)
+        bandeau.set_alpha(Donnees.GAME_OVER_ALPHA)
+        texte_surface = font.render("Niveau Réussi!", True, Donnees.COULEUR_BLANC)
         rect = texte_surface.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
-        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - taille_bandeau//2))
+        screen.blit(bandeau, (0, Donnees.HEIGHT//2 - Donnees.GAME_OVER_BANDEAU_HAUTEUR//2))
         screen.blit(texte_surface, rect)
 
     def afficher_stats_fin_niveau(self, screen, mots_reussis, vitesse_wpm, erreurs):
         """Affiche les statistiques de fin de niveau."""
         # Fond semi-transparent
         overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
-        overlay.fill((0, 0, 0))
-        overlay.set_alpha(180)
+        overlay.fill(Donnees.COULEUR_NOIR)
+        overlay.set_alpha(Donnees.STATS_FIN_ALPHA)
         screen.blit(overlay, (0, 0))
         
-        font_titre = pg.font.Font(None, 60)
-        font_stats = pg.font.Font(None, 40)
+        font_titre = pg.font.Font(None, Donnees.STATS_FIN_POLICE_TITRE)
+        font_stats = pg.font.Font(None, Donnees.STATS_FIN_POLICE_TEXTE)
         
         # Titre
-        titre = font_titre.render("Statistiques du niveau", True, (255, 255, 255))
-        titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 150))
+        titre = font_titre.render("Statistiques du niveau", True, Donnees.COULEUR_BLANC)
+        titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.STATS_FIN_TITRE_Y))
         screen.blit(titre, titre_rect)
         
         # Stats
-        y_offset = 250
-        line_height = 50
+        stat1 = font_stats.render(f"Mots réussis: {mots_reussis}", True, Donnees.COULEUR_BLANC)
+        screen.blit(stat1, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, Donnees.STATS_FIN_STATS_Y))
         
-        stat1 = font_stats.render(f"Mots réussis: {mots_reussis}", True, (255, 255, 255))
-        screen.blit(stat1, (Donnees.WIDTH // 2 - 150, y_offset))
+        stat2 = font_stats.render(f"Vitesse: {vitesse_wpm:.1f} mots/min", True, Donnees.COULEUR_BLANC)
+        screen.blit(stat2, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, Donnees.STATS_FIN_STATS_Y + Donnees.STATS_FIN_LINE_HEIGHT))
         
-        stat2 = font_stats.render(f"Vitesse: {vitesse_wpm:.1f} mots/min", True, (255, 255, 255))
-        screen.blit(stat2, (Donnees.WIDTH // 2 - 150, y_offset + line_height))
-        
-        stat3 = font_stats.render(f"Erreurs: {erreurs}", True, (255, 255, 255))
-        screen.blit(stat3, (Donnees.WIDTH // 2 - 150, y_offset + 2 * line_height))
+        stat3 = font_stats.render(f"Erreurs: {erreurs}", True, Donnees.COULEUR_BLANC)
+        screen.blit(stat3, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, Donnees.STATS_FIN_STATS_Y + 2 * Donnees.STATS_FIN_LINE_HEIGHT))
         
         # Message pour retourner au menu
-        menu = font_stats.render("Appuyez sur Échap pour retourner au menu", True, (200, 200, 200))
-        menu_rect = menu.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 60))
+        menu = font_stats.render("Appuyez sur Échap pour retourner au menu", True, Donnees.COULEUR_GRIS_TEXTE)
+        menu_rect = menu.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - Donnees.STATS_FIN_MARGIN_BOTTOM))
         screen.blit(menu, menu_rect)
 
 
-def fenetre_parametres(screen, vitesse_actuelle, joueur=None):
+def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, joueur=None):
     """
     Affiche une fenêtre modale pour configurer les paramètres du jeu.
-    Retourne la vitesse WPM configurée, ou None si annulé.
+    Retourne un tuple (vitesse_pourcentage, reset_on_error) ou None si annulé.
     """
     import BaseDonnees
     
-    wpm_str = str(vitesse_actuelle)
+    vitesse_str = str(vitesse_actuelle)
+    reset_on_error = reset_on_error_actuel
     clock = pg.time.Clock()
     
     # Récupérer les stats du joueur si disponibles
@@ -120,7 +116,10 @@ def fenetre_parametres(screen, vitesse_actuelle, joueur=None):
             j = BaseDonnees.get_joueur(nom_j, prenom_j)
             if j is not None:
                 try:
-                    derniere = float(j.get('Derniere_Vitesse_WPM', 0.0))
+                    # Convertir WPM stocké en pourcentage pour l'affichage
+                    derniere_wpm = float(j.get('Derniere_Vitesse_WPM', 0.0))
+                    if derniere_wpm > 0:
+                        derniere = int((derniere_wpm / Donnees.WPM_BASE_CONVERSION) * 100)
                 except Exception:
                     derniere = None
     except Exception:
@@ -135,83 +134,98 @@ def fenetre_parametres(screen, vitesse_actuelle, joueur=None):
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
                     try:
-                        val = int(wpm_str) if wpm_str != '' else vitesse_actuelle
+                        val = int(vitesse_str) if vitesse_str != '' else vitesse_actuelle
                     except Exception:
                         val = vitesse_actuelle
-                    val = max(Donnees.VITESSE_WPM_MIN, min(Donnees.VITESSE_WPM_MAX, val))
+                    val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
                     
-                    # Sauvegarder la dernière valeur pour le joueur
+                    # Sauvegarder la dernière valeur pour le joueur (convertir en WPM pour compatibilité)
                     if joueur is not None:
                         try:
                             nom_j, prenom_j = joueur
-                            BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val)
+                            val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION  # Convertir % en WPM pour stockage
+                            BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val_wpm)
                         except Exception:
                             pass
                     
-                    return int(val)
+                    return (int(val), reset_on_error)
                 
                 if event.key == pg.K_ESCAPE:
                     return None
                 
+                if event.key == pg.K_r:  # Touche R pour basculer le mode reset
+                    reset_on_error = not reset_on_error
+                
                 if event.key == pg.K_BACKSPACE:
-                    wpm_str = wpm_str[:-1]
+                    vitesse_str = vitesse_str[:-1]
                 else:
                     ch = event.unicode
-                    if ch.isdigit() and len(wpm_str) < 3:
-                        if wpm_str == '0':
-                            wpm_str = ch
+                    if ch.isdigit() and len(vitesse_str) < 4:
+                        if vitesse_str == '0':
+                            vitesse_str = ch
                         else:
-                            wpm_str += ch
+                            vitesse_str += ch
         
         # Affichage
         screen.fill(Donnees.COULEUR_FOND)
         
-        font_titre = pg.font.Font(None, 56)
-        font_val = pg.font.Font(None, 48)
-        font_info = pg.font.Font(None, 28)
-        font_small = pg.font.Font(None, 22)
+        font_titre = pg.font.Font(None, Donnees.PARAMS_POLICE_TITRE)
+        font_val = pg.font.Font(None, Donnees.PARAMS_POLICE_VALEUR)
+        font_info = pg.font.Font(None, Donnees.PARAMS_POLICE_INFO)
+        font_small = pg.font.Font(None, Donnees.PARAMS_POLICE_PETITE)
         
         # Titre
         titre = font_titre.render("Paramètres", True, Donnees.COULEUR_NOIR)
-        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, 60))
+        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, Donnees.PARAMS_TITRE_Y))
         
         # Sous-titre
-        sous_titre = font_info.render("Vitesse des mots (mots par minute)", True, Donnees.COULEUR_GRIS_FONCE)
-        screen.blit(sous_titre, (Donnees.WIDTH//2 - sous_titre.get_width()//2, 140))
+        sous_titre = font_info.render("Vitesse de défilement (en pourcentage)", True, Donnees.COULEUR_GRIS_FONCE)
+        screen.blit(sous_titre, (Donnees.WIDTH//2 - sous_titre.get_width()//2, Donnees.PARAMS_SOUS_TITRE_Y))
         
         # Zone de saisie
-        box_w, box_h = 200, 70
-        box_rect = pg.Rect(Donnees.WIDTH//2 - box_w//2, Donnees.HEIGHT//2 - box_h//2, box_w, box_h)
+        box_rect = pg.Rect(Donnees.WIDTH//2 - Donnees.PARAMS_BOX_WIDTH//2, Donnees.HEIGHT//2 - Donnees.PARAMS_BOX_HEIGHT//2, Donnees.PARAMS_BOX_WIDTH, Donnees.PARAMS_BOX_HEIGHT)
         pg.draw.rect(screen, Donnees.COULEUR_BLANC, box_rect)
-        pg.draw.rect(screen, Donnees.COULEUR_NOIR, box_rect, 3)
+        pg.draw.rect(screen, Donnees.COULEUR_NOIR, box_rect, Donnees.PARAMS_BOX_BORDURE)
         
         # Valeur affichée
-        display_val = wpm_str if wpm_str else str(vitesse_actuelle)
+        display_val = vitesse_str if vitesse_str else str(vitesse_actuelle)
         val_text = font_val.render(display_val, True, Donnees.COULEUR_NOIR)
         screen.blit(val_text, (box_rect.centerx - val_text.get_width()//2, 
                                box_rect.centery - val_text.get_height()//2))
         
-        # Label "WPM"
-        label = font_info.render("WPM", True, Donnees.COULEUR_NOIR)
-        screen.blit(label, (box_rect.right + 15, box_rect.centery - label.get_height()//2))
+        # Label "%"
+        label = font_info.render("%", True, Donnees.COULEUR_NOIR)
+        screen.blit(label, (box_rect.right + Donnees.PARAMS_LABEL_OFFSET_X, box_rect.centery - label.get_height()//2))
         
         # Plage autorisée
-        plage = font_small.render(f"Plage: {Donnees.VITESSE_WPM_MIN} - {Donnees.VITESSE_WPM_MAX}", 
+        plage = font_small.render(f"Plage: {Donnees.VITESSE_POURCENTAGE_MIN}% - {Donnees.VITESSE_POURCENTAGE_MAX}%", 
                                    True, Donnees.COULEUR_GRIS_CLAIR)
-        screen.blit(plage, (Donnees.WIDTH//2 - plage.get_width()//2, box_rect.bottom + 30))
+        screen.blit(plage, (Donnees.WIDTH//2 - plage.get_width()//2, box_rect.bottom + Donnees.PARAMS_PLAGE_OFFSET_Y))
+        
+        # Option Reset on Error
+        reset_y = box_rect.bottom + Donnees.PARAMS_RESET_OFFSET_Y
+        reset_label = font_info.render("Réinitialiser le mot en cas d'erreur:", True, Donnees.COULEUR_NOIR)
+        screen.blit(reset_label, (Donnees.WIDTH//2 - reset_label.get_width()//2, reset_y))
+        
+        reset_status = "OUI" if reset_on_error else "NON"
+        reset_color = Donnees.COULEUR_VERT_FONCE if reset_on_error else Donnees.COULEUR_ROUGE_FONCE
+        reset_text = font_info.render(reset_status, True, reset_color)
+        screen.blit(reset_text, (Donnees.WIDTH//2 - reset_text.get_width()//2, reset_y + Donnees.PARAMS_RESET_STATUS_OFFSET_Y))
         
         # Dernière valeur utilisée
         if derniere is not None and derniere > 0:
             derniere_text = font_small.render(f"Dernière valeur utilisée: {int(derniere)}", 
                                                True, Donnees.COULEUR_GRIS_MOYEN)
             screen.blit(derniere_text, (Donnees.WIDTH//2 - derniere_text.get_width()//2, 
-                                        box_rect.bottom + 55))
+                                        box_rect.bottom + Donnees.PARAMS_DERNIERE_OFFSET_Y))
         
         # Instructions
         info1 = font_info.render("Entrée: Valider", True, Donnees.COULEUR_VERT_FONCE)
         info2 = font_info.render("Échap: Annuler", True, Donnees.COULEUR_ROUGE_FONCE)
-        screen.blit(info1, (Donnees.WIDTH//2 - info1.get_width()//2, Donnees.HEIGHT - 100))
-        screen.blit(info2, (Donnees.WIDTH//2 - info2.get_width()//2, Donnees.HEIGHT - 60))
+        info3 = font_small.render("R: Basculer réinitialisation", True, Donnees.COULEUR_GRIS_FONCE)
+        screen.blit(info1, (Donnees.WIDTH//2 - info1.get_width()//2, Donnees.HEIGHT - Donnees.PARAMS_INFO_MARGIN_BOTTOM_1))
+        screen.blit(info2, (Donnees.WIDTH//2 - info2.get_width()//2, Donnees.HEIGHT - Donnees.PARAMS_INFO_MARGIN_BOTTOM_2))
+        screen.blit(info3, (Donnees.WIDTH//2 - info3.get_width()//2, Donnees.HEIGHT - Donnees.PARAMS_INFO_MARGIN_BOTTOM_3))
         
         pg.display.flip()
         clock.tick(Donnees.FPS)
@@ -236,24 +250,23 @@ def _calculer_rect_niveau(index):
     )
 
 
-def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None):
+def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None):
     """
     Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-    Retourne un tuple (niveau_selectionne, vitesse_wpm).
+    Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error).
     Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
     """
     clock = pg.time.Clock()
     niveau_selectionne = None
-    vitesse_wpm = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_WPM_PAR_DEFAUT
+    vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
+    reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
     
     # Définir le bouton paramètres (en bas à droite)
-    btn_params_width = 150
-    btn_params_height = 50
     btn_params = pg.Rect(
-        Donnees.WIDTH - btn_params_width - 30,
-        Donnees.HEIGHT - btn_params_height - 30,
-        btn_params_width,
-        btn_params_height
+        Donnees.WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
+        Donnees.HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
+        Donnees.NIVEAU_BOUTON_PARAMS_WIDTH,
+        Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT
     )
     
     while niveau_selectionne is None:
@@ -270,9 +283,9 @@ def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None):
                 
                 # Vérifier le clic sur le bouton paramètres
                 if btn_params.collidepoint(position):
-                    nouvelle_vitesse = fenetre_parametres(screen, vitesse_wpm, joueur)
-                    if nouvelle_vitesse is not None:
-                        vitesse_wpm = nouvelle_vitesse
+                    resultat = fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, joueur)
+                    if resultat is not None:
+                        vitesse_pourcentage, reset_on_error = resultat
                 
                 # Event 2 : Clic sur un niveau
                 for i in range(Donnees.NB_NIVEAUX):
@@ -285,11 +298,11 @@ def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None):
         # Affichage 1 : Fond
         screen.fill(Donnees.COULEUR_FOND)
         font = pg.font.Font(None, Donnees.NIVEAU_TITRE_POLICE)
-        font_small = pg.font.Font(None, 32)
+        font_small = pg.font.Font(None, Donnees.NIVEAU_POLICE_INFO)
         
         # Titre
         titre = font.render("Sélectionnez un niveau", True, Donnees.COULEUR_NOIR)
-        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, 50))
+        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, Donnees.NIVEAU_TITRE_Y))
         
         # Affichage 2 : Boutons de niveaux
         for i in range(Donnees.NB_NIVEAUX):
@@ -306,20 +319,26 @@ def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None):
         
         # Affichage 3 : Bouton paramètres
         pg.draw.rect(screen, Donnees.COULEUR_BLEU_BOUTON, btn_params)
-        pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, 2)
+        pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, Donnees.NIVEAU_BOUTON_PARAMS_BORDURE)
         texte_params = font_small.render("Paramètres", True, Donnees.COULEUR_BLANC)
         texte_params_rect = texte_params.get_rect(center=btn_params.center)
         screen.blit(texte_params, texte_params_rect)
         
         # Affichage 4 : Vitesse actuelle
-        info_vitesse = font_small.render(f"Vitesse: {vitesse_wpm} WPM", True, Donnees.COULEUR_GRIS_FONCE)
-        screen.blit(info_vitesse, (30, Donnees.HEIGHT - 60))
+        info_vitesse = font_small.render(f"Vitesse: {vitesse_pourcentage}%", True, Donnees.COULEUR_GRIS_FONCE)
+        screen.blit(info_vitesse, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_VITESSE_Y))
+        
+        # Affichage 5 : Mode reset
+        reset_mode = "Reset: OUI" if reset_on_error else "Reset: NON"
+        reset_color = Donnees.COULEUR_VERT_FONCE if reset_on_error else Donnees.COULEUR_ROUGE_FONCE
+        info_reset = font_small.render(reset_mode, True, reset_color)
+        screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_RESET_Y))
         
         pg.display.flip()
         clock.tick(Donnees.FPS)
 
     
-    return niveau_selectionne, vitesse_wpm
+    return niveau_selectionne, vitesse_pourcentage, reset_on_error
 
 
 def fenetre_vitesse(screen, default_wpm=40, joueur=None):
@@ -733,14 +752,14 @@ def menu_selection_joueur(screen):
                 else:
                     # Le joueur existe déjà - afficher message et revenir au choix
                     screen.fill(Donnees.COULEUR_FOND)
-                    font = pg.font.Font(None, 48)
-                    font_small = pg.font.Font(None, 36)
+                    font = pg.font.Font(None, Donnees.MENU_JOUEUR_POLICE_ERREUR)
+                    font_small = pg.font.Font(None, Donnees.MENU_JOUEUR_POLICE_INFO)
                     
-                    texte_erreur = font.render(message, True, (255, 0, 0))
-                    texte_retry = font_small.render("Appuyez sur une touche pour continuer...", True, (0, 0, 0))
+                    texte_erreur = font.render(message, True, Donnees.MENU_JOUEUR_COULEUR_ERREUR)
+                    texte_retry = font_small.render("Appuyez sur une touche pour continuer...", True, Donnees.COULEUR_NOIR)
                     
-                    screen.blit(texte_erreur, (Donnees.WIDTH // 2 - 200, Donnees.HEIGHT // 2 - 30))
-                    screen.blit(texte_retry, (Donnees.WIDTH // 2 - 180, Donnees.HEIGHT // 2 + 40))
+                    screen.blit(texte_erreur, (Donnees.WIDTH // 2 - Donnees.MENU_JOUEUR_ERREUR_OFFSET_X, Donnees.HEIGHT // 2 - Donnees.MENU_JOUEUR_ERREUR_OFFSET_Y))
+                    screen.blit(texte_retry, (Donnees.WIDTH // 2 - Donnees.MENU_JOUEUR_INFO_OFFSET_X, Donnees.HEIGHT // 2 + Donnees.MENU_JOUEUR_INFO_OFFSET_Y))
                     pg.display.flip()
                     
                     # Attendre une touche
@@ -792,23 +811,22 @@ def fenetre_afficher_stats_joueur(screen, nom, prenom):
         screen.fill(Donnees.COULEUR_FOND)
         
         # Titre
-        font_titre = pg.font.Font(None, 60)
-        titre = font_titre.render("Profil du Joueur", True, (0, 0, 0))
-        titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 30))
+        font_titre = pg.font.Font(None, Donnees.STATS_JOUEUR_POLICE_TITRE)
+        titre = font_titre.render("Profil du Joueur", True, Donnees.COULEUR_NOIR)
+        titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.STATS_JOUEUR_TITRE_Y))
         screen.blit(titre, titre_rect)
         
         # Infos du joueur
-        font_info = pg.font.Font(None, 40)
-        font_label = pg.font.Font(None, 32)
+        font_info = pg.font.Font(None, Donnees.STATS_JOUEUR_POLICE_INFO)
+        font_label = pg.font.Font(None, Donnees.STATS_JOUEUR_POLICE_LABEL)
         
-        y_offset = 120
-        line_height = 50
+        y_offset = Donnees.STATS_JOUEUR_STATS_Y
         
         # Nom et prénom
-        joueur_nom = font_info.render(f"{joueur['Prénom']} {joueur['Nom']}", True, (0, 100, 200))
-        screen.blit(joueur_nom, (Donnees.WIDTH // 2 - 150, y_offset))
+        joueur_nom = font_info.render(f"{joueur['Prénom']} {joueur['Nom']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
+        screen.blit(joueur_nom, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, y_offset))
         
-        y_offset += line_height + 20
+        y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT + Donnees.STATS_JOUEUR_SECTION_SPACING
         
         # Statistiques
         nb_parties = int(joueur['Nb_Parties'])
@@ -824,13 +842,13 @@ def fenetre_afficher_stats_joueur(screen, nom, prenom):
         ]
         
         for stat in stat_text:
-            texte = font_label.render(stat, True, (0, 0, 0))
+            texte = font_label.render(stat, True, Donnees.COULEUR_NOIR)
             screen.blit(texte, (Donnees.WIDTH // 4, y_offset))
-            y_offset += line_height
+            y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT
         
         # Message pour revenir
-        info_text = font_label.render("Appuyez sur une touche pour continuer", True, (100, 100, 100))
-        info_rect = info_text.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 50))
+        info_text = font_label.render("Appuyez sur une touche pour continuer", True, Donnees.COULEUR_GRIS_MOYEN)
+        info_rect = info_text.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - Donnees.STATS_JOUEUR_INFO_MARGIN_BOTTOM))
         screen.blit(info_text, info_rect)
         
         pg.display.flip()
