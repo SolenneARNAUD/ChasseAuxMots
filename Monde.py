@@ -18,6 +18,8 @@ class Monde(object):
         self.personnage = None
         self.obstacle_actuel_type = None
         self.obstacle_actuel_config = None
+        self.personnage_type = "viking"  # Type de personnage par défaut
+        self.personnage_animation = "attaque"  # Animation par défaut
 
     
         self.mot = None
@@ -55,10 +57,14 @@ class Monde(object):
                                   Donnees.SOL_DEPART_Y)
         
         # Initialisation du personnage
+        sprite_defaut = BaseDonnees.get_personnage_sprite_defaut(self.personnage_type)
+        if not sprite_defaut:
+            sprite_defaut = Donnees.PERSONNAGE_SKIN  # Fallback
+        
         self.personnage = Personnage.Personnage(
             Donnees.PERSONNAGE_DEPART_X,
             self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
-            Donnees.PERSONNAGE_SKIN)
+            sprite_defaut)
         
         # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
         self.total_mots = Donnees.TOTAL_MOTS
@@ -137,6 +143,22 @@ class Monde(object):
     def get_liste_mots(self):
         "Renvoie la liste des mots du monde."
         return self.liste_mots
+    
+    def get_personnage_type(self):
+        "Renvoie le type de personnage actuel."
+        return self.personnage_type
+    
+    def set_personnage_type(self, type):
+        "Définit le type de personnage."
+        self.personnage_type = type
+    
+    def get_personnage_animation(self):
+        "Renvoie le nom de l'animation du personnage."
+        return self.personnage_animation
+    
+    def set_personnage_animation(self, animation):
+        "Définit l'animation du personnage."
+        self.personnage_animation = animation
     
     # Getters et setters pour les variables de jeu
     def get_compteur_mot(self):

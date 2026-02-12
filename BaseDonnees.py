@@ -164,6 +164,150 @@ OBSTACLES_CONFIG = {
     }
 }
 
+PERSONNAGES_CONFIG = {
+    "viking": {
+        "chemin_base": "images/Man/Viking",
+        "sprite_defaut": "images/Man/Viking/viking_attaque_1.png",
+        "hauteur": 120,
+        "animations": {
+            "attaque": {
+                "chemin_base": "images/Man/Viking/viking_attaque",
+                "nb_images": 5,
+                "animation_delay": 8
+            }
+        }
+    },
+    "dino_vert": {
+        "chemin_base": "images/Dino_vert",
+        "sprite_defaut": "images/Dino_vert/Idle (1).png",
+        "hauteur": 120,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Dino_vert/Idle",
+                "nb_images": 10,
+                "animation_delay": 5,
+                "format": " ({}).png"
+            },
+            "run": {
+                "chemin_base": "images/Dino_vert/Run",
+                "nb_images": 8,
+                "animation_delay": 5,
+                "format": " ({}).png"
+            },
+            "jump": {
+                "chemin_base": "images/Dino_vert/Jump",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": " ({}).png"
+            },
+            "walk": {
+                "chemin_base": "images/Dino_vert/Walk",
+                "nb_images": 10,
+                "animation_delay": 5,
+                "format": " ({}).png"
+            },
+            "dead": {
+                "chemin_base": "images/Dino_vert/Dead",
+                "nb_images": 8,
+                "animation_delay": 5,
+                "format": " ({}).png"
+            }
+        }
+    }
+}
+
+def get_animation_frames(personnage_type, animation_name):
+    """
+    Génère la liste des chemins des frames d'animation pour un personnage.
+    
+    Args:
+        personnage_type: Type de personnage (ex: "viking", "man", "centipede", "dino_vert")
+        animation_name: Nom de l'animation (ex: "attaque", "walk", "idle", etc.)
+    
+    Returns:
+        Liste des chemins des frames d'animation ou None si non trouvé
+    """
+    if personnage_type not in PERSONNAGES_CONFIG:
+        return None
+    
+    config = PERSONNAGES_CONFIG[personnage_type]
+    
+    if animation_name not in config['animations']:
+        return None
+    
+    anim_config = config['animations'][animation_name]
+    
+    # Si c'est un sprite unique (nb_images = 1)
+    if anim_config.get('nb_images', 1) == 1:
+        if 'sprite' in anim_config:
+            return [anim_config['sprite']]
+        else:
+            return None
+    
+    # Si c'est une séquence d'images
+    frames = []
+    chemin_base = anim_config.get('chemin_base', '')
+    nb_images = anim_config.get('nb_images', 1)
+    format_str = anim_config.get('format', '_{}.png')  # Format par défaut: _1.png, _2.png, etc.
+    
+    for i in range(1, nb_images + 1):
+        # Si le format contient {}, remplacer par le numéro
+        if '{}' in format_str:
+            frame_path = f"{chemin_base}{format_str.format(i)}"
+        else:
+            frame_path = f"{chemin_base}{format_str}"
+        frames.append(frame_path)
+    
+    return frames
+
+def get_personnage_sprite_defaut(personnage_type):
+    """
+    Retourne le sprite par défaut d'un personnage.
+    
+    Args:
+        personnage_type: Type de personnage (ex: "viking", "man", etc.)
+    
+    Returns:
+        Chemin du sprite par défaut ou None
+    """
+    if personnage_type not in PERSONNAGES_CONFIG:
+        return None
+    return PERSONNAGES_CONFIG[personnage_type].get('sprite_defaut')
+
+def get_personnage_hauteur(personnage_type):
+    """
+    Retourne la hauteur par défaut d'un personnage.
+    
+    Args:
+        personnage_type: Type de personnage (ex: "viking", "man", etc.)
+    
+    Returns:
+        Hauteur du personnage ou 120 par défaut
+    """
+    if personnage_type not in PERSONNAGES_CONFIG:
+        return 120
+    return PERSONNAGES_CONFIG[personnage_type].get('hauteur', 120)
+
+def get_animation_delay(personnage_type, animation_name):
+    """
+    Retourne le délai d'animation pour un personnage et une animation donnés.
+    
+    Args:
+        personnage_type: Type de personnage (ex: "viking", "man", etc.)
+        animation_name: Nom de l'animation (ex: "attaque", "walk", etc.)
+    
+    Returns:
+        Délai d'animation ou 5 par défaut
+    """
+    if personnage_type not in PERSONNAGES_CONFIG:
+        return 5
+    
+    config = PERSONNAGES_CONFIG[personnage_type]
+    if animation_name not in config['animations']:
+        return 5
+    
+    return config['animations'][animation_name].get('animation_delay', 5)
+
 # DataFrame pour enregistrer les joueurs
 def charger_joueurs():
     """Charge les joueurs depuis le fichier CSV s'il existe, sinon crée un DataFrame vide"""

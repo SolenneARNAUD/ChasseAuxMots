@@ -17,6 +17,8 @@ FPS = 60
 # Personnage
 PERSONNAGE_DEPART_X = WIDTH/6
 PERSONNAGE_DEPART_Y = HEIGHT * 2/3
+# Note: Les personnages utilisent maintenant PERSONNAGES_CONFIG dans BaseDonnees.py
+# PERSONNAGE_SKIN est conservé comme fallback pour la rétrocompatibilité
 PERSONNAGE_SKIN = resource_path("images/Man/Viking/viking_attaque_1.png")
 PERSONNAGE_HEIGHT = 120
 

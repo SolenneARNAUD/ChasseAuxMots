@@ -67,8 +67,7 @@ class Jeu:
         self.mechant = self.monde.get_mechant()
         self.mot = self.monde.get_mot()
         self.liste_mots = self.monde.get_liste_mots()
-        
-        self.jeu_demarre = False
+        self.jeu_demarre = False # Le jeu commence après la première touche du joueur
     
     def gerer_game_over(self):
         """Gère l'affichage et la logique du game over."""
@@ -151,10 +150,11 @@ class Jeu:
         """Boucle principale du gameplay."""
         while True:
             events = pygame.event.get()
-            self.traiter_events_globaux(events)
+            self.traiter_events_globaux(events) # Ex : fermeture de la fenêtre
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
+                    # Démarrage du jeu
                     self.jeu_demarre = True
                     if self.monde.get_temps_debut() is None:
                         self.monde.set_temps_debut(pygame.time.get_ticks())
@@ -187,7 +187,7 @@ class Jeu:
             # Mettre à jour l'état précédent
             self.monde.set_mot_state_precedent(self.mot._state)
             
-            # Gestion du déplacement du méchant vers le man
+            # Gestion du déplacement du méchant vers le personnage
             if self.monde.get_mechant_move_to_man():
                 distance_x = -self.man.position_x + self.mechant.position_x
                 
@@ -196,15 +196,18 @@ class Jeu:
                     self.monde.set_mechant_move_to_man(False)
                     self.monde.set_animation_in_progress(True)
                     
-                    # Lancer l'animation du man
-                    animation_frames = [
-                        "images/Man/Viking/viking_attaque_1.png",
-                        "images/Man/Viking/viking_attaque_2.png",
-                        "images/Man/Viking/viking_attaque_3.png",
-                        "images/Man/Viking/viking_attaque_4.png",
-                        "images/Man/Viking/viking_attaque_5.png"
-                    ]
-                    self.man.start_animation(animation_frames, animation_delay=8)
+                    # Lancer l'animation du personnage
+                    animation_frames = BaseDonnees.get_animation_frames(
+                        self.monde.get_personnage_type(), 
+                        self.monde.get_personnage_animation()
+                    )
+                    animation_delay = BaseDonnees.get_animation_delay(
+                        self.monde.get_personnage_type(), 
+                        self.monde.get_personnage_animation()
+                    )
+                    
+                    if animation_frames:
+                        self.man.start_animation(animation_frames, animation_delay=animation_delay)
                 else:
                     self.mechant.position_x -= self.mechant_step
             
