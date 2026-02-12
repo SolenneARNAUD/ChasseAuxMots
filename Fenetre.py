@@ -1,5 +1,6 @@
 import Donnees
 import pygame as pg
+import sys
 
 class Fenetre(object):
     "Classe correspondant à la fenêtre de jeu."
@@ -101,58 +102,224 @@ class Fenetre(object):
         screen.blit(menu, menu_rect)
 
 
-def fenetre_niveau(screen, events):
+def fenetre_parametres(screen, vitesse_actuelle, joueur=None):
     """
-    Affiche la fenêtre de sélection des niveaux.
-    Retourne le numéro du niveau cliqué (1 à 5) ou None.
+    Affiche une fenêtre modale pour configurer les paramètres du jeu.
+    Retourne la vitesse WPM configurée, ou None si annulé.
     """
+    import BaseDonnees
+    
+    wpm_str = str(vitesse_actuelle)
+    clock = pg.time.Clock()
+    
+    # Récupérer les stats du joueur si disponibles
+    derniere = None
+    try:
+        if joueur is not None:
+            nom_j, prenom_j = joueur
+            j = BaseDonnees.get_joueur(nom_j, prenom_j)
+            if j is not None:
+                try:
+                    derniere = float(j.get('Derniere_Vitesse_WPM', 0.0))
+                except Exception:
+                    derniere = None
+    except Exception:
+        derniere = None
+    
+    while True:
+        events = pg.event.get()
+        for event in events:
+            if event.type == pg.QUIT:
+                sys.exit()
+            
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                    try:
+                        val = int(wpm_str) if wpm_str != '' else vitesse_actuelle
+                    except Exception:
+                        val = vitesse_actuelle
+                    val = max(Donnees.VITESSE_WPM_MIN, min(Donnees.VITESSE_WPM_MAX, val))
+                    
+                    # Sauvegarder la dernière valeur pour le joueur
+                    if joueur is not None:
+                        try:
+                            nom_j, prenom_j = joueur
+                            BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val)
+                        except Exception:
+                            pass
+                    
+                    return int(val)
+                
+                if event.key == pg.K_ESCAPE:
+                    return None
+                
+                if event.key == pg.K_BACKSPACE:
+                    wpm_str = wpm_str[:-1]
+                else:
+                    ch = event.unicode
+                    if ch.isdigit() and len(wpm_str) < 3:
+                        if wpm_str == '0':
+                            wpm_str = ch
+                        else:
+                            wpm_str += ch
+        
+        # Affichage
+        screen.fill(Donnees.COULEUR_FOND)
+        
+        font_titre = pg.font.Font(None, 56)
+        font_val = pg.font.Font(None, 48)
+        font_info = pg.font.Font(None, 28)
+        font_small = pg.font.Font(None, 22)
+        
+        # Titre
+        titre = font_titre.render("Paramètres", True, Donnees.COULEUR_NOIR)
+        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, 60))
+        
+        # Sous-titre
+        sous_titre = font_info.render("Vitesse des mots (mots par minute)", True, Donnees.COULEUR_GRIS_FONCE)
+        screen.blit(sous_titre, (Donnees.WIDTH//2 - sous_titre.get_width()//2, 140))
+        
+        # Zone de saisie
+        box_w, box_h = 200, 70
+        box_rect = pg.Rect(Donnees.WIDTH//2 - box_w//2, Donnees.HEIGHT//2 - box_h//2, box_w, box_h)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, box_rect)
+        pg.draw.rect(screen, Donnees.COULEUR_NOIR, box_rect, 3)
+        
+        # Valeur affichée
+        display_val = wpm_str if wpm_str else str(vitesse_actuelle)
+        val_text = font_val.render(display_val, True, Donnees.COULEUR_NOIR)
+        screen.blit(val_text, (box_rect.centerx - val_text.get_width()//2, 
+                               box_rect.centery - val_text.get_height()//2))
+        
+        # Label "WPM"
+        label = font_info.render("WPM", True, Donnees.COULEUR_NOIR)
+        screen.blit(label, (box_rect.right + 15, box_rect.centery - label.get_height()//2))
+        
+        # Plage autorisée
+        plage = font_small.render(f"Plage: {Donnees.VITESSE_WPM_MIN} - {Donnees.VITESSE_WPM_MAX}", 
+                                   True, Donnees.COULEUR_GRIS_CLAIR)
+        screen.blit(plage, (Donnees.WIDTH//2 - plage.get_width()//2, box_rect.bottom + 30))
+        
+        # Dernière valeur utilisée
+        if derniere is not None and derniere > 0:
+            derniere_text = font_small.render(f"Dernière valeur utilisée: {int(derniere)}", 
+                                               True, Donnees.COULEUR_GRIS_MOYEN)
+            screen.blit(derniere_text, (Donnees.WIDTH//2 - derniere_text.get_width()//2, 
+                                        box_rect.bottom + 55))
+        
+        # Instructions
+        info1 = font_info.render("Entrée: Valider", True, Donnees.COULEUR_VERT_FONCE)
+        info2 = font_info.render("Échap: Annuler", True, Donnees.COULEUR_ROUGE_FONCE)
+        screen.blit(info1, (Donnees.WIDTH//2 - info1.get_width()//2, Donnees.HEIGHT - 100))
+        screen.blit(info2, (Donnees.WIDTH//2 - info2.get_width()//2, Donnees.HEIGHT - 60))
+        
+        pg.display.flip()
+        clock.tick(Donnees.FPS)
 
-    screen.fill(Donnees.COULEUR_FOND)
 
-    font = pg.font.Font(None, 48)
+def _calculer_rect_niveau(index):
 
-    # Paramètres des carrés
-    taille = 100    # Taille des carrés
-    espacement = 30 # Espacement entre les carrés
+    """
+    Calcule le rectangle d'un bouton de niveau. 
+    NB : on a ajouté un _ pour indiquer que c'est une fonction interne à ce module.
+    """
+    largeur_totale = (Donnees.NB_NIVEAUX * Donnees.NIVEAU_BOUTON_TAILLE + 
+                     (Donnees.NB_NIVEAUX - 1) * Donnees.NIVEAU_BOUTON_ESPACEMENT)
+    start_x = (Donnees.WIDTH - largeur_totale) // 2
+    y = Donnees.HEIGHT // 2 - Donnees.NIVEAU_BOUTON_TAILLE // 2
+    
+    return pg.Rect(
+        start_x + index * (Donnees.NIVEAU_BOUTON_TAILLE + Donnees.NIVEAU_BOUTON_ESPACEMENT),
+        y,
+        Donnees.NIVEAU_BOUTON_TAILLE,
+        Donnees.NIVEAU_BOUTON_TAILLE
+    )
 
-    largeur_totale = Donnees.NB_NIVEAUX * taille + (Donnees.NB_NIVEAUX - 1) * espacement # Calcul de la largeur totale
-    start_x = (Donnees.WIDTH - largeur_totale) // 2 # Position de départ en X
-    y = Donnees.HEIGHT // 2 - taille // 2           # Position en Y
 
-    rectangles = [] # Liste des rectangles des niveaux
+def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None):
+    """
+    Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
+    Retourne un tuple (niveau_selectionne, vitesse_wpm).
+    Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
+    """
+    clock = pg.time.Clock()
+    niveau_selectionne = None
+    vitesse_wpm = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_WPM_PAR_DEFAUT
+    
+    # Définir le bouton paramètres (en bas à droite)
+    btn_params_width = 150
+    btn_params_height = 50
+    btn_params = pg.Rect(
+        Donnees.WIDTH - btn_params_width - 30,
+        Donnees.HEIGHT - btn_params_height - 30,
+        btn_params_width,
+        btn_params_height
+    )
+    
+    while niveau_selectionne is None:
+        events = pg.event.get()
+        
+        ## Gestion des événements ##
+        for event in events:
+            # Event 1 : Quitter le jeu
+            if event.type == pg.QUIT:
+                sys.exit()
+            
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                position = event.pos
+                
+                # Vérifier le clic sur le bouton paramètres
+                if btn_params.collidepoint(position):
+                    nouvelle_vitesse = fenetre_parametres(screen, vitesse_wpm, joueur)
+                    if nouvelle_vitesse is not None:
+                        vitesse_wpm = nouvelle_vitesse
+                
+                # Event 2 : Clic sur un niveau
+                for i in range(Donnees.NB_NIVEAUX):
+                    rect = _calculer_rect_niveau(i)
+                    if rect.collidepoint(position): # Test si le clic est dans le rectangle du niveau
+                        niveau_selectionne = i + 1 # Le niveau a été sélectionné > on sort de la boucle
+                        break
+        
+        ## Affichage ##
+        # Affichage 1 : Fond
+        screen.fill(Donnees.COULEUR_FOND)
+        font = pg.font.Font(None, Donnees.NIVEAU_TITRE_POLICE)
+        font_small = pg.font.Font(None, 32)
+        
+        # Titre
+        titre = font.render("Sélectionnez un niveau", True, Donnees.COULEUR_NOIR)
+        screen.blit(titre, (Donnees.WIDTH//2 - titre.get_width()//2, 50))
+        
+        # Affichage 2 : Boutons de niveaux
+        for i in range(Donnees.NB_NIVEAUX):
+            rect = _calculer_rect_niveau(i)
+            
+            # Dessin du carré
+            pg.draw.rect(screen, Donnees.NIVEAU_BOUTON_COULEUR_FOND, rect)
+            pg.draw.rect(screen, Donnees.NIVEAU_BOUTON_COULEUR_BORDURE, rect, Donnees.NIVEAU_BOUTON_EPAISSEUR_BORDURE)
+            
+            # Numéro du niveau
+            texte = font.render(str(i + 1), True, Donnees.NIVEAU_BOUTON_COULEUR_BORDURE)
+            texte_rect = texte.get_rect(center=rect.center)
+            screen.blit(texte, texte_rect)
+        
+        # Affichage 3 : Bouton paramètres
+        pg.draw.rect(screen, Donnees.COULEUR_BLEU_BOUTON, btn_params)
+        pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, 2)
+        texte_params = font_small.render("Paramètres", True, Donnees.COULEUR_BLANC)
+        texte_params_rect = texte_params.get_rect(center=btn_params.center)
+        screen.blit(texte_params, texte_params_rect)
+        
+        # Affichage 4 : Vitesse actuelle
+        info_vitesse = font_small.render(f"Vitesse: {vitesse_wpm} WPM", True, Donnees.COULEUR_GRIS_FONCE)
+        screen.blit(info_vitesse, (30, Donnees.HEIGHT - 60))
+        
+        pg.display.flip()
+        clock.tick(Donnees.FPS)
 
-    for i in range(Donnees.NB_NIVEAUX):
-        rect = pg.Rect(
-            start_x + i * (taille + espacement),
-            y,
-            taille,
-            taille
-        )
-        rectangles.append(rect) # Stockage du rectangle
-
-        # Dessin du carré
-        pg.draw.rect(screen, (200, 200, 200), rect) # Fond blanc gris
-        pg.draw.rect(screen, (0, 0, 0), rect, 3) # Bordure noire
-
-        # Numéro du niveau
-        texte = font.render(str(i + 1), True, (0, 0, 0))
-        texte_rect = texte.get_rect(center=rect.center)
-        screen.blit(texte, texte_rect)
-
-    pg.display.flip()
-
-    # Gestion des clics
-    for event in events: 
-        if event.type == pg.QUIT:
-            pg.quit()
-            exit()
-
-        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-            position = event.pos
-            for i, rect in enumerate(rectangles):
-                if rect.collidepoint(position):
-                    return i + 1
-    return None
+    
+    return niveau_selectionne, vitesse_wpm
 
 
 def fenetre_vitesse(screen, default_wpm=40, joueur=None):
@@ -533,6 +700,70 @@ def fenetre_charger_joueur(screen):
     # Retourner le joueur sélectionné
     nom, prenom = joueurs_list[selected_index]
     return nom, prenom
+
+
+def menu_selection_joueur(screen):
+    """
+    Gère le menu complet de sélection/création d'un joueur.
+    Retourne un tuple (nom, prenom) une fois qu'un joueur valide est sélectionné.
+    """
+    import BaseDonnees
+    import sys
+    
+    joueur_valide = False
+    nom_joueur = None
+    prenom_joueur = None
+    
+    while not joueur_valide:
+        # Afficher le menu de choix
+        choix = fenetre_menu_joueur(screen)
+        
+        if choix == "nouveau":
+            # Créer un nouveau joueur
+            while True:
+                nom, prenom = fenetre_joueur(screen)
+                succes, message = BaseDonnees.ajouter_joueur(nom, prenom)
+                
+                if succes:
+                    nom_joueur = nom
+                    prenom_joueur = prenom
+                    joueur_valide = True
+                    print(f"Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                    break
+                else:
+                    # Le joueur existe déjà - afficher message et revenir au choix
+                    screen.fill(Donnees.COULEUR_FOND)
+                    font = pg.font.Font(None, 48)
+                    font_small = pg.font.Font(None, 36)
+                    
+                    texte_erreur = font.render(message, True, (255, 0, 0))
+                    texte_retry = font_small.render("Appuyez sur une touche pour continuer...", True, (0, 0, 0))
+                    
+                    screen.blit(texte_erreur, (Donnees.WIDTH // 2 - 200, Donnees.HEIGHT // 2 - 30))
+                    screen.blit(texte_retry, (Donnees.WIDTH // 2 - 180, Donnees.HEIGHT // 2 + 40))
+                    pg.display.flip()
+                    
+                    # Attendre une touche
+                    en_attente = True
+                    while en_attente:
+                        for event in pg.event.get():
+                            if event.type == pg.QUIT:
+                                sys.exit()
+                            if event.type == pg.KEYDOWN:
+                                en_attente = False
+                    break
+        
+        elif choix == "existant":
+            # Charger un joueur existant
+            result = fenetre_charger_joueur(screen)
+            
+            if result is not None:
+                nom_joueur, prenom_joueur = result
+                joueur_valide = True
+                print(f"Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+            # else: retourner au menu de choix
+    
+    return nom_joueur, prenom_joueur
 
 
 def fenetre_afficher_stats_joueur(screen, nom, prenom):

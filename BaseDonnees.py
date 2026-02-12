@@ -71,7 +71,11 @@ def copier_fichier_vers_projet():
         # Ne copier que si le répertoire de données est différent du projet
         if os.path.exists(FICHIER_JOUEURS) and REPERTOIRE_DONNEES != SCRIPT_DIR:
             print(f"[INFO] Copie de {FICHIER_JOUEURS} vers {FICHIER_JOUEURS_PROJET}...")
-            shutil.copy2(FICHIER_JOUEURS, FICHIER_JOUEURS_PROJET)
+            # Utiliser une copie manuelle plus robuste au lieu de shutil.copy2
+            with open(FICHIER_JOUEURS, 'r', encoding='utf-8') as f_source:
+                contenu = f_source.read()
+            with open(FICHIER_JOUEURS_PROJET, 'w', encoding='utf-8') as f_dest:
+                f_dest.write(contenu)
             print(f"[INFO] Copie reussie!")
     except Exception as e:
         print(f"[WARNING] Impossible de copier le fichier vers le projet: {e}")
