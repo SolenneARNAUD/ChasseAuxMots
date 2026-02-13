@@ -19,10 +19,38 @@ class Menu:
         clock = pg.time.Clock()
         input_active = False
         
+        # Division de l'écran en 3 zones
+        zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
+        zone_params_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_PARAMS_RATIO
+        zone_boutons_y = zone_titre_height + zone_params_height
+        
+        # Zone du milieu : calcul de l'espacement vertical
+        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
+        param_height = Donnees.PARAMS_PARAM_HEIGHT
+        spacing = (zone_params_height - 2 * param_height) // 3  # Espacement X
+        
+        # Position verticale des paramètres dans la zone milieu
+        param1_y = zone_titre_height + spacing
+        param2_y = param1_y + param_height + spacing
+        
+        # Alignement horizontal : labels à gauche, inputs à droite alignés
+        label_x = Donnees.WIDTH // Donnees.PARAMS_LABEL_X_RATIO
+        input_x = Donnees.WIDTH // 2 + Donnees.PARAMS_INPUT_X_OFFSET
+        
         # Zones interactives
-        input_box = pg.Rect(Donnees.WIDTH // 2 - 150, Donnees.HEIGHT // 2 - 80, 300, 60)
-        checkbox_rect = pg.Rect(Donnees.WIDTH // 2 - 30, Donnees.HEIGHT // 2 + 80, 40, 40)
-        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 100, Donnees.HEIGHT - 120, 200, 50)
+        input_box = pg.Rect(input_x, param1_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
+        checkbox_rect = pg.Rect(input_x + Donnees.PARAMS_CHECKBOX_OFFSET_X, param2_y + Donnees.PARAMS_CHECKBOX_OFFSET_Y, 
+                               Donnees.PARAMS_CHECKBOX_SIZE, Donnees.PARAMS_CHECKBOX_SIZE)
+        
+        # Boutons en bas
+        bouton_w = Donnees.PARAMS_BOUTON_WIDTH
+        bouton_h = Donnees.PARAMS_BOUTON_HEIGHT
+        bouton_spacing = Donnees.PARAMS_BOUTON_SPACING
+        total_boutons_width = 2 * bouton_w + bouton_spacing
+        bouton_y = zone_boutons_y + (Donnees.HEIGHT - zone_boutons_y) // 2 - bouton_h // 2
+        
+        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2, bouton_y, bouton_w, bouton_h)
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2 + bouton_w + bouton_spacing, bouton_y, bouton_w, bouton_h)
         
         while True:
             events = pg.event.get()
@@ -37,6 +65,8 @@ class Menu:
                         vitesse_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
+                    elif bouton_retour.collidepoint(event.pos):
+                        return None
                     elif bouton_valider.collidepoint(event.pos):
                         try:
                             val = int(vitesse_str) if vitesse_str else vitesse_actuelle
@@ -90,62 +120,80 @@ class Menu:
             # Affichage
             screen.fill(Donnees.COULEUR_FOND)
             
-            font_titre = pg.font.Font(None, 60)
-            font_label = pg.font.Font(None, 40)
-            font_input = pg.font.Font(None, 48)
-            font_info = pg.font.Font(None, 28)
+            font_titre = pg.font.Font(None, Donnees.PARAMS_FENETRE_POLICE_TITRE)
+            font_label = pg.font.Font(None, Donnees.PARAMS_FENETRE_POLICE_LABEL)
+            font_input = pg.font.Font(None, Donnees.PARAMS_FENETRE_POLICE_INPUT)
+            font_bouton = pg.font.Font(None, Donnees.PARAMS_FENETRE_POLICE_BOUTON)
             
-            # Titre
+            # === ZONE TITRE ===
             titre = font_titre.render("Paramètres", True, Donnees.COULEUR_NOIR)
-            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, 40))
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, zone_titre_height // 2 - titre.get_height() // 2))
             
-            # Paramètre 1 : Vitesse
-            label_vitesse = font_label.render("Vitesse (%)", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_vitesse, (Donnees.WIDTH // 2 - 250, Donnees.HEIGHT // 2 - 80))
+            # Ligne de séparation après le titre
+            pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
+                        (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_titre_height - Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
+                        (5 * Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_titre_height - Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
+                        Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
             
-            pg.draw.rect(screen, (255, 255, 255), input_box)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR, input_box, 3)
+            # === ZONE PARAMÈTRES ===
+            
+            # Paramètre 1 : Vitesse de défilement
+            label_vitesse = font_label.render("Vitesse de défilement", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_vitesse, (label_x, param1_y + 10))
+            
+            # Input box vitesse
+            pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR if not input_active else Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE, 
+                        input_box, Donnees.PARAMS_INPUT_BOX_BORDURE)
             
             if input_active:
-                texte_vitesse = font_input.render(vitesse_str, True, Donnees.COULEUR_NOIR)
+                texte_vitesse = font_input.render(vitesse_str + "|", True, Donnees.COULEUR_NOIR)
             else:
-                texte_vitesse = font_input.render(vitesse_affichee, True, (150, 150, 150))
+                texte_vitesse = font_input.render(vitesse_affichee + " %", True, (100, 100, 100))
             
             screen.blit(texte_vitesse, (input_box.centerx - texte_vitesse.get_width() // 2, 
                                         input_box.centery - texte_vitesse.get_height() // 2))
             
-            # Hint pour cliquer
-            if not input_active:
-                hint = font_info.render("(cliquez pour modifier)", True, (180, 180, 180))
-                screen.blit(hint, (input_box.centerx - hint.get_width() // 2, input_box.bottom + 10))
+            # Paramètre 2 : Reset du mot après erreur
+            label_reset = font_label.render("Reset du mot après erreur", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_reset, (label_x, param2_y + 10))
             
-            # Paramètre 2 : Reset on Error
-            label_reset = font_label.render("Réinitialiser en cas d'erreur", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_reset, (Donnees.WIDTH // 2 - 250, Donnees.HEIGHT // 2 + 60))
-            
-            # Case à cocher
-            pg.draw.rect(screen, (255, 255, 255), checkbox_rect)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR, checkbox_rect, 3)
+            # Checkbox
+            pg.draw.rect(screen, Donnees.COULEUR_BLANC, checkbox_rect)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, checkbox_rect, Donnees.PARAMS_INPUT_BOX_BORDURE)
             
             if reset_on_error:
-                # Dessiner une croix ou un checkmark
+                # Checkmark
                 pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE, 
-                            (checkbox_rect.left + 5, checkbox_rect.top + 5),
-                            (checkbox_rect.right - 5, checkbox_rect.bottom - 5), 4)
+                            (checkbox_rect.left + Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.centery),
+                            (checkbox_rect.centerx - Donnees.PARAMS_CHECKMARK_MARGIN_RIGHT, checkbox_rect.bottom - Donnees.PARAMS_CHECKMARK_MARGIN_BOTTOM), 
+                            Donnees.PARAMS_CHECKMARK_EPAISSEUR)
                 pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE,
-                            (checkbox_rect.right - 5, checkbox_rect.top + 5),
-                            (checkbox_rect.left + 5, checkbox_rect.bottom - 5), 4)
+                            (checkbox_rect.centerx - Donnees.PARAMS_CHECKMARK_MARGIN_RIGHT, checkbox_rect.bottom - Donnees.PARAMS_CHECKMARK_MARGIN_BOTTOM),
+                            (checkbox_rect.right - Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.top + Donnees.PARAMS_CHECKMARK_MARGIN_TOP), 
+                            Donnees.PARAMS_CHECKMARK_EPAISSEUR)
+            
+            # Ligne de séparation avant les boutons
+            pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
+                        (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
+                        (5 * Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
+                        Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            
+            # === ZONE BOUTONS ===
             
             # Bouton Valider
-            pg.draw.rect(screen, (100, 200, 100), bouton_valider)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_valider, 2)
-            texte_valider = font_label.render("Valider", True, (255, 255, 255))
+            pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_VALIDER, bouton_valider)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_valider, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            texte_valider = font_bouton.render("Valider", True, Donnees.COULEUR_BLANC)
             screen.blit(texte_valider, (bouton_valider.centerx - texte_valider.get_width() // 2,
                                        bouton_valider.centery - texte_valider.get_height() // 2))
             
-            # Instructions
-            info = font_info.render("Esc: Annuler", True, Donnees.COULEUR_ROUGE_FONCE)
-            screen.blit(info, (Donnees.WIDTH // 2 - info.get_width() // 2, Donnees.HEIGHT - 40))
+            # Bouton Retour
+            pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_RETOUR, bouton_retour)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            texte_retour = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_retour, (bouton_retour.centerx - texte_retour.get_width() // 2,
+                                      bouton_retour.centery - texte_retour.get_height() // 2))
             
             pg.display.flip()
             clock.tick(Donnees.FPS)
