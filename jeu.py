@@ -1,6 +1,7 @@
 import sys
 import pygame
-import Fenetre
+import Fenetre_jeu
+import Menu
 import Donnees
 import Mot
 import BaseDonnees
@@ -16,12 +17,12 @@ class Jeu:
         
         # Créer le screen et la fenêtre
         self.screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
-        self.fenetre = Fenetre.Fenetre(Donnees.FOND_SKIN)
+        self.fenetre = Fenetre_jeu.Fenetre(Donnees.FOND_SKIN)
         
         # Menu d'entrée du joueur
-        self.nom_joueur, self.prenom_joueur = Fenetre.menu_selection_joueur(self.screen)
+        self.nom_joueur, self.prenom_joueur = Menu.Menu.menu_selection_joueur(self.screen)
     
-    def initialiser_variables(self):
+    def _initialiser_variables(self):
         """Initialise/réinitialise les variables de jeu."""
         self.clock = pygame.time.Clock()
         self.game_over = False
@@ -36,13 +37,13 @@ class Jeu:
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
-    def traiter_events_globaux(self, events):
+    def _traiter_events_globaux(self, events):
         """Traite les événements globaux (fermeture, etc.). Retourne False si l'application doit se fermer."""
         for event in events:
             if event.type == pygame.QUIT:
                 sys.exit()
     
-    def appliquer_vitesse(self, vitesse_pourcentage):
+    def _appliquer_vitesse(self, vitesse_pourcentage):
         """Applique la vitesse configurée au jeu."""
         # Calcul du multiplicateur de vitesse (100% = multiplicateur de 1.0)
         try:
@@ -56,7 +57,7 @@ class Jeu:
         # Vitesse du méchant adaptée
         self.mechant_step = max(1, int(3 * self.multiplier))
     
-    def initialiser_monde(self):
+    def _initialiser_monde(self):
         """Initialise le monde et tous ses éléments pour le niveau sélectionné."""
         self.monde = Monde.Monde()
         self.monde.initialiser_niveau(self.niveau)
@@ -69,7 +70,7 @@ class Jeu:
         self.liste_mots = self.monde.get_liste_mots()
         self.jeu_demarre = False # Le jeu commence après la première touche du joueur
     
-    def gerer_game_over(self):
+    def _gerer_game_over(self):
         """Gère l'affichage et la logique du game over."""
         self.fenetre.afficher_game_over(self.screen)
         pygame.display.flip()
@@ -92,7 +93,7 @@ class Jeu:
         retour_menu = False
         while not retour_menu:
             events = pygame.event.get()
-            self.traiter_events_globaux(events)
+            self._traiter_events_globaux(events)
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -103,7 +104,7 @@ class Jeu:
         
         return True  # Retourner au menu
     
-    def gerer_niveau_reussi(self):
+    def _gerer_niveau_reussi(self):
         """Gère l'affichage et la logique de fin de niveau réussi."""
         # Calculer les statistiques une seule fois
         if self.monde.get_vitesse_finale() is None:
@@ -129,7 +130,7 @@ class Jeu:
         attente = True
         while attente:
             events = pygame.event.get()
-            self.traiter_events_globaux(events)
+            self._traiter_events_globaux(events)
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -146,11 +147,11 @@ class Jeu:
         
         return True  # Retourner au menu
 
-    def boucle_jeu(self):
+    def _boucle_jeu(self):
         """Boucle principale du gameplay."""
         while True:
             events = pygame.event.get()
-            self.traiter_events_globaux(events) # Ex : fermeture de la fenêtre
+            self._traiter_events_globaux(events) # Ex : fermeture de la fenêtre
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
@@ -164,11 +165,11 @@ class Jeu:
                 self.game_over = True
             
             if self.game_over:
-                return self.gerer_game_over()
+                return self._gerer_game_over()
             
             # Niveau réussi : Si tous les mots ont été complétés
             if self.monde.get_compteur_mot() >= self.monde.get_total_mots():
-                return self.gerer_niveau_reussi()
+                return self._gerer_niveau_reussi()
             
             # Traitement des entrées clavier pour le mot
             erreur, caracteres_corrects = self.mot.process_input(events, reset_on_error=self.reset_on_error)
@@ -176,7 +177,7 @@ class Jeu:
                 self.monde.set_nb_erreurs(self.monde.get_nb_erreurs() + erreur)
             self.monde.increment_total_caracteres(caracteres_corrects)
             
-            # Vérifier si le mot vient d'être complété
+            # Vérifier si le mot vient d'être complété (animation)
             if self.monde.get_mot_state_precedent() and not self.mot._state:
                 self.monde.set_compteur_mot(self.monde.get_compteur_mot() + 1)
                 self.monde.set_mechant_move_to_man(True)
@@ -286,10 +287,10 @@ class Jeu:
         """Lance la boucle principale du jeu."""        
         while True:
             # Réinitialiser les variables
-            self.initialiser_variables()
+            self._initialiser_variables()
             
             # Fenêtre des niveaux (et paramètres)
-            self.niveau, self.vitesse_pourcentage, self.reset_on_error = Fenetre.fenetre_niveau(
+            self.niveau, self.vitesse_pourcentage, self.reset_on_error = Menu.Menu.fenetre_niveau(
                 self.screen, 
                 joueur=(self.nom_joueur, self.prenom_joueur),
                 vitesse_par_defaut=self.vitesse_pourcentage,
@@ -297,13 +298,13 @@ class Jeu:
             )
             
             # Appliquer la vitesse configurée
-            self.appliquer_vitesse(self.vitesse_pourcentage)
+            self._appliquer_vitesse(self.vitesse_pourcentage)
             
             # Initialisation du monde
-            self.initialiser_monde()
+            self._initialiser_monde()
             
             # Lancer la boucle de jeu
-            self.boucle_jeu()
+            self._boucle_jeu()
 
 
 
