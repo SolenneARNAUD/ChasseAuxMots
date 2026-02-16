@@ -221,10 +221,12 @@ class Menu:
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
         Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error).
+        Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
         clock = pg.time.Clock()
         niveau_selectionne = None
+        niveau_survole = 0  # Index du niveau actuellement sélectionné au clavier (0-4)
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
         
@@ -239,11 +241,32 @@ class Menu:
         while niveau_selectionne is None:
             events = pg.event.get()
             
+            # Survol avec la souris
+            mouse_pos = pg.mouse.get_pos()
+            for i in range(Donnees.NB_NIVEAUX):
+                rect = Menu._calculer_rect_niveau(i)
+                if rect.collidepoint(mouse_pos):
+                    niveau_survole = i
+                    break
+            
             ## Gestion des événements ##
             for event in events:
                 # Event 1 : Quitter le jeu
                 if event.type == pg.QUIT:
                     sys.exit()
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return None  # Retour en arrière
+                    
+                    # Navigation au clavier
+                    if event.key == pg.K_LEFT:
+                        niveau_survole = (niveau_survole - 1) % Donnees.NB_NIVEAUX
+                    elif event.key == pg.K_RIGHT:
+                        niveau_survole = (niveau_survole + 1) % Donnees.NB_NIVEAUX
+                    elif event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                        niveau_selectionne = niveau_survole + 1
+                        break
                 
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     position = event.pos
@@ -275,9 +298,19 @@ class Menu:
             for i in range(Donnees.NB_NIVEAUX):
                 rect = Menu._calculer_rect_niveau(i)
                 
+                # Couleur de fond (surbrillance si sélectionné au clavier)
+                couleur_fond = Donnees.NIVEAU_BOUTON_COULEUR_FOND
+                if i == niveau_survole:
+                    couleur_fond = (220, 220, 220)  # Couleur plus claire pour la sélection
+                
                 # Dessin du carré
-                pg.draw.rect(screen, Donnees.NIVEAU_BOUTON_COULEUR_FOND, rect)
-                pg.draw.rect(screen, Donnees.NIVEAU_BOUTON_COULEUR_BORDURE, rect, Donnees.NIVEAU_BOUTON_EPAISSEUR_BORDURE)
+                pg.draw.rect(screen, couleur_fond, rect)
+                
+                # Bordure plus épaisse si sélectionné
+                epaisseur = Donnees.NIVEAU_BOUTON_EPAISSEUR_BORDURE
+                if i == niveau_survole:
+                    epaisseur = 5
+                pg.draw.rect(screen, Donnees.NIVEAU_BOUTON_COULEUR_BORDURE, rect, epaisseur)
                 
                 # Numéro du niveau
                 texte = font.render(str(i + 1), True, Donnees.NIVEAU_BOUTON_COULEUR_BORDURE)
@@ -301,10 +334,175 @@ class Menu:
             info_reset = font_small.render(reset_mode, True, reset_color)
             screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_RESET_Y))
             
+            # Affichage 6 : Message Échap pour retour
+            info_echap = font_small.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_echap, (Donnees.WIDTH // 2 - info_echap.get_width() // 2, Donnees.HEIGHT - 30))
+            
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
         return niveau_selectionne, vitesse_pourcentage, reset_on_error
+
+    @staticmethod
+    def selection_monde(screen):
+        """
+        Affiche une fenêtre de sélection des mondes avec 4 carrés représentant :
+        - Foret bleue
+        - Foret violette
+        - Vallée verte
+        - Foret aux champignons
+        
+        Retourne la clé univers du monde sélectionné (str) ex: 'foret_bleue'.
+        Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
+        """
+        clock = pg.time.Clock()
+        monde_selectionne = None
+        monde_survole = 0  # Index du monde actuellement sélectionné au clavier (0-3)
+        
+        # Configuration des mondes avec leurs noms d'affichage et clés univers
+        mondes = [
+            {"nom": ["Forêt Bleue"], "cle": "foret_bleue", "couleur": (100, 150, 200)},
+            {"nom": ["Forêt Violette"], "cle": "foret_violette", "couleur": (150, 100, 180)},
+            {"nom": ["Vallée Verte"], "cle": "vallee_verte", "couleur": (100, 180, 100)},
+            {"nom": ["Forêt", "Champignons"], "cle": "foret_au_champignon", "couleur": (200, 150, 100)}
+        ]
+        
+        # Calcul de la position des carrés (2x2 grid)
+        taille_carre = 150
+        espacement = 50
+        
+        # Position de départ pour centrer la grille
+        largeur_grille = 2 * taille_carre + espacement
+        hauteur_grille = 2 * taille_carre + espacement
+        start_x = (Donnees.WIDTH - largeur_grille) // 2
+        start_y = (Donnees.HEIGHT - hauteur_grille) // 2 + 30  # Décalé vers le bas pour le titre
+        
+        # Créer les rectangles pour chaque monde
+        rectangles_mondes = []
+        for i in range(4):
+            row = i // 2
+            col = i % 2
+            x = start_x + col * (taille_carre + espacement)
+            y = start_y + row * (taille_carre + espacement)
+            rectangles_mondes.append(pg.Rect(x, y, taille_carre, taille_carre))
+        
+        while monde_selectionne is None:
+            events = pg.event.get()
+            
+            # Survol avec la souris
+            mouse_pos = pg.mouse.get_pos()
+            for i, rect in enumerate(rectangles_mondes):
+                if rect.collidepoint(mouse_pos):
+                    monde_survole = i
+                    break
+            
+            # Gestion des événements
+            for event in events:
+                if event.type == pg.QUIT:
+                    sys.exit()
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return None  # Retour en arrière
+                    
+                    # Navigation au clavier (grille 2x2)
+                    row = monde_survole // 2
+                    col = monde_survole % 2
+                    
+                    if event.key == pg.K_LEFT:
+                        col = (col - 1) % 2
+                    elif event.key == pg.K_RIGHT:
+                        col = (col + 1) % 2
+                    elif event.key == pg.K_UP:
+                        row = (row - 1) % 2
+                    elif event.key == pg.K_DOWN:
+                        row = (row + 1) % 2
+                    elif event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                        monde_selectionne = mondes[monde_survole]["cle"]
+                        break
+                    
+                    monde_survole = row * 2 + col
+                
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    position = event.pos
+                    
+                    # Vérifier le clic sur un des carrés de monde
+                    for i, rect in enumerate(rectangles_mondes):
+                        if rect.collidepoint(position):
+                            monde_selectionne = mondes[i]["cle"]
+                            break
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Polices
+            font_titre = pg.font.Font(None, 48)
+            font_monde = pg.font.Font(None, 28)
+            font_info = pg.font.Font(None, 24)
+            
+            # Titre
+            titre = font_titre.render("Sélectionnez un monde", True, Donnees.COULEUR_NOIR)
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, 50))
+            
+            # Dessiner les carrés des mondes
+            for i, (rect, monde) in enumerate(zip(rectangles_mondes, mondes)):
+                # Fond du carré avec la couleur du monde
+                pg.draw.rect(screen, monde["couleur"], rect)
+                
+                # Bordure plus épaisse si sélectionné au clavier
+                epaisseur = 3
+                couleur_bordure = Donnees.COULEUR_NOIR
+                if i == monde_survole:
+                    epaisseur = 6
+                    couleur_bordure = Donnees.COULEUR_BLANC  # Bordure blanche pour mettre en valeur
+                
+                pg.draw.rect(screen, couleur_bordure, rect, epaisseur)
+                
+                # Nom du monde (centré, sur plusieurs lignes si nécessaire)
+                lignes_nom = monde["nom"]
+                hauteur_ligne = 30
+                nb_lignes = len(lignes_nom)
+                offset_y = -(nb_lignes - 1) * hauteur_ligne // 2
+                
+                for j, ligne in enumerate(lignes_nom):
+                    texte = font_monde.render(ligne, True, Donnees.COULEUR_BLANC)
+                    y_pos = rect.centery + offset_y + j * hauteur_ligne
+                    texte_rect = texte.get_rect(center=(rect.centerx, y_pos))
+                    screen.blit(texte, texte_rect)
+            
+            # Message d'information Échap
+            info_text = font_info.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_text, (Donnees.WIDTH // 2 - info_text.get_width() // 2, Donnees.HEIGHT - 40))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
+        
+        return monde_selectionne
+
+    @staticmethod
+    def get_chemins_monde(cle_monde):
+        """
+        Retourne les chemins des images de fond et de sol pour un monde donné.
+        
+        Args:
+            cle_monde: La clé univers du monde (ex: "foret_bleue", "foret_violette", etc.)
+        
+        Returns:
+            Un dictionnaire contenant 'fond_skin' (liste) et 'sol_skin' (str)
+        """
+        from BaseDonnees import Univers
+        
+        # Utiliser directement la clé univers
+        chemin_background = Univers[cle_monde]["background"]["chemin"]
+        
+        # Construire les chemins complets
+        sol_skin = Donnees.resource_path(chemin_background + "1.png")
+        fond_skin = [Donnees.resource_path(chemin_background + f"{i}.png") for i in range(2, 8)]
+        
+        return {
+            "sol_skin": sol_skin,
+            "fond_skin": fond_skin
+        }
 
     @staticmethod
     def fenetre_vitesse(screen, default_wpm=40, joueur=None):

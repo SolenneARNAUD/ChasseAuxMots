@@ -12,15 +12,12 @@ class Jeu:
     """Classe principale du jeu qui encapsule toute la logique."""
     
     def __init__(self):
-        """Initialise le jeu et sélectionne le joueur."""
+        """Initialise le jeu."""
         pygame.init()
         
         # Créer le screen et la fenêtre
         self.screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
         self.fenetre = Fenetre_jeu.Fenetre(Donnees.FOND_SKIN)
-        
-        # Menu d'entrée du joueur
-        self.nom_joueur, self.prenom_joueur = Menu.Menu.menu_selection_joueur(self.screen)
     
     def _initialiser_variables(self):
         """Initialise/réinitialise les variables de jeu."""
@@ -85,7 +82,7 @@ class Jeu:
         BaseDonnees.enregistrer_essai(
             nom=self.nom_joueur,
             prenom=self.prenom_joueur,
-            monde='foret_bleue',  # TODO: à adapter quand d'autres mondes seront disponibles
+            monde=self.monde_choisi,
             niveau=self.niveau,
             erreurs_detaillees=self.monde.get_erreurs_detaillees(),
             vitesse_frappe=vitesse_défaite,
@@ -135,7 +132,7 @@ class Jeu:
         BaseDonnees.enregistrer_essai(
             nom=self.nom_joueur,
             prenom=self.prenom_joueur,
-            monde='foret_bleue',  # TODO: à adapter quand d'autres mondes seront disponibles
+            monde=self.monde_choisi,
             niveau=self.niveau,
             erreurs_detaillees=self.monde.get_erreurs_detaillees(),
             vitesse_frappe=self.monde.get_vitesse_finale(),
@@ -302,38 +299,65 @@ class Jeu:
     def run(self):
         """Lance la boucle principale du jeu."""
         
-        # Récupérer les derniers paramètres utilisés par le joueur
-        derniers_params = BaseDonnees.get_derniers_parametres_joueur(self.nom_joueur, self.prenom_joueur)
-        if derniers_params:
-            # Initialiser avec les derniers paramètres du joueur
-            self.vitesse_pourcentage = derniers_params['vitesse_defilement']
-            self.reset_on_error = derniers_params['reset_mots_actif']
-            print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
-        else:
-            # Valeurs par défaut pour un nouveau joueur
-            self.vitesse_pourcentage = 100
-            self.reset_on_error = True
-        
+        # Boucle principale permettant de revenir à la sélection du joueur
         while True:
-            # Réinitialiser les variables
-            self._initialiser_variables()
+            # Menu d'entrée du joueur
+            self.nom_joueur, self.prenom_joueur = Menu.Menu.menu_selection_joueur(self.screen)
             
-            # Fenêtre des niveaux (et paramètres) - utilise vitesse_pourcentage et reset_on_error s'ils existent
-            self.niveau, self.vitesse_pourcentage, self.reset_on_error = Menu.Menu.fenetre_niveau(
-                self.screen, 
-                joueur=(self.nom_joueur, self.prenom_joueur),
-                vitesse_par_defaut=self.vitesse_pourcentage,
-                reset_on_error_defaut=self.reset_on_error
-            )
+            # Récupérer les derniers paramètres utilisés par le joueur
+            derniers_params = BaseDonnees.get_derniers_parametres_joueur(self.nom_joueur, self.prenom_joueur)
+            if derniers_params:
+                # Initialiser avec les derniers paramètres du joueur
+                self.vitesse_pourcentage = derniers_params['vitesse_defilement']
+                self.reset_on_error = derniers_params['reset_mots_actif']
+                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
+            else:
+                # Valeurs par défaut pour un nouveau joueur
+                self.vitesse_pourcentage = 100
+                self.reset_on_error = True
             
-            # Appliquer la vitesse configurée
-            self._appliquer_vitesse(self.vitesse_pourcentage)
-            
-            # Initialisation du monde
-            self._initialiser_monde()
-            
-            # Lancer la boucle de jeu
-            self._boucle_jeu()
+            # Boucle de sélection du monde
+            while True:
+                # Sélection du monde
+                self.monde_choisi = Menu.Menu.selection_monde(self.screen)
+                
+                # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du joueur
+                if self.monde_choisi is None:
+                    break  # Sortir de la boucle monde pour retourner à la sélection du joueur
+                
+                # Mettre à jour les chemins d'images pour le monde sélectionné
+                chemins_monde = Menu.Menu.get_chemins_monde(self.monde_choisi)
+                Donnees.SOL_SKIN = chemins_monde['sol_skin']
+                Donnees.FOND_SKIN = chemins_monde['fond_skin']
+                self.fenetre.set_image(Donnees.FOND_SKIN)
+                
+                # Boucle de sélection de niveau et jeu
+                while True:
+                    # Réinitialiser les variables
+                    self._initialiser_variables()
+                    
+                    # Fenêtre des niveaux (et paramètres)
+                    resultat = Menu.Menu.fenetre_niveau(
+                        self.screen, 
+                        joueur=(self.nom_joueur, self.prenom_joueur),
+                        vitesse_par_defaut=self.vitesse_pourcentage,
+                        reset_on_error_defaut=self.reset_on_error
+                    )
+                    
+                    # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du monde
+                    if resultat is None:
+                        break  # Sortir de la boucle de niveau pour retourner à la sélection du monde
+                    
+                    self.niveau, self.vitesse_pourcentage, self.reset_on_error = resultat
+                    
+                    # Appliquer la vitesse configurée
+                    self._appliquer_vitesse(self.vitesse_pourcentage)
+                    
+                    # Initialisation du monde
+                    self._initialiser_monde()
+                    
+                    # Lancer la boucle de jeu
+                    self._boucle_jeu()
 
 
 

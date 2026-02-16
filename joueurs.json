@@ -76,14 +76,60 @@
         "historique": {
             "vallee_verte": {
                 "niveau_1": [],
-                "niveau_2": [],
+                "niveau_2": [
+                    {
+                        "timestamp": "2026-02-16 13:46:16",
+                        "erreurs": [],
+                        "vitesse_frappe": 12.48,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
                 "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
             },
             "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [],
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-16 13:57:40",
+                        "erreurs": [],
+                        "vitesse_frappe": 19.96,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [
+                    {
+                        "timestamp": "2026-02-16 13:45:46",
+                        "erreurs": [],
+                        "vitesse_frappe": 14.0,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 13:57:25",
+                        "erreurs": [
+                            {
+                                "mot": "sabre",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "b"
+                            },
+                            {
+                                "mot": "sabre",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "a"
+                            }
+                        ],
+                        "vitesse_frappe": 16.49,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
                 "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
@@ -132,6 +178,22 @@
                         "timestamp": "2026-02-16 12:17:39",
                         "erreurs": [],
                         "vitesse_frappe": 17.86,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 13:30:31",
+                        "erreurs": [],
+                        "vitesse_frappe": 13.69,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 13:45:14",
+                        "erreurs": [],
+                        "vitesse_frappe": 17.01,
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
