@@ -31,7 +31,7 @@ class Jeu:
         self.monde = None           # Monde actuel du jeu
         # Ne pas réinitialiser vitesse_pourcentage et reset_on_error ici pour conserver les valeurs entre les niveaux
         if not hasattr(self, 'vitesse_pourcentage'):
-            self.vitesse_pourcentage = None     # Vitesse (en %) choisie par le joueur
+            self.vitesse_pourcentage = 100     # Vitesse par défaut (en %) choisie par le joueur
         if not hasattr(self, 'reset_on_error'):
             self.reset_on_error = True          # Réinitialiser le mot en cas d'erreur
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
@@ -75,18 +75,23 @@ class Jeu:
         self.fenetre.afficher_game_over(self.screen)
         pygame.display.flip()
         
-        # Enregistrer les stats même en cas de défaite
+        # Calculer les statistiques
         temps_fin = pygame.time.get_ticks()
         temps_total_ms = temps_fin - self.monde.get_temps_debut()
         temps_total_min = temps_total_ms / 60000.0
         vitesse_défaite = self.monde.get_compteur_mot() / temps_total_min if temps_total_min > 0 else 0
         
-        BaseDonnees.update_stats_joueur(
-            self.nom_joueur,
-            self.prenom_joueur,
-            mots_reussis=self.monde.get_compteur_mot(),
-            vitesse_wpm=vitesse_défaite,
-            nb_erreurs=self.monde.get_nb_erreurs()
+        # Enregistrer l'essai complet
+        BaseDonnees.enregistrer_essai(
+            nom=self.nom_joueur,
+            prenom=self.prenom_joueur,
+            monde='foret_bleue',  # TODO: à adapter quand d'autres mondes seront disponibles
+            niveau=self.niveau,
+            erreurs_detaillees=self.monde.get_erreurs_detaillees(),
+            vitesse_frappe=vitesse_défaite,
+            vitesse_defilement=self.vitesse_pourcentage,
+            reset_mots_actif=self.reset_on_error,
+            score=self.monde.get_compteur_mot()
         )
         
         # Attendre une touche pour retourner au menu
@@ -126,6 +131,19 @@ class Jeu:
         )
         pygame.display.flip()
         
+        # Enregistrer l'essai complet
+        BaseDonnees.enregistrer_essai(
+            nom=self.nom_joueur,
+            prenom=self.prenom_joueur,
+            monde='foret_bleue',  # TODO: à adapter quand d'autres mondes seront disponibles
+            niveau=self.niveau,
+            erreurs_detaillees=self.monde.get_erreurs_detaillees(),
+            vitesse_frappe=self.monde.get_vitesse_finale(),
+            vitesse_defilement=self.vitesse_pourcentage,
+            reset_mots_actif=self.reset_on_error,
+            score=self.monde.get_compteur_mot()
+        )
+        
         # Attendre une touche pour continuer
         attente = True
         while attente:
@@ -134,16 +152,7 @@ class Jeu:
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        # Enregistrer les stats du joueur avant de retourner au menu
-                        BaseDonnees.update_stats_joueur(
-                            self.nom_joueur,
-                            self.prenom_joueur,
-                            mots_reussis=self.monde.get_compteur_mot(),
-                            vitesse_wpm=self.monde.get_vitesse_finale(),
-                            nb_erreurs=self.monde.get_nb_erreurs()
-                        )
-                        attente = False
+                    attente = False
         
         return True  # Retourner au menu
 
@@ -172,9 +181,16 @@ class Jeu:
                 return self._gerer_niveau_reussi()
             
             # Traitement des entrées clavier pour le mot
-            erreur, caracteres_corrects = self.mot.process_input(events, reset_on_error=self.reset_on_error)
+            erreur, caracteres_corrects, info_erreur = self.mot.process_input(events, reset_on_error=self.reset_on_error)
             if erreur:
                 self.monde.set_nb_erreurs(self.monde.get_nb_erreurs() + erreur)
+                # Enregistrer l'erreur détaillée si disponible
+                if info_erreur:
+                    self.monde.ajouter_erreur_detaillee(
+                        mot=self.mot.get_texte(),
+                        lettre_attendue=info_erreur['lettre_attendue'],
+                        lettre_tapee=info_erreur['lettre_tapee']
+                    )
             self.monde.increment_total_caracteres(caracteres_corrects)
             
             # Vérifier si le mot vient d'être complété (animation)
@@ -284,12 +300,25 @@ class Jeu:
             self.clock.tick(Donnees.FPS)
     
     def run(self):
-        """Lance la boucle principale du jeu."""        
+        """Lance la boucle principale du jeu."""
+        
+        # Récupérer les derniers paramètres utilisés par le joueur
+        derniers_params = BaseDonnees.get_derniers_parametres_joueur(self.nom_joueur, self.prenom_joueur)
+        if derniers_params:
+            # Initialiser avec les derniers paramètres du joueur
+            self.vitesse_pourcentage = derniers_params['vitesse_defilement']
+            self.reset_on_error = derniers_params['reset_mots_actif']
+            print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
+        else:
+            # Valeurs par défaut pour un nouveau joueur
+            self.vitesse_pourcentage = 100
+            self.reset_on_error = True
+        
         while True:
             # Réinitialiser les variables
             self._initialiser_variables()
             
-            # Fenêtre des niveaux (et paramètres)
+            # Fenêtre des niveaux (et paramètres) - utilise vitesse_pourcentage et reset_on_error s'ils existent
             self.niveau, self.vitesse_pourcentage, self.reset_on_error = Menu.Menu.fenetre_niveau(
                 self.screen, 
                 joueur=(self.nom_joueur, self.prenom_joueur),

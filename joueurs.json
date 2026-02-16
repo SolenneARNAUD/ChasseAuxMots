@@ -3,32 +3,191 @@
         "nom": "Kapfer",
         "prenom": "Vincent",
         "date_inscription": "2026-02-09 11:06:44",
-        "nb_parties": 13,
-        "score_total": 0.0,
-        "mots_reussis_total": 94,
-        "vitesse_moyenne_wpm": 15.16,
-        "erreurs_total": 19,
-        "derniere_vitesse_wpm": 200.0
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
     },
     "test_test": {
         "nom": "Test",
         "prenom": "Test",
         "date_inscription": "2026-02-11 09:32:49",
-        "nb_parties": 0,
-        "score_total": 0.0,
-        "mots_reussis_total": 0,
-        "vitesse_moyenne_wpm": 0.0,
-        "erreurs_total": 0,
-        "derniere_vitesse_wpm": 0.0
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
     },
     "arnaud_solenne": {
         "nom": "Arnaud",
         "prenom": "Solenne",
         "date_inscription": "2026-02-16 11:46:34",
-        "nb_parties": 2,
-        "mots_reussis_total": 6,
-        "vitesse_moyenne_wpm": 30.57,
-        "derniere_vitesse_wpm": 200.0,
-        "erreurs_total": 0
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [
+                    {
+                        "timestamp": "2026-02-16 12:12:13",
+                        "erreurs": [
+                            {
+                                "mot": "bison",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "f"
+                            },
+                            {
+                                "mot": "bison",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "g"
+                            },
+                            {
+                                "mot": "bison",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "ravin",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "h"
+                            }
+                        ],
+                        "vitesse_frappe": 11.17,
+                        "vitesse_defilement": 1.0,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 12:14:30",
+                        "erreurs": [],
+                        "vitesse_frappe": 12.19,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 12:17:39",
+                        "erreurs": [],
+                        "vitesse_frappe": 17.86,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-16 12:18:04",
+                        "erreurs": [
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "u"
+                            },
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "i"
+                            }
+                        ],
+                        "vitesse_frappe": 12.6,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
     }
 }

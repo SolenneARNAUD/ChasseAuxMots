@@ -40,6 +40,7 @@ class Monde(object):
         self.distance_mechant_man = 150
         
         self.nb_erreurs = 0
+        self.erreurs_detaillees = []  # Liste des erreurs avec détails: {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
         self.temps_debut = None
         self.total_caracteres = 0
         self.vitesse_finale = None
@@ -220,6 +221,17 @@ class Monde(object):
     
     def set_nb_erreurs(self, value):
         self.nb_erreurs = value
+    
+    def get_erreurs_detaillees(self):
+        return self.erreurs_detaillees
+    
+    def ajouter_erreur_detaillee(self, mot, lettre_attendue, lettre_tapee):
+        """Ajoute une erreur détaillée à la liste."""
+        self.erreurs_detaillees.append({
+            'mot': mot,
+            'lettre_attendue': lettre_attendue,
+            'lettre_tapee': lettre_tapee
+        })
     
     def get_temps_debut(self):
         return self.temps_debut

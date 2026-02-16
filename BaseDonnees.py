@@ -411,6 +411,55 @@ def get_animation_delay(personnage_type, animation_name):
     return config['animations'][animation_name].get('animation_delay', 5)
 
 # Dictionnaire pour enregistrer les joueurs
+def migrer_ancienne_structure(joueurs):
+    """Migre l'ancienne structure JSON vers la nouvelle structure avec historique."""
+    joueurs_migres = {}
+    
+    for cle, joueur in joueurs.items():
+        # Vérifier si c'est l'ancienne structure (pas d'historique)
+        if 'historique' not in joueur:
+            print(f"[INFO] Migration du joueur {cle} vers la nouvelle structure")
+            joueurs_migres[cle] = {
+                'nom': joueur.get('nom', ''),
+                'prenom': joueur.get('prenom', ''),
+                'date_inscription': joueur.get('date_inscription', datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                'historique': {
+                    'vallee_verte': {
+                        'niveau_1': [],
+                        'niveau_2': [],
+                        'niveau_3': [],
+                        'niveau_4': [],
+                        'niveau_5': []
+                    },
+                    'foret_violette': {
+                        'niveau_1': [],
+                        'niveau_2': [],
+                        'niveau_3': [],
+                        'niveau_4': [],
+                        'niveau_5': []
+                    },
+                    'foret_bleue': {
+                        'niveau_1': [],
+                        'niveau_2': [],
+                        'niveau_3': [],
+                        'niveau_4': [],
+                        'niveau_5': []
+                    },
+                    'foret_aux_champignons': {
+                        'niveau_1': [],
+                        'niveau_2': [],
+                        'niveau_3': [],
+                        'niveau_4': [],
+                        'niveau_5': []
+                    }
+                }
+            }
+        else:
+            # Déjà la nouvelle structure
+            joueurs_migres[cle] = joueur
+    
+    return joueurs_migres
+
 def charger_joueurs():
     """Charge les joueurs depuis le fichier JSON s'il existe, sinon crée un dictionnaire vide"""
     
@@ -427,6 +476,21 @@ def charger_joueurs():
         try:
             with open(FICHIER_JOUEURS, 'r', encoding='utf-8') as f:
                 joueurs = json.load(f)
+            
+            # Migrer si nécessaire
+            joueurs_originaux = joueurs.copy()
+            joueurs = migrer_ancienne_structure(joueurs)
+            
+            # Si migration effectuée, sauvegarder immédiatement
+            if joueurs != joueurs_originaux:
+                print(f"[INFO] Sauvegarde après migration...")
+                try:
+                    with open(FICHIER_JOUEURS, 'w', encoding='utf-8') as f:
+                        json.dump(joueurs, f, ensure_ascii=False, indent=4)
+                    print(f"[INFO] Migration sauvegardée avec succès")
+                except Exception as e:
+                    print(f"[WARNING] Erreur lors de la sauvegarde de la migration: {e}")
+            
             return joueurs
         except Exception as e:
             print(f"[WARNING] Erreur lors du chargement de {FICHIER_JOUEURS}: {e}")
@@ -486,16 +550,41 @@ def ajouter_joueur(nom, prenom):
     if cle in dict_joueurs:
         return False, "Ce joueur existe deja!"
     
-    # Créer les données du nouveau joueur
+    # Créer les données du nouveau joueur avec la nouvelle structure
     dict_joueurs[cle] = {
         'nom': nom.capitalize(),
         'prenom': prenom.capitalize(),
         'date_inscription': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        'nb_parties': 0,
-        'mots_reussis_total': 0,
-        'vitesse_moyenne_wpm': 0.0,
-        'derniere_vitesse_wpm': 40.0,
-        'erreurs_total': 0
+        'historique': {
+            'vallee_verte': {
+                'niveau_1': [],
+                'niveau_2': [],
+                'niveau_3': [],
+                'niveau_4': [],
+                'niveau_5': []
+            },
+            'foret_violette': {
+                'niveau_1': [],
+                'niveau_2': [],
+                'niveau_3': [],
+                'niveau_4': [],
+                'niveau_5': []
+            },
+            'foret_bleue': {
+                'niveau_1': [],
+                'niveau_2': [],
+                'niveau_3': [],
+                'niveau_4': [],
+                'niveau_5': []
+            },
+            'foret_aux_champignons': {
+                'niveau_1': [],
+                'niveau_2': [],
+                'niveau_3': [],
+                'niveau_4': [],
+                'niveau_5': []
+            }
+        }
     }
     
     print(f"[DEBUG] Nouveau joueur: {dict_joueurs[cle]}")
@@ -531,57 +620,177 @@ def get_joueur(nom, prenom):
     return None
 
 def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
-    """Met a jour les statistiques du joueur apres une partie"""
+    """Met a jour les statistiques du joueur apres une partie (fonction maintenue pour compatibilité)"""
+    # Cette fonction est maintenant obsolète mais conservée pour compatibilité
+    # Les vraies données sont enregistrées via enregistrer_essai()
+    return True
+
+def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_frappe, 
+                     vitesse_defilement, reset_mots_actif, score):
+    """Enregistre un essai complet dans l'historique du joueur.
+    
+    Args:
+        nom: Nom du joueur
+        prenom: Prénom du joueur
+        monde: Nom du monde (ex: 'foret_bleue')
+        niveau: Numéro du niveau (1-5)
+        erreurs_detaillees: Liste de dict {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
+        vitesse_frappe: Vitesse de frappe en mots/min
+        vitesse_defilement: Vitesse de défilement du sol
+        reset_mots_actif: Boolean indiquant si le reset est activé
+        score: Score final (nombre de mots réussis)
+    
+    Returns:
+        bool: True si sauvegarde réussie
+    """
     global dict_joueurs
     
     cle = f"{nom}_{prenom}".lower()
     
-    if cle in dict_joueurs:
-        joueur = dict_joueurs[cle]
-        
-        # Récupérer les anciennes stats
-        nb_parties_ancien = joueur['nb_parties']
-        mots_reussis_ancien = joueur['mots_reussis_total']
-        vitesse_ancienne = joueur['vitesse_moyenne_wpm']
-        erreurs_ancien = joueur['erreurs_total']
-        
-        # Calculer les nouvelles statistiques
-        nb_parties_nouveau = nb_parties_ancien + 1
-        mots_reussis_nouveau = mots_reussis_ancien + mots_reussis
-        
-        # Calculer la moyenne de vitesse
-        if nb_parties_ancien == 0:
-            vitesse_nouvelle = vitesse_wpm
-        else:
-            vitesse_nouvelle = (vitesse_ancienne * nb_parties_ancien + vitesse_wpm) / nb_parties_nouveau
-        
-        erreurs_nouveau = erreurs_ancien + nb_erreurs
-        
-        # Mettre à jour les valeurs
-        joueur['nb_parties'] = nb_parties_nouveau
-        joueur['mots_reussis_total'] = mots_reussis_nouveau
-        joueur['vitesse_moyenne_wpm'] = round(vitesse_nouvelle, 2)
-        # Ne pas modifier 'derniere_vitesse_wpm' ici : conserver la valeur saisie
-        joueur['erreurs_total'] = erreurs_nouveau
-        
-        # Tenter de sauvegarder (ne crash pas si échec)
-        succes = sauvegarder_joueurs()
-        if not succes:
-            print("ATTENTION: Les statistiques n'ont pas pu être sauvegardées!")
-        return succes
-    return False
+    if cle not in dict_joueurs:
+        print(f"[WARNING] Joueur {nom} {prenom} non trouvé")
+        return False
+    
+    joueur = dict_joueurs[cle]
+    
+    # Vérifier que le monde existe dans l'historique
+    if 'historique' not in joueur:
+        print(f"[WARNING] Pas d'historique pour {nom} {prenom}")
+        return False
+    
+    if monde not in joueur['historique']:
+        print(f"[WARNING] Monde {monde} non trouvé dans l'historique")
+        return False
+    
+    niveau_key = f'niveau_{niveau}'
+    if niveau_key not in joueur['historique'][monde]:
+        print(f"[WARNING] Niveau {niveau} non trouvé dans {monde}")
+        return False
+    
+    # Créer l'objet essai
+    essai = {
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'erreurs': erreurs_detaillees,  # Liste de {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
+        'vitesse_frappe': round(vitesse_frappe, 2),
+        'vitesse_defilement': round(vitesse_defilement, 2),
+        'reset_mots_actif': reset_mots_actif,
+        'score': score
+    }
+    
+    # Ajouter l'essai à l'historique du niveau
+    joueur['historique'][monde][niveau_key].append(essai)
+    
+    # Sauvegarder
+    succes = sauvegarder_joueurs()
+    if not succes:
+        print("ATTENTION: L'essai n'a pas pu être sauvegardé!")
+    else:
+        print(f"[INFO] Essai enregistré pour {nom} {prenom} - {monde} niveau {niveau}")
+    
+    return succes
 
 
 def set_derniere_vitesse(nom, prenom, valeur):
-    """Enregistre la dernière valeur de vitesse entrée pour le joueur."""
-    global dict_joueurs
+    """Enregistre la dernière valeur de vitesse entrée pour le joueur (obsolète mais conservée)."""
+    # Cette fonction ne fait plus rien car la structure a changé
+    pass
+
+def get_statistiques_joueur(nom, prenom, monde=None, niveau=None):
+    """Récupère les statistiques d'un joueur.
     
+    Args:
+        nom: Nom du joueur
+        prenom: Prénom du joueur
+        monde: Optionnel - filtre par monde
+        niveau: Optionnel - filtre par niveau (1-5)
+    
+    Returns:
+        dict: Statistiques calculées depuis l'historique
+    """
     cle = f"{nom}_{prenom}".lower()
     
-    if cle in dict_joueurs:
-        try:
-            dict_joueurs[cle]['derniere_vitesse_wpm'] = float(valeur)
-            sauvegarder_joueurs()
-        except Exception:
-            pass
+    if cle not in dict_joueurs:
+        return None
+    
+    joueur = dict_joueurs[cle]
+    
+    if 'historique' not in joueur:
+        return None
+    
+    stats = {
+        'nb_parties': 0,
+        'mots_reussis_total': 0,
+        'vitesse_moyenne_wpm': 0.0,
+        'erreurs_total': 0
+    }
+    
+    # Parcourir l'historique pour calculer les stats
+    mondes_a_parcourir = [monde] if monde else joueur['historique'].keys()
+    
+    for m in mondes_a_parcourir:
+        if m not in joueur['historique']:
+            continue
+        
+        niveaux_a_parcourir = [f'niveau_{niveau}'] if niveau else joueur['historique'][m].keys()
+        
+        for n in niveaux_a_parcourir:
+            if n not in joueur['historique'][m]:
+                continue
+            
+            essais = joueur['historique'][m][n]
+            stats['nb_parties'] += len(essais)
+            
+            for essai in essais:
+                stats['mots_reussis_total'] += essai.get('score', 0)
+                stats['erreurs_total'] += len(essai.get('erreurs', []))
+                stats['vitesse_moyenne_wpm'] += essai.get('vitesse_frappe', 0)
+    
+    # Calculer la moyenne de vitesse
+    if stats['nb_parties'] > 0:
+        stats['vitesse_moyenne_wpm'] = round(stats['vitesse_moyenne_wpm'] / stats['nb_parties'], 2)
+    
+    return stats
+
+def get_derniers_parametres_joueur(nom, prenom):
+    """Récupère les derniers paramètres utilisés par le joueur.
+    
+    Args:
+        nom: Nom du joueur
+        prenom: Prénom du joueur
+    
+    Returns:
+        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool} ou None si pas d'historique
+    """
+    cle = f"{nom}_{prenom}".lower()
+    
+    if cle not in dict_joueurs:
+        return None
+    
+    joueur = dict_joueurs[cle]
+    
+    if 'historique' not in joueur:
+        return None
+    
+    dernier_essai = None
+    dernier_timestamp = None
+    
+    # Parcourir tous les mondes et niveaux pour trouver l'essai le plus récent
+    for monde in joueur['historique'].values():
+        for niveau in monde.values():
+            if isinstance(niveau, list) and len(niveau) > 0:
+                for essai in niveau:
+                    timestamp_str = essai.get('timestamp')
+                    if timestamp_str:
+                        if dernier_timestamp is None or timestamp_str > dernier_timestamp:
+                            dernier_timestamp = timestamp_str
+                            dernier_essai = essai
+    
+    if dernier_essai:
+        return {
+            'vitesse_defilement': dernier_essai.get('vitesse_defilement', 100),
+            'reset_mots_actif': dernier_essai.get('reset_mots_actif', True)
+        }
+    
+    return None
+
 

@@ -762,6 +762,12 @@ class Menu:
         if joueur is None:
             return
         
+        # Récupérer les statistiques calculées depuis l'historique
+        stats = BaseDonnees.get_statistiques_joueur(nom, prenom)
+        
+        if stats is None:
+            return
+        
         attente_stats = True
         while attente_stats:
             events = pg.event.get()
@@ -789,16 +795,16 @@ class Menu:
             y_offset = Donnees.STATS_JOUEUR_STATS_Y
             
             # Nom et prénom
-            joueur_nom = font_info.render(f"{joueur['Prénom']} {joueur['Nom']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
+            joueur_nom = font_info.render(f"{joueur['prenom']} {joueur['nom']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
             screen.blit(joueur_nom, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, y_offset))
             
             y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT + Donnees.STATS_JOUEUR_SECTION_SPACING
             
-            # Statistiques
-            nb_parties = int(joueur['Nb_Parties'])
-            mots_reussis = int(joueur['Mots_Réussis_Total'])
-            vitesse_moyenne = float(joueur['Vitesse_Moyenne_WPM'])
-            erreurs_total = int(joueur['Erreurs_Total'])
+            # Statistiques calculées depuis l'historique
+            nb_parties = stats['nb_parties']
+            mots_reussis = stats['mots_reussis_total']
+            vitesse_moyenne = stats['vitesse_moyenne_wpm']
+            erreurs_total = stats['erreurs_total']
             
             stat_text = [
                 f"Parties jouées: {nb_parties}",

@@ -18,7 +18,7 @@ python jeu.py
 
 Par défaut, vos données de joueurs sont enregistrées dans le dossier TEMP de Windows :
 ```
-C:\Users\VotreNom\AppData\Local\Temp\ChasseAuxMots\joueurs.csv
+C:\Users\VotreNom\AppData\Local\Temp\ChasseAuxMots\joueurs.json
 ```
 
 ### Changer le dossier de sauvegarde
@@ -34,10 +34,17 @@ C:\Users\VotreNom\AppData\Local\Temp\ChasseAuxMots\joueurs.csv
 
 ## Données sauvegardées
 
-Le fichier `joueurs.csv` contient :
-- Nom et prénom des joueurs
+Le fichier `joueurs.json` contient pour chaque joueur :
+- Nom et prénom
 - Date d'inscription
-- Nombre de parties jouées
-- Statistiques (mots réussis, vitesse moyenne, erreurs)
+- Historique complet par monde et par niveau
+
+Pour chaque essai de jeu, les informations suivantes sont enregistrées :
+- Liste détaillée des erreurs (mot, lettre attendue, lettre tapée)
+- Vitesse de frappe (mots/minute)
+- Vitesse de défilement du sol
+- Option "Reset mots" activée ou non
+- Score (nombre de mots réussis)
+- Date et heure de l'essai
 
 Une copie de sauvegarde est automatiquement créée dans le dossier du jeu à la fermeture.

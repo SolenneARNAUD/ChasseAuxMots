@@ -53,6 +53,10 @@ class Mot(object):
             self._symboles = [s for s in value if isinstance(s, Symbole.Symbole)]
         elif isinstance(value, Symbole.Symbole):
             self._symboles = [value]
+    
+    def get_texte(self):
+        """Retourne le texte complet du mot."""
+        return ''.join([s._symbole for s in self._symboles])
 
     def afficher(self, screen):
         """
@@ -117,10 +121,15 @@ class Mot(object):
             reset_on_error: Si True, reinitialise le mot si une mauvaise lettre est tapee
         
         Returns:
-            tuple: (erreur_commise, caracteres_corrects) - 1/0 pour erreur, nombre de caractères tapés correctement
+            tuple: (erreur_commise, caracteres_corrects, info_erreur) 
+                   - erreur_commise: 1/0 pour erreur
+                   - caracteres_corrects: nombre de caractères tapés correctement
+                   - info_erreur: dict avec {'lettre_attendue': str, 'lettre_tapee': str} ou None
         """
         erreur = 0
         caracteres_corrects = 0
+        info_erreur = None
+        
         for event in events:
             if event.type == pg.KEYDOWN:
                 char = str(event.unicode).lower()
@@ -132,8 +141,12 @@ class Mot(object):
                 if self._state and self._symboles:
                     # Trouver le premier symbole non gris
                     found = False
+                    lettre_attendue = None
+                    
                     for symbole in self._symboles:
                         if symbole._couleur != (128, 128, 128):
+                            lettre_attendue = symbole._symbole
+                            
                             # Verifier si le caractere correspond a ce symbole (avec normalisation Unicode)
                             symbole_normalized = unicodedata.normalize('NFD', symbole._symbole.lower())
                             char_normalized = unicodedata.normalize('NFD', char)
@@ -145,8 +158,12 @@ class Mot(object):
                             break
                     
                     # Si la lettre est fausse : toujours compter l'erreur
-                    if not found:
+                    if not found and lettre_attendue:
                         erreur = 1
+                        info_erreur = {
+                            'lettre_attendue': lettre_attendue,
+                            'lettre_tapee': char
+                        }
                         # Réinitialiser le mot uniquement si reset_on_error est True
                         if reset_on_error:
                             for symbole in self._symboles:
@@ -156,7 +173,7 @@ class Mot(object):
                     if all(symbole._couleur == (128, 128, 128) for symbole in self._symboles):
                         self._state = False
         
-        return erreur, caracteres_corrects
+        return erreur, caracteres_corrects, info_erreur
 
     def update_position(self, velocity):
         """Déplace le mot à une vitesse donnée et réinitialise s'il sort de l'écran."""
