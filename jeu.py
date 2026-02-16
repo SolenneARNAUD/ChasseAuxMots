@@ -230,7 +230,7 @@ class Jeu:
                             # Créer le nouveau mot
                             self.mot = Mot.Mot.from_string(
                                 Donnees.MOT_DEPART_X,
-                                self.sol_gauche.get_rect().y - 100,
+                                Donnees.MOT_DEPART_Y,
                                 self.liste_mots[self.monde.get_compteur_mot()],
                                 Donnees.MOT_COULEUR
                             )

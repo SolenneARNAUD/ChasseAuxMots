@@ -10,29 +10,43 @@ class Fenetre(object):
         # Initialisation des attributs
         self.size = (Donnees.WIDTH, Donnees.HEIGHT)
         self.couleur_fond = Donnees.COULEUR_FOND
-        self._image = None
+        self._images = []  # Liste d'images pour le fond multicouche
         self.set_image(image)
         self.bandeau = str(Donnees.BANDEAU_TEXTE)
 
     def set_image(self, image):
-        if isinstance(image, str):
+        """Définit l'image ou les images de fond (peut être une liste)."""
+        self._images = []
+        
+        # Si c'est une liste d'images (fond multicouche)
+        if isinstance(image, list):
+            for img_path in image:
+                try:
+                    loaded_img = pg.image.load(img_path).convert_alpha()
+                    loaded_img = pg.transform.smoothscale(loaded_img, self.size)
+                    self._images.append(loaded_img)
+                except Exception as e:
+                    print(f"Erreur chargement image {img_path}: {e}")
+        # Si c'est une seule image (string)
+        elif isinstance(image, str):
             try:
-                self._image = pg.image.load(image).convert()
-                # Redimensionner l'image au format de la fenêtre
-                self._image = pg.transform.smoothscale(self._image, self.size)
+                loaded_img = pg.image.load(image).convert()
+                loaded_img = pg.transform.smoothscale(loaded_img, self.size)
+                self._images.append(loaded_img)
             except Exception as e:
                 print(f"Erreur chargement image {image}: {e}")
-                self._image = None
+        # Si c'est déjà une Surface
         elif isinstance(image, pg.Surface):
-            self._image = image
-        else:
-            self._image = None
+            self._images.append(image)
             
     def afficher_fond(self, screen):
-        if self._image:
-            screen.blit(self._image, (0, 0))
+        """Affiche le fond (une ou plusieurs images superposées)."""
+        if self._images:
+            # Afficher les images en ordre inversé (indice le plus grand = arrière-plan)
+            for img in reversed(self._images):
+                screen.blit(img, (0, 0))
         else:
-            # Fallback : afficher la couleur si l'image ne charge pas
+            # Fallback : afficher la couleur si aucune image n'est chargée
             screen.fill(self.couleur_fond)
     
     def afficher_bandeau(self, screen, niveau, n_mots, total_mots):

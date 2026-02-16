@@ -63,7 +63,7 @@ class Monde(object):
         
         self.personnage = Personnage.Personnage(
             Donnees.PERSONNAGE_DEPART_X,
-            self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
+            Donnees.PERSONNAGE_DEPART_Y,
             sprite_defaut)
         
         # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
@@ -80,7 +80,7 @@ class Monde(object):
         # Initialisation du premier mot à afficher (positionné au-dessus du méchant)
         self.mot = Mot.Mot.from_string(
             Donnees.MOT_DEPART_X_PREMIER,  # Le premier mot spawn dans la fenêtre
-            self.sol_gauche.get_rect().y - 100,
+            Donnees.MOT_DEPART_Y,
             self.liste_mots[0],
             Donnees.MOT_COULEUR)
         
@@ -109,7 +109,7 @@ class Monde(object):
         return Obstacles.Obstacles(
             f"{config['chemin_base']}1.png",
             position_x,
-            self.sol_gauche.get_rect().y + self.sol_gauche.get_rect().height / 4,
+            Donnees.OBSTACLE_DEPART_Y,
             config['type'],
             config['animation_delay'],
             config['nb_images']

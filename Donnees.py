@@ -1,5 +1,6 @@
 import os
 import sys
+from BaseDonnees import Univers
 
 def resource_path(relative_path):
     """ Calcule le chemin absolu pour les ressources (indispensable pour le .exe) """
@@ -16,7 +17,7 @@ FPS = 60
 
 # Personnage
 PERSONNAGE_DEPART_X = WIDTH/6
-PERSONNAGE_DEPART_Y = HEIGHT * 2/3
+PERSONNAGE_DEPART_Y = HEIGHT - 40  # Descendu de 10 pixels
 # Note: Les personnages utilisent maintenant PERSONNAGES_CONFIG dans BaseDonnees.py
 # PERSONNAGE_SKIN est conservé comme fallback pour la rétrocompatibilité
 PERSONNAGE_SKIN = resource_path("images/Man/Viking/viking_attaque_1.png")
@@ -25,7 +26,7 @@ PERSONNAGE_HEIGHT = 120
 # Obstacles
 OBSTACLE_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran
 OBSTACLE_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier obstacle (dans la fenêtre)
-OBSTACLE_DEPART_Y = HEIGHT * 2/3
+OBSTACLE_DEPART_Y = HEIGHT - 40  # Descendu de 10 pixels
 OBSTACLE_SKIN_DINO = resource_path("images/Mechant/dino")
 OBSTACLE_NIMAGES_DINO = 4
 OBSTACLE_NIMAGES_DINO_VOLANT = 7
@@ -38,7 +39,7 @@ OBSTACLE_HEIGHT = 120
 TAILLE_POLICE = 36
 MOT_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran
 MOT_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier mot (dans la fenêtre)
-MOT_DEPART_Y = HEIGHT * 2/3 - 50
+MOT_DEPART_Y = HEIGHT - 180  # 140 pixels au-dessus du monstre
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
 TOTAL_MOTS = 3
@@ -46,10 +47,10 @@ TOTAL_MOTS = 3
 # Sol
 SOL_DEPART_X = WIDTH / 2
 SOL_DEPART_Y = HEIGHT
-SOL_SKIN = resource_path("images/Sol/Terre.png")
+SOL_SKIN = resource_path(Univers["foret_bleue"]["background"]["chemin"] + "1.png")
 SOL_VITESSE = 0.5
 # Fond
-FOND_SKIN = resource_path("images/Fond/volcan.jpg")
+FOND_SKIN = [resource_path(Univers["foret_bleue"]["background"]["chemin"] + f"{i}.png") for i in range(2, 8)]
 FOND_GAME_OVER = resource_path("images/Fond/volcan_erruption.jpg")
 
 # Bandeau
