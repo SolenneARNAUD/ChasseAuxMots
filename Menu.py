@@ -602,8 +602,8 @@ class Menu:
         import BaseDonnees
         
         joueurs_list = []
-        if not BaseDonnees.df_joueurs.empty:
-            joueurs_list = BaseDonnees.df_joueurs[['Nom', 'Prénom']].values.tolist()
+        if BaseDonnees.dict_joueurs:
+            joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
         
         if not joueurs_list:
             # Aucun joueur enregistré, revenir au menu

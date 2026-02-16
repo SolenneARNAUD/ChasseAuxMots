@@ -68,7 +68,7 @@ class Monde(object):
         
         # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
         self.total_mots = Donnees.TOTAL_MOTS
-        all_words = BaseDonnees.df["niveau" + str(niveau)].dropna().tolist()
+        all_words = BaseDonnees.mots["niveau" + str(niveau)]
         self.liste_mots = random.sample(all_words, min(Donnees.TOTAL_MOTS, len(all_words)))
         
         # Initialiser la liste d'obstacles aléatoires

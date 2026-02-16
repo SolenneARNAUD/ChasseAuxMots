@@ -1,10 +1,8 @@
-import pandas as pd
+import json
 import os
 import tempfile
 import shutil
 import atexit
-from datetime import datetime
-
 from datetime import datetime
 
 # Configuration des répertoires
@@ -59,8 +57,8 @@ def lire_repertoire_config():
 
 # Obtenir le répertoire de données depuis la configuration
 REPERTOIRE_DONNEES = lire_repertoire_config()
-FICHIER_JOUEURS = os.path.join(REPERTOIRE_DONNEES, "joueurs.csv")
-FICHIER_JOUEURS_PROJET = os.path.join(SCRIPT_DIR, "joueurs.csv")
+FICHIER_JOUEURS = os.path.join(REPERTOIRE_DONNEES, "joueurs.json")
+FICHIER_JOUEURS_PROJET = os.path.join(SCRIPT_DIR, "joueurs.json")
 
 print(f"[INFO] Repertoire de sauvegarde: {REPERTOIRE_DONNEES}")
 print(f"[INFO] Fichier joueurs: {FICHIER_JOUEURS}")
@@ -138,7 +136,8 @@ mots={
         ]
     }
 
-df = pd.DataFrame({k: pd.Series(v) for k, v in mots.items()})
+# Note: Le dictionnaire 'mots' est directement accessible pour obtenir les mots par niveau
+# Exemple: mots["niveau1"], mots["niveau2"], etc.
 
 OBSTACLES_CONFIG = {
     "dino_volant": {
@@ -411,19 +410,9 @@ def get_animation_delay(personnage_type, animation_name):
     
     return config['animations'][animation_name].get('animation_delay', 5)
 
-# DataFrame pour enregistrer les joueurs
+# Dictionnaire pour enregistrer les joueurs
 def charger_joueurs():
-    """Charge les joueurs depuis le fichier CSV s'il existe, sinon crée un DataFrame vide"""
-    colonnes_attendues = [
-        'Nom', 
-        'Prénom', 
-        'Date_Inscription',
-        'Nb_Parties', 
-        'Mots_Réussis_Total',
-        'Vitesse_Moyenne_WPM',
-        'Derniere_Vitesse_WPM',
-        'Erreurs_Total'
-    ]
+    """Charge les joueurs depuis le fichier JSON s'il existe, sinon crée un dictionnaire vide"""
     
     # Si le fichier TEMP n'existe pas mais que le fichier projet existe, copier
     if not os.path.exists(FICHIER_JOUEURS) and os.path.exists(FICHIER_JOUEURS_PROJET):
@@ -435,55 +424,32 @@ def charger_joueurs():
             print(f"[WARNING] Impossible de copier depuis le projet: {e}")
     
     if os.path.exists(FICHIER_JOUEURS):
-        df = pd.read_csv(FICHIER_JOUEURS)
-        
-        # Migration : Ajouter les colonnes manquantes
-        for col in colonnes_attendues:
-            if col not in df.columns:
-                if col == 'Mots_Réussis_Total':
-                    df[col] = 0
-                elif col == 'Vitesse_Moyenne_WPM':
-                    df[col] = 0.0
-                elif col == 'Derniere_Vitesse_WPM':
-                    df[col] = 0.0
-                elif col == 'Erreurs_Total':
-                    df[col] = 0
-                elif col == 'Date_Inscription':
-                    df[col] = ''
-                else:
-                    df[col] = ''
-        
-        return df
+        try:
+            with open(FICHIER_JOUEURS, 'r', encoding='utf-8') as f:
+                joueurs = json.load(f)
+            return joueurs
+        except Exception as e:
+            print(f"[WARNING] Erreur lors du chargement de {FICHIER_JOUEURS}: {e}")
+            return {}
     else:
-        return pd.DataFrame(columns=colonnes_attendues)
+        return {}
 
-df_joueurs = charger_joueurs()
+dict_joueurs = charger_joueurs()
 
 def sauvegarder_joueurs():
-    """Sauvegarde le DataFrame des joueurs dans un fichier CSV dans le répertoire configuré"""
-    global df_joueurs
+    """Sauvegarde le dictionnaire des joueurs dans un fichier JSON dans le répertoire configuré"""
+    global dict_joueurs
     
     try:
         import random
         # Utiliser le répertoire de données configuré
-        temp_filename = os.path.join(REPERTOIRE_DONNEES, f"joueurs_temp_{random.randint(1000,9999)}.txt")
+        temp_filename = os.path.join(REPERTOIRE_DONNEES, f"joueurs_temp_{random.randint(1000,9999)}.json")
         
         print(f"[DEBUG] Sauvegarde dans: {FICHIER_JOUEURS}")
         
-        # Construire le CSV manuellement
-        df_temp = df_joueurs.fillna('')
-        lines = []
-        lines.append(','.join(df_temp.columns))
-        
-        for _, row in df_temp.iterrows():
-            values = [str(row[col]).replace(',', ';') for col in df_temp.columns]
-            lines.append(','.join(values))
-        
-        csv_content = '\n'.join(lines) + '\n'
-        
         # Écrire dans le fichier temporaire
         with open(temp_filename, 'w', encoding='utf-8') as f:
-            f.write(csv_content)
+            json.dump(dict_joueurs, f, ensure_ascii=False, indent=4)
         
         # Supprimer l'ancien et renommer
         if os.path.exists(FICHIER_JOUEURS):
@@ -491,7 +457,7 @@ def sauvegarder_joueurs():
         
         os.rename(temp_filename, FICHIER_JOUEURS)
         
-        print(f"[DEBUG] Sauvegarde OK: {len(df_joueurs)} lignes")
+        print(f"[DEBUG] Sauvegarde OK: {len(dict_joueurs)} joueurs")
         return True
         
     except Exception as e:
@@ -507,140 +473,77 @@ def sauvegarder_joueurs():
         return False
 
 def ajouter_joueur(nom, prenom):
-    """Ajoute un nouveau joueur au DataFrame et sauvegarde"""
-    global df_joueurs
+    """Ajoute un nouveau joueur au dictionnaire et sauvegarde"""
+    global dict_joueurs
     
     print("[DEBUG] Debut ajouter_joueur()")
     print(f"[DEBUG] Repertoire de sauvegarde: {REPERTOIRE_DONNEES}")
     
-    # Vérifier si le joueur existe déjà
-    joueur_existant = df_joueurs[
-        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
-        (df_joueurs['Prénom'].str.lower() == prenom.lower())
-    ]
+    # Créer la clé unique
+    cle = f"{nom}_{prenom}".lower()
     
-    if not joueur_existant.empty:
+    # Vérifier si le joueur existe déjà
+    if cle in dict_joueurs:
         return False, "Ce joueur existe deja!"
     
     # Créer les données du nouveau joueur
-    nouvelle_ligne = {
-        'Nom': nom.capitalize(),
-        'Prénom': prenom.capitalize(),
-        'Date_Inscription': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        'Nb_Parties': 0,
-        'Mots_Réussis_Total': 0,
-        'Vitesse_Moyenne_WPM': 0.0,
-        'Derniere_Vitesse_WPM': 40.0,
-        'Erreurs_Total': 0
+    dict_joueurs[cle] = {
+        'nom': nom.capitalize(),
+        'prenom': prenom.capitalize(),
+        'date_inscription': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'nb_parties': 0,
+        'mots_reussis_total': 0,
+        'vitesse_moyenne_wpm': 0.0,
+        'derniere_vitesse_wpm': 40.0,
+        'erreurs_total': 0
     }
     
-    print(f"[DEBUG] Nouveau joueur: {nouvelle_ligne}")
-    
-    # Ajouter au DataFrame en mémoire
-    df_joueurs = pd.concat([df_joueurs, pd.DataFrame([nouvelle_ligne])], ignore_index=True)
-    print(f"[DEBUG] DataFrame en memoire: {len(df_joueurs)} lignes")
+    print(f"[DEBUG] Nouveau joueur: {dict_joueurs[cle]}")
+    print(f"[DEBUG] Dictionnaire en memoire: {len(dict_joueurs)} joueurs")
     
     # ECRIRE DANS LE REPERTOIRE CONFIGURE (ou TEMP par défaut)
     try:
-        import random
-        # Utiliser le répertoire de données configuré
-        temp_filename = os.path.join(REPERTOIRE_DONNEES, f"joueurs_temp_{random.randint(1000,9999)}.txt")
+        succes = sauvegarder_joueurs()
         
-        print(f"[DEBUG] Ecriture dans: {temp_filename}")
-        
-        # Test rapide : peut-on créer un fichier ?
-        try:
-            test_file = os.path.join(REPERTOIRE_DONNEES, f"test_{random.randint(1000,9999)}.txt")
-            with open(test_file, 'w') as f:
-                f.write("test")
-            os.remove(test_file)
-            print("[DEBUG] Test ecriture: OK")
-        except Exception as test_e:
-            print(f"[DEBUG] Test ecriture: ECHEC - {test_e}")
-        
-        # Construire le CSV manuellement
-        df_temp = df_joueurs.fillna('')
-        lines = []
-        
-        # En-tête
-        lines.append(','.join(df_temp.columns))
-        
-        # Données
-        for _, row in df_temp.iterrows():
-            values = [str(row[col]).replace(',', ';') for col in df_temp.columns]
-            lines.append(','.join(values))
-        
-        csv_content = '\n'.join(lines) + '\n'
-        print(f"[DEBUG] Contenu prepare: {len(csv_content)} caracteres")
-        
-        # Écrire dans le fichier temporaire
-        print("[DEBUG] Ecriture du fichier temporaire...")
-        with open(temp_filename, 'w', encoding='utf-8') as f:
-            f.write(csv_content)
-        
-        print("[DEBUG] Fichier temporaire ecrit!")
-        
-        # Vérifier qu'il existe
-        if not os.path.exists(temp_filename):
-            raise IOError("Fichier temporaire non cree")
-        
-        print(f"[DEBUG] Taille: {os.path.getsize(temp_filename)} bytes")
-        
-        # Supprimer l'ancien fichier et renommer
-        print(f"[DEBUG] Suppression de {FICHIER_JOUEURS}...")
-        if os.path.exists(FICHIER_JOUEURS):
-            os.remove(FICHIER_JOUEURS)
-        
-        print(f"[DEBUG] Renommage {temp_filename} -> {FICHIER_JOUEURS}...")
-        os.rename(temp_filename, FICHIER_JOUEURS)
-        
-        print("[DEBUG] SUCCES!")
-        print(f"[INFO] Joueur sauvegarde dans: {FICHIER_JOUEURS}")
-        return True, "Joueur cree avec succes!"
+        if succes:
+            print("[DEBUG] SUCCES!")
+            print(f"[INFO] Joueur sauvegarde dans: {FICHIER_JOUEURS}")
+            return True, "Joueur cree avec succes!"
+        else:
+            return True, "Joueur cree en memoire (erreur sauvegarde)"
         
     except Exception as e:
         print(f"[DEBUG] ERREUR: {e}")
         import traceback
         traceback.print_exc()
-        
-        # Nettoyer le fichier temporaire si existe
-        try:
-            if 'temp_filename' in locals() and os.path.exists(temp_filename):
-                os.remove(temp_filename)
-        except:
-            pass
-        
         return True, f"Joueur cree en memoire (erreur sauvegarde: {e})"
 
 def joueur_existe(nom, prenom):
     """Verifie si un joueur existe"""
-    return not df_joueurs[
-        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
-        (df_joueurs['Prénom'].str.lower() == prenom.lower())
-    ].empty
+    cle = f"{nom}_{prenom}".lower()
+    return cle in dict_joueurs
 
 def get_joueur(nom, prenom):
     """Recupere les donnees d'un joueur"""
-    joueur = df_joueurs[
-        (df_joueurs['Nom'].str.lower() == nom.lower()) & 
-        (df_joueurs['Prénom'].str.lower() == prenom.lower())
-    ]
-    if not joueur.empty:
-        return joueur.iloc[0]
+    cle = f"{nom}_{prenom}".lower()
+    if cle in dict_joueurs:
+        return dict_joueurs[cle]
     return None
 
 def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
     """Met a jour les statistiques du joueur apres une partie"""
-    global df_joueurs
-    mask = (df_joueurs['Nom'].str.lower() == nom.lower()) & (df_joueurs['Prénom'].str.lower() == prenom.lower())
-    if mask.any():
-        idx = df_joueurs[mask].index[0]
+    global dict_joueurs
+    
+    cle = f"{nom}_{prenom}".lower()
+    
+    if cle in dict_joueurs:
+        joueur = dict_joueurs[cle]
         
         # Récupérer les anciennes stats
-        nb_parties_ancien = df_joueurs.loc[idx, 'Nb_Parties']
-        mots_reussis_ancien = df_joueurs.loc[idx, 'Mots_Réussis_Total']
-        vitesse_ancienne = df_joueurs.loc[idx, 'Vitesse_Moyenne_WPM']
-        erreurs_ancien = df_joueurs.loc[idx, 'Erreurs_Total']
+        nb_parties_ancien = joueur['nb_parties']
+        mots_reussis_ancien = joueur['mots_reussis_total']
+        vitesse_ancienne = joueur['vitesse_moyenne_wpm']
+        erreurs_ancien = joueur['erreurs_total']
         
         # Calculer les nouvelles statistiques
         nb_parties_nouveau = nb_parties_ancien + 1
@@ -655,11 +558,11 @@ def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
         erreurs_nouveau = erreurs_ancien + nb_erreurs
         
         # Mettre à jour les valeurs
-        df_joueurs.loc[idx, 'Nb_Parties'] = nb_parties_nouveau
-        df_joueurs.loc[idx, 'Mots_Réussis_Total'] = mots_reussis_nouveau
-        df_joueurs.loc[idx, 'Vitesse_Moyenne_WPM'] = round(vitesse_nouvelle, 2)
-        # Ne pas modifier 'Derniere_Vitesse_WPM' ici : conserver la valeur saisie
-        df_joueurs.loc[idx, 'Erreurs_Total'] = erreurs_nouveau
+        joueur['nb_parties'] = nb_parties_nouveau
+        joueur['mots_reussis_total'] = mots_reussis_nouveau
+        joueur['vitesse_moyenne_wpm'] = round(vitesse_nouvelle, 2)
+        # Ne pas modifier 'derniere_vitesse_wpm' ici : conserver la valeur saisie
+        joueur['erreurs_total'] = erreurs_nouveau
         
         # Tenter de sauvegarder (ne crash pas si échec)
         succes = sauvegarder_joueurs()
@@ -671,12 +574,13 @@ def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
 
 def set_derniere_vitesse(nom, prenom, valeur):
     """Enregistre la dernière valeur de vitesse entrée pour le joueur."""
-    global df_joueurs
-    mask = (df_joueurs['Nom'].str.lower() == nom.lower()) & (df_joueurs['Prénom'].str.lower() == prenom.lower())
-    if mask.any():
-        idx = df_joueurs[mask].index[0]
+    global dict_joueurs
+    
+    cle = f"{nom}_{prenom}".lower()
+    
+    if cle in dict_joueurs:
         try:
-            df_joueurs.loc[idx, 'Derniere_Vitesse_WPM'] = float(valeur)
+            dict_joueurs[cle]['derniere_vitesse_wpm'] = float(valeur)
             sauvegarder_joueurs()
         except Exception:
             pass

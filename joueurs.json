@@ -1,0 +1,34 @@
+{
+    "kapfer_vincent": {
+        "nom": "Kapfer",
+        "prenom": "Vincent",
+        "date_inscription": "2026-02-09 11:06:44",
+        "nb_parties": 13,
+        "score_total": 0.0,
+        "mots_reussis_total": 94,
+        "vitesse_moyenne_wpm": 15.16,
+        "erreurs_total": 19,
+        "derniere_vitesse_wpm": 200.0
+    },
+    "test_test": {
+        "nom": "Test",
+        "prenom": "Test",
+        "date_inscription": "2026-02-11 09:32:49",
+        "nb_parties": 0,
+        "score_total": 0.0,
+        "mots_reussis_total": 0,
+        "vitesse_moyenne_wpm": 0.0,
+        "erreurs_total": 0,
+        "derniere_vitesse_wpm": 0.0
+    },
+    "arnaud_solenne": {
+        "nom": "Arnaud",
+        "prenom": "Solenne",
+        "date_inscription": "2026-02-16 11:46:34",
+        "nb_parties": 2,
+        "mots_reussis_total": 6,
+        "vitesse_moyenne_wpm": 30.57,
+        "derniere_vitesse_wpm": 200.0,
+        "erreurs_total": 0
+    }
+}

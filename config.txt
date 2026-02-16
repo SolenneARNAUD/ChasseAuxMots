@@ -1,4 +1,4 @@
-# Configuration ChasseAuxMots - Chemin de sauvegarde des données
+# Configuration ChasseAuxMots - Chemin de sauvegarde des donnees
 # Modifiez cette ligne pour changer le dossier de sauvegarde
 # Exemple: C:\Users\VotreNom\Documents\ChasseAuxMots
 
