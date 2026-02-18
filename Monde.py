@@ -50,9 +50,17 @@ class Monde(object):
         self.temps_apparition_mot = None  # Temps d'apparition du mot actuel
         self.caracteres_tapes_mot_actuel = 0  # Nombre de caractères tapés pour le mot actuel
         self.donnees_frappe = []  # Liste des données de frappe: {'temps_frappe': ms, 'caracteres_tapes': int}
+        
+        # Variables pour le niveau 4
+        self.niveau = None
+        self.print_disparition_affiche = False  # Pour éviter d'afficher le print plusieurs fois
+        self.mot_entierement_visible = False  # Pour tracker si le mot est entièrement entré dans la fenêtre
+        self.temps_entree_complete = None  # Temps où le mot est devenu entièrement visible
+        self.afficher_seulement_lettres_tapees = False  # Pour n'afficher que les lettres tapées
     
     def initialiser_niveau(self, niveau, univers="foret_bleue"):
         """Initialise tous les éléments du monde pour le niveau sélectionné."""
+        self.niveau = niveau  # Stocker le niveau actuel
         self.univers = univers  # Stocker l'univers choisi
         # Initialisation des sols
         self.sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
@@ -307,6 +315,10 @@ class Monde(object):
         import pygame
         self.temps_apparition_mot = temps_actuel if temps_actuel else pygame.time.get_ticks()
         self.caracteres_tapes_mot_actuel = 0
+        self.print_disparition_affiche = False  # Réinitialiser pour le nouveau mot
+        self.mot_entierement_visible = False  # Réinitialiser le flag de visibilité
+        self.temps_entree_complete = None  # Réinitialiser le temps d'entrée complète
+        self.afficher_seulement_lettres_tapees = False  # Réinitialiser le mode d'affichage
     
     def ajouter_caractere_tape(self):
         """Incrémente le compteur de caractères tapés pour le mot actuel."""
@@ -347,3 +359,8 @@ class Monde(object):
     
     def get_obstacle_actuel_type(self):
         return self.obstacle_actuel_type
+    
+    def faire_disparaitre_mot(self):
+        """Fait disparaître le mot de l'écran (pour le niveau 4)."""
+        # Ne pas cacher complètement, mais activer le mode "seulement lettres tapées"
+        self.afficher_seulement_lettres_tapees = True

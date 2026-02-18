@@ -57,33 +57,66 @@ class Mot(object):
     def get_texte(self):
         """Retourne le texte complet du mot."""
         return ''.join([s._symbole for s in self._symboles])
+    
+    def get_largeur(self):
+        """Retourne la largeur totale du mot en pixels."""
+        font = pg.font.Font(None, Donnees.TAILLE_POLICE)
+        total_width = 0
+        for s in self._symboles:
+            ch = getattr(s, "symbole", None) or getattr(s, "_symbole", "?")
+            surf = font.render(ch, True, (255, 255, 255))  # Couleur n'importe
+            total_width += surf.get_width()
+        return total_width
 
-    def afficher(self, screen):
+    def afficher(self, screen, afficher_seulement_tapees=False):
         """
         Rend chaque symbole en surface, centre horizontalement le bloc de texte
         sur self._position_x et aligne le bas du texte sur self._position_y.
+        
+        Args:
+            screen: Surface pygame où afficher
+            afficher_seulement_tapees: Si True, n'affiche que les lettres déjà tapées (grises)
         """
         font = pg.font.Font(None, Donnees.TAILLE_POLICE)
         # Pré-calculer surfaces et tailles
         surfaces = []
+        symboles_a_afficher = []  # Pour tracker quels symboles afficher
         total_width = 0
         max_height = 0
         for s in self._symboles:
             ch = getattr(s, "symbole", None) or getattr(s, "_symbole", "?")
             couleur = getattr(s, "couleur", None) or getattr(s, "_couleur", Donnees.MOT_COULEUR)
-            surf = font.render(ch, True, couleur)
-            surfaces.append(surf)
-            total_width += surf.get_width()
-            max_height = max(max_height, surf.get_height())
+            
+            # Si mode "seulement tapées", ne prendre que les lettres grises
+            if afficher_seulement_tapees:
+                if couleur == (128, 128, 128):  # Lettre déjà tapée
+                    surf = font.render(ch, True, couleur)
+                    surfaces.append(surf)
+                    symboles_a_afficher.append(True)
+                    total_width += surf.get_width()
+                    max_height = max(max_height, surf.get_height())
+                else:
+                    # Ne pas afficher cette lettre, mais garder l'espace
+                    symboles_a_afficher.append(False)
+            else:
+                surf = font.render(ch, True, couleur)
+                surfaces.append(surf)
+                symboles_a_afficher.append(True)
+                total_width += surf.get_width()
+                max_height = max(max_height, surf.get_height())
 
         # point de départ pour centrer horizontalement (position_x = centre du mot)
         start_x = int(self._position_x) - total_width // 2
         x = start_x
-        for surf in surfaces:
-            # aligner le bas de la surface sur position_y :
-            y = int(self._position_y) - surf.get_height()
-            screen.blit(surf, (int(x), int(y)))
-            x += surf.get_width()
+        surf_idx = 0
+        for idx, doit_afficher in enumerate(symboles_a_afficher):
+            if doit_afficher:
+                surf = surfaces[surf_idx]
+                # aligner le bas de la surface sur position_y :
+                y = int(self._position_y) - surf.get_height()
+                screen.blit(surf, (int(x), int(y)))
+                x += surf.get_width()
+                surf_idx += 1
 
  
     def conversion_symbole(chaine, couleur=None):

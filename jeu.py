@@ -31,6 +31,8 @@ class Jeu:
             self.vitesse_pourcentage = 100     # Vitesse par défaut (en %) choisie par le joueur
         if not hasattr(self, 'reset_on_error'):
             self.reset_on_error = True          # Réinitialiser le mot en cas d'erreur
+        if not hasattr(self, 'delai_niveau4'):
+            self.delai_niveau4 = Donnees.DELAI_NIVEAU4_PAR_DEFAUT  # Délai d'affichage niveau 4
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
@@ -82,7 +84,8 @@ class Jeu:
             vitesse_frappe=vitesse_défaite,
             vitesse_defilement=self.vitesse_pourcentage,
             reset_mots_actif=self.reset_on_error,
-            score=self.monde.get_compteur_mot()
+            score=self.monde.get_compteur_mot(),
+            delai_niveau4=self.delai_niveau4
         )
         
         # État de l'écran : 'gameover' ou 'stats'
@@ -138,7 +141,8 @@ class Jeu:
             vitesse_frappe=self.monde.get_vitesse_finale(),
             vitesse_defilement=self.vitesse_pourcentage,
             reset_mots_actif=self.reset_on_error,
-            score=self.monde.get_compteur_mot()
+            score=self.monde.get_compteur_mot(),
+            delai_niveau4=self.delai_niveau4
         )
         
         # État de l'écran : 'reussite' ou 'stats'
@@ -306,6 +310,27 @@ class Jeu:
                 
                 # Mise à jour de l'animation du personnage
                 self.man.update_animation()
+                
+                # Pour le niveau 4 : vérifier si le mot est entièrement dans la fenêtre
+                if self.niveau == 4 and not self.monde.mot_entierement_visible:
+                    # Calculer si le mot est entièrement visible
+                    largeur_mot = self.mot.get_largeur()
+                    bord_droit_mot = self.mot.position_x + largeur_mot / 2
+                    bord_gauche_mot = self.mot.position_x - largeur_mot / 2
+                    
+                    # Le mot est entièrement visible si ses deux bords sont dans la fenêtre
+                    if bord_droit_mot <= Donnees.WIDTH and bord_gauche_mot >= 0:
+                        self.monde.mot_entierement_visible = True
+                        self.monde.temps_entree_complete = pygame.time.get_ticks()
+                
+                # Vérifier si 1.5 secondes se sont écoulées depuis l'entrée complète
+                if self.niveau == 4 and self.monde.mot_entierement_visible and self.monde.temps_entree_complete is not None:
+                    temps_actuel = pygame.time.get_ticks()
+                    temps_ecoule = temps_actuel - self.monde.temps_entree_complete
+                    if temps_ecoule >= self.delai_niveau4 and not self.monde.print_disparition_affiche:
+                        print("c'est l'heure de disparaitre")
+                        self.monde.faire_disparaitre_mot()
+                        self.monde.print_disparition_affiche = True
             
             # Affichage des éléments
             self.fenetre.afficher_fond(self.screen)
@@ -314,7 +339,11 @@ class Jeu:
             self.man.afficher(self.screen)
             self.mechant.afficher(self.screen)
             if self.monde.get_mot_visible():
-                self.mot.afficher(self.screen)
+                # Au niveau 4, après disparition, afficher seulement les lettres tapées
+                if self.niveau == 4 and self.monde.afficher_seulement_lettres_tapees:
+                    self.mot.afficher(self.screen, afficher_seulement_tapees=True)
+                else:
+                    self.mot.afficher(self.screen)
             self.fenetre.afficher_bandeau(
                 self.screen, 
                 self.niveau, 
@@ -340,11 +369,13 @@ class Jeu:
                 # Initialiser avec les derniers paramètres du joueur
                 self.vitesse_pourcentage = derniers_params['vitesse_defilement']
                 self.reset_on_error = derniers_params['reset_mots_actif']
-                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
+                self.delai_niveau4 = derniers_params.get('delai_niveau4', Donnees.DELAI_NIVEAU4_PAR_DEFAUT)
+                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}, délai_niveau4={self.delai_niveau4}ms")
             else:
                 # Valeurs par défaut pour un nouveau joueur
                 self.vitesse_pourcentage = 100
                 self.reset_on_error = True
+                self.delai_niveau4 = Donnees.DELAI_NIVEAU4_PAR_DEFAUT
             
             # Boucle de sélection du monde
             while True:
@@ -371,14 +402,15 @@ class Jeu:
                         self.screen, 
                         joueur=(self.nom_joueur, self.prenom_joueur),
                         vitesse_par_defaut=self.vitesse_pourcentage,
-                        reset_on_error_defaut=self.reset_on_error
+                        reset_on_error_defaut=self.reset_on_error,
+                        delai_niveau4_defaut=self.delai_niveau4
                     )
                     
                     # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du monde
                     if resultat is None:
                         break  # Sortir de la boucle de niveau pour retourner à la sélection du monde
                     
-                    self.niveau, self.vitesse_pourcentage, self.reset_on_error = resultat
+                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.delai_niveau4 = resultat
                     
                     # Appliquer la vitesse configurée
                     self._appliquer_vitesse(self.vitesse_pourcentage)

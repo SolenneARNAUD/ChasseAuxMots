@@ -70,6 +70,9 @@ VITESSE_POURCENTAGE_PAR_DEFAUT = 100  # Vitesse par défaut en pourcentage (100%
 VITESSE_POURCENTAGE_MIN = 25  # 25% = vitesse lente
 VITESSE_POURCENTAGE_MAX = 500  # 500% = 5x plus rapide
 RESET_ON_ERROR_PAR_DEFAUT = True  # Si True, le mot est remis à zéro lors d'une erreur de frappe
+DELAI_NIVEAU4_PAR_DEFAUT = 1500  # Délai en ms avant disparition du mot au niveau 4
+DELAI_NIVEAU4_MIN = 500  # Délai minimum (0.5 secondes)
+DELAI_NIVEAU4_MAX = 10000  # Délai maximum (10 secondes)
 
 # Couleurs interface
 COULEUR_NOIR = (0, 0, 0)
