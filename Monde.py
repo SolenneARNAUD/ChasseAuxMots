@@ -123,6 +123,9 @@ class Monde(object):
         
         obstacle_type = self.liste_obstacles[index]
         
+        # Utiliser la position_y du personnage pour aligner les pieds
+        position_y = self.personnage.position_y if self.personnage else Donnees.OBSTACLE_DEPART_Y
+        
         # Essayer de charger avec la configuration d'univers
         mechants_disponibles = BaseDonnees.get_mechants_univers(self.univers)
         
@@ -138,15 +141,16 @@ class Monde(object):
                 # Le premier obstacle spawn dans la fenêtre, les autres hors écran
                 position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
                 
-                # Créer l'obstacle avec les frames d'animation
+                # Créer l'obstacle avec les frames d'animation et l'offset global
                 return Obstacles.Obstacles(
                     config['frames'][0],  # Utiliser la première frame
                     position_x,
-                    Donnees.OBSTACLE_DEPART_Y,
+                    position_y,  # Utiliser la position_y du personnage
                     config['type'],
                     config['animation_delay'],
                     config['nb_images'],
-                    animation_frames=config['frames']  # Passer les frames d'animation
+                    animation_frames=config['frames'],  # Passer les frames d'animation
+                    foot_offset=Donnees.MECHANT_FOOT_OFFSET  # Utiliser l'offset global
                 )
         
         # Fallback vers ancienne config
@@ -163,10 +167,11 @@ class Monde(object):
             return Obstacles.Obstacles(
                 f"{config['chemin_base']}1.png",
                 position_x,
-                Donnees.OBSTACLE_DEPART_Y,
+                position_y,  # Utiliser la position_y du personnage
                 config['type'],
                 config['animation_delay'],
-                config['nb_images']
+                config['nb_images'],
+                foot_offset=Donnees.MECHANT_FOOT_OFFSET  # Utiliser l'offset global
             )
         
         return None

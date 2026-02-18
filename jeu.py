@@ -252,6 +252,7 @@ class Jeu:
                 
                 if abs(distance_x) <= self.monde.get_distance_mechant_man():
                     self.mechant.position_x = self.man.position_x + self.monde.get_distance_mechant_man()
+                    self.mechant.position_y = self.man.position_y  # Aligner les pieds
                     self.monde.set_mechant_move_to_man(False)
                     self.monde.set_animation_in_progress(True)
                     
@@ -269,10 +270,12 @@ class Jeu:
                         self.man.start_animation(animation_frames, animation_delay=animation_delay)
                 else:
                     self.mechant.position_x -= self.mechant_step
+                    self.mechant.position_y = self.man.position_y  # Aligner les pieds pendant le déplacement
             
             # Bloquer le méchant à la bonne position pendant l'animation
             if self.monde.get_animation_in_progress() and not self.monde.get_mechant_move_to_man():
                 self.mechant.position_x = self.man.position_x + self.monde.get_distance_mechant_man()
+                self.mechant.position_y = self.man.position_y  # Aligner les pieds
             
             # Gestion du délai et du respawn après animation
             if self.monde.get_animation_in_progress():

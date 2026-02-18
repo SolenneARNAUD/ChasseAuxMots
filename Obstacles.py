@@ -4,10 +4,11 @@ import Donnees
 class Obstacles(object):
     "Classe correspondant aux obstacles du décor."
 
-    def __init__(self, image, position_x, position_y, type, animation_delay = 5, nb_images=4, animation_frames=None):
+    def __init__(self, image, position_x, position_y, type, animation_delay = 5, nb_images=4, animation_frames=None, foot_offset=0):
         "Constructeur de la classe Obstacles."
         self._position_x = int(position_x)   # centre X
         self._position_y = int(position_y)   # bottom Y
+        self._foot_offset = int(foot_offset)  # Ajustement vertical pour aligner les pieds
         self.type = type  # 0: à sauter, 1: en hauteur, 2: méchant
         self.animation_delay = animation_delay
         self.nb_images = nb_images
@@ -35,8 +36,8 @@ class Obstacles(object):
                     self.image = pg.transform.smoothscale(self.image, new_size)
                 # Flipper l'image horizontalement (miroir)
                 self.image = pg.transform.flip(self.image, True, False)
-                # midbottom => center X, bottom Y
-                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+                # midbottom => center X, bottom Y (avec offset)
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y + self._foot_offset))
             except Exception as e:
                 print(f"Erreur chargement image {image}: {e}")
                 self.image = None
@@ -45,7 +46,7 @@ class Obstacles(object):
             self.image = image
             # Flipper l'image horizontalement (miroir)
             self.image = pg.transform.flip(self.image, True, False)
-            self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+            self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y + self._foot_offset))
         else:
             self.image = None
             self.rect = None
@@ -61,7 +62,7 @@ class Obstacles(object):
         if frame_path in self.image_cache:
             self.image = self.image_cache[frame_path]
             if self.rect:
-                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y + self._foot_offset))
             return True
         
         # Charger la frame
@@ -80,11 +81,11 @@ class Obstacles(object):
             self.image_cache[frame_path] = img
             self.image = img
             
-            # Mettre à jour le rect
+            # Mettre à jour le rect (avec offset)
             if self.rect:
-                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y + self._foot_offset))
             else:
-                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
+                self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y + self._foot_offset))
             
             return True
         except Exception as e:
@@ -124,7 +125,8 @@ class Obstacles(object):
         if isinstance(value, (int, float)):
             self._position_y = int(value)
             if self.rect:
-                self.rect.bottom = self._position_y
+                # Appliquer l'offset pour aligner les pieds visuels
+                self.rect.bottom = self._position_y + self._foot_offset
 
     def afficher(self, screen):
         if self.image and self.rect:

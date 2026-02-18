@@ -236,6 +236,12 @@ Univers = {
         },
         "personnages": {
             "Skelette_Crusader_1": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_1/PNG/PNG Sequences/Idle/0_Skeleton_Crusader_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Crusader_1/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
                     "nb_images": 24,
@@ -244,6 +250,12 @@ Univers = {
                 }
             },
             "Skelette_Crusader_2": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_2/PNG/PNG Sequences/Idle/0_Skeleton_Crusader_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Crusader_2/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
                     "nb_images": 24,
@@ -252,6 +264,12 @@ Univers = {
                 }
             },
             "Skelette_Crusader_3": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_3/PNG/PNG Sequences/Idle/0_Skeleton_Crusader_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Crusader_3/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
                     "nb_images": 24,
@@ -260,6 +278,12 @@ Univers = {
                 }
             },
             "Skelette_warrior_1": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_1/PNG/PNG Sequences/Idle/0_Skeleton_Warrior_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Warrior_1/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
                     "nb_images": 24,
@@ -268,6 +292,12 @@ Univers = {
                 }
             },
             "Skelette_warrior_2": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_2/PNG/PNG Sequences/Idle/0_Skeleton_Warrior_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Warrior_2/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
                     "nb_images": 24,
@@ -276,6 +306,12 @@ Univers = {
                 }
             },
             "Skelette_warrior_3": {
+                "idle": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_3/PNG/PNG Sequences/Idle/0_Skeleton_Warrior_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_bleue/Skeleton_Warrior_3/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
                     "nb_images": 24,
@@ -291,6 +327,12 @@ Univers = {
         },
         "personnages": {
             "Golem_01": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Golem_01/PNG Sequences/Idle/Golem_01_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Golem_01/PNG Sequences/Walking/Golem_01_Walking_",
                     "nb_images": 18,
@@ -299,6 +341,12 @@ Univers = {
                 }
             },
             "Golem_02": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Golem_02/PNG Sequences/Idle/Golem_02_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Golem_02/PNG Sequences/Walking/Golem_02_Walking_",
                     "nb_images": 18,
@@ -307,6 +355,12 @@ Univers = {
                 }
             },
             "Golem_03": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Golem_03/PNG Sequences/Idle/Golem_03_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Golem_03/PNG Sequences/Walking/Golem_03_Walking_",
                     "nb_images": 18,
@@ -315,6 +369,12 @@ Univers = {
                 }
             },
             "Wraith_01": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Idle/Wraith_01_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Walking/Wraith_01_Moving Forward_",
                     "nb_images": 18,
@@ -323,6 +383,12 @@ Univers = {
                 }
             },
             "Wraith_02": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Idle/Wraith_02_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Walking/Wraith_02_Moving Forward_",
                     "nb_images": 18,
@@ -331,6 +397,12 @@ Univers = {
                 }
             },
             "Wraith_03": {
+                "idle": {
+                    "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Idle/Wraith_03_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Walking/Wraith_03_Moving Forward_",
                     "nb_images": 18,
@@ -346,6 +418,12 @@ Univers = {
         },
         "personnages": {
             "Golem_1": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_1/PNG/PNG Sequences/Idle/0_Golem_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Golem_1/PNG/PNG Sequences/Walking/0_Golem_Walking_",
                     "nb_images": 18,
@@ -354,6 +432,12 @@ Univers = {
                 }
             },
             "Golem_2": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_2/PNG/PNG Sequences/Idle/0_Golem_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Golem_2/PNG/PNG Sequences/Walking/0_Golem_Walking_",
                     "nb_images": 18,
@@ -362,6 +446,12 @@ Univers = {
                 }
             },
             "Golem_3": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Golem_3/PNG/PNG Sequences/Walking/0_Golem_Walking_",
                     "nb_images": 18,
@@ -370,6 +460,12 @@ Univers = {
                 }
             },
             "Satyr_01": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_01/PNG Sequences/Idle/Satyr_01_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Satyr_01/PNG Sequences/Walking/Satyr_01_Walking_",
                     "nb_images": 18,
@@ -378,6 +474,12 @@ Univers = {
                 }
             },
             "Satyr_02": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_02/PNG Sequences/Idle/Satyr_02_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Satyr_02/PNG Sequences/Walking/Satyr_02_Walking_",
                     "nb_images": 18,
@@ -386,6 +488,12 @@ Univers = {
                 }
             },
             "Satyr_03": {
+                "idle": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_03/PNG Sequences/Idle/Satyr_03_Idle_",
+                    "nb_images": 12,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Foret_au_champignon/Satyr_03/PNG Sequences/Walking/Satyr_03_Walking_",
                     "nb_images": 18,
@@ -401,6 +509,12 @@ Univers = {
         },
         "personnages": {
             "Forest_Ranger_1": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_1/PNG/PNG Sequences/Idle/0_Forest_Ranger_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Forest_Ranger_1/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
                     "nb_images": 18,
@@ -409,6 +523,12 @@ Univers = {
                 }
             },
             "Forest_Ranger_2": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_2/PNG/PNG Sequences/Idle/0_Forest_Ranger_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Forest_Ranger_2/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
                     "nb_images": 18,
@@ -417,6 +537,12 @@ Univers = {
                 }
             },
             "Forest_Ranger_3": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_3/PNG/PNG Sequences/Idle/0_Forest_Ranger_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Forest_Ranger_3/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
                     "nb_images": 18,
@@ -425,6 +551,12 @@ Univers = {
                 }
             },
             "Minotaur_1": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_1/PNG/PNG Sequences/Idle/0_Minotaur_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Minotaur_1/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
                     "nb_images": 18,
@@ -433,6 +565,12 @@ Univers = {
                 }
             },
             "Minotaur_2": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_2/PNG/PNG Sequences/Idle/0_Minotaur_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Minotaur_2/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
                     "nb_images": 18,
@@ -441,6 +579,12 @@ Univers = {
                 }
             },
             "Minotaur_3": {
+                "idle": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_3/PNG/PNG Sequences/Idle/0_Minotaur_Idle_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                },
                 "walking": {
                     "chemin_base": "images/Vallee_verte/Minotaur_3/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
                     "nb_images": 18,
@@ -559,14 +703,14 @@ def get_mechants_univers(univers_cle):
     
     return list(Univers[univers_cle]["personnages"].keys())
 
-def get_mechant_animation_frames(univers_cle, mechant_nom, animation_name="walking"):
+def get_mechant_animation_frames(univers_cle, mechant_nom, animation_name="idle"):
     """
     Génère la liste des chemins des frames d'animation pour un méchant.
     
     Args:
         univers_cle: Clé de l'univers (ex: "foret_bleue")
         mechant_nom: Nom du méchant (ex: "Skelette_Crusader_1")
-        animation_name: Nom de l'animation (par défaut "walking")
+        animation_name: Nom de l'animation (par défaut "idle")
     
     Returns:
         Tuple (liste des chemins des frames, nombre d'images, délai animation)

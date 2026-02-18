@@ -30,22 +30,14 @@
             },
             "foret_violette": {
                 "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:12:15",
-                        "erreurs": [],
-                        "vitesse_frappe": 24.41,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
+                "niveau_2": [],
                 "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
             },
             "foret_bleue": {
                 "niveau_1": [],
+<<<<<<< HEAD
                 "niveau_2": [
                     {
                         "timestamp": "2026-02-18 10:09:02",
@@ -112,6 +104,9 @@
                         "score": 3
                     }
                 ],
+=======
+                "niveau_2": [],
+>>>>>>> c6aa1293d278f2338cb029e909e603f20fc45f1c
                 "niveau_3": [],
                 "niveau_4": [
                     {
@@ -407,6 +402,130 @@
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
+<<<<<<< HEAD
+=======
+                    },
+                    {
+                        "timestamp": "2026-02-18 09:59:25",
+                        "erreurs": [],
+                        "vitesse_frappe": 25.8,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:00:08",
+                        "erreurs": [
+                            {
+                                "mot": "sol",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "meute",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "j"
+                            }
+                        ],
+                        "vitesse_frappe": 16.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:10:24",
+                        "erreurs": [
+                            {
+                                "mot": "épine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "b"
+                            }
+                        ],
+                        "vitesse_frappe": 17.06,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:32:51",
+                        "erreurs": [],
+                        "vitesse_frappe": 154.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:33:23",
+                        "erreurs": [],
+                        "vitesse_frappe": 193.76,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:34:45",
+                        "erreurs": [
+                            {
+                                "mot": "terre",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "f"
+                            },
+                            {
+                                "mot": "terre",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 2.51,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:37:08",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:53:03",
+                        "erreurs": [
+                            {
+                                "mot": "queue",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 1.8,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:09:33",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.43,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+>>>>>>> c6aa1293d278f2338cb029e909e603f20fc45f1c
                     }
                 ],
                 "niveau_3": [
