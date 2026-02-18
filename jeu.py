@@ -69,14 +69,8 @@ class Jeu:
     
     def _gerer_game_over(self):
         """Gère l'affichage et la logique du game over."""
-        self.fenetre.afficher_game_over(self.screen)
-        pygame.display.flip()
-        
-        # Calculer les statistiques
-        temps_fin = pygame.time.get_ticks()
-        temps_total_ms = temps_fin - self.monde.get_temps_debut()
-        temps_total_min = temps_total_ms / 60000.0
-        vitesse_défaite = self.monde.get_compteur_mot() / temps_total_min if temps_total_min > 0 else 0
+        # Calculer la vitesse de frappe en caractères/min
+        vitesse_défaite = self.monde.calculer_vitesse_frappe()
         
         # Enregistrer l'essai complet
         BaseDonnees.enregistrer_essai(
@@ -91,42 +85,48 @@ class Jeu:
             score=self.monde.get_compteur_mot()
         )
         
-        # Attendre une touche pour retourner au menu
-        retour_menu = False
-        while not retour_menu:
+        # État de l'écran : 'gameover' ou 'stats'
+        ecran_actuel = 'gameover'
+        
+        # Boucle de gestion des écrans
+        while True:
+            # Afficher l'écran approprié
+            if ecran_actuel == 'gameover':
+                bouton_stats = self.fenetre.afficher_game_over(self.screen)
+            else:  # écran 'stats'
+                # Afficher le fond normal pour les stats
+                self.fenetre.set_image(Donnees.FOND_SKIN)
+                self.fenetre.afficher_fond(self.screen)
+                self.fenetre.afficher_stats_detaillees(
+                    self.screen,
+                    vitesse_défaite,
+                    self.monde.get_erreurs_detaillees()
+                )
+            
+            pygame.display.flip()
+            
+            # Gérer les événements
             events = pygame.event.get()
             self._traiter_events_globaux(events)
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
-                    retour_menu = True
-        
-        # Réinitialiser le fond normal après le game over
-        self.fenetre.set_image(Donnees.FOND_SKIN)
-        
-        return True  # Retourner au menu
+                    if event.key == pygame.K_ESCAPE:
+                        # Réinitialiser le fond normal après le game over
+                        self.fenetre.set_image(Donnees.FOND_SKIN)
+                        return True  # Retourner au menu
+                
+                # Gestion du clic sur le bouton Statistiques
+                if ecran_actuel == 'gameover' and event.type == pygame.MOUSEBUTTONDOWN:
+                    if bouton_stats.collidepoint(event.pos):
+                        ecran_actuel = 'stats'
     
     def _gerer_niveau_reussi(self):
         """Gère l'affichage et la logique de fin de niveau réussi."""
         # Calculer les statistiques une seule fois
         if self.monde.get_vitesse_finale() is None:
-            temps_fin = pygame.time.get_ticks()
-            temps_total_ms = temps_fin - self.monde.get_temps_debut()
-            temps_total_min = temps_total_ms / 60000.0
-            vitesse_calc = self.monde.get_compteur_mot() / temps_total_min if temps_total_min > 0 else 0
+            vitesse_calc = self.monde.calculer_vitesse_frappe()
             self.monde.set_vitesse_finale(vitesse_calc)
-        
-        self.fenetre.afficher_fond(self.screen)
-        self.sol_gauche.afficher(self.screen)
-        self.sol_droite.afficher(self.screen)
-        self.man.afficher(self.screen)
-        self.fenetre.afficher_stats_fin_niveau(
-            self.screen, 
-            self.monde.get_compteur_mot(), 
-            self.monde.get_vitesse_finale(), 
-            self.monde.get_nb_erreurs()
-        )
-        pygame.display.flip()
         
         # Enregistrer l'essai complet
         BaseDonnees.enregistrer_essai(
@@ -141,17 +141,43 @@ class Jeu:
             score=self.monde.get_compteur_mot()
         )
         
-        # Attendre une touche pour continuer
-        attente = True
-        while attente:
+        # État de l'écran : 'reussite' ou 'stats'
+        ecran_actuel = 'reussite'
+        
+        # Boucle de gestion des écrans
+        while True:
+            # Afficher le fond
+            self.fenetre.afficher_fond(self.screen)
+            self.sol_gauche.afficher(self.screen)
+            self.sol_droite.afficher(self.screen)
+            self.man.afficher(self.screen)
+            
+            # Afficher l'écran approprié
+            if ecran_actuel == 'reussite':
+                bouton_stats = self.fenetre.afficher_niveau_reussi(self.screen)
+            else:  # écran 'stats'
+                self.fenetre.afficher_stats_detaillees(
+                    self.screen,
+                    self.monde.get_vitesse_finale(),
+                    self.monde.get_erreurs_detaillees()
+                )
+            
+            pygame.display.flip()
+            
+            # Gérer les événements
             events = pygame.event.get()
             self._traiter_events_globaux(events)
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
-                    attente = False
-        
-        return True  # Retourner au menu
+                    if event.key == pygame.K_ESCAPE:
+                        return True  # Retourner au menu
+                
+                # Gestion du clic sur le bouton Statistiques
+                if ecran_actuel == 'reussite' and event.type == pygame.MOUSEBUTTONDOWN:
+                    if bouton_stats.collidepoint(event.pos):
+                        ecran_actuel = 'stats'
+
 
     def _boucle_jeu(self):
         """Boucle principale du gameplay."""
@@ -162,13 +188,19 @@ class Jeu:
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     # Démarrage du jeu
-                    self.jeu_demarre = True
-                    if self.monde.get_temps_debut() is None:
-                        self.monde.set_temps_debut(pygame.time.get_ticks())
+                    if not self.jeu_demarre:
+                        self.jeu_demarre = True
+                        if self.monde.get_temps_debut() is None:
+                            temps_actuel = pygame.time.get_ticks()
+                            self.monde.set_temps_debut(temps_actuel)
+                            # Démarrer le tracking pour le premier mot
+                            self.monde.demarrer_nouveau_mot(temps_actuel)
             
             # GAME OVER : Si collision détectée
             if self.man.check_collision(self.mechant):
                 self.game_over = True
+                # Finaliser le tracking du mot actuel en cas de collision
+                self.monde.finaliser_mot_actuel(pygame.time.get_ticks())
             
             if self.game_over:
                 return self._gerer_game_over()
@@ -179,6 +211,12 @@ class Jeu:
             
             # Traitement des entrées clavier pour le mot
             erreur, caracteres_corrects, info_erreur = self.mot.process_input(events, reset_on_error=self.reset_on_error)
+            
+            # Compter tous les caractères tapés (corrects + erreurs) pour le calcul de vitesse
+            total_caracteres_tapes = caracteres_corrects + erreur
+            for _ in range(total_caracteres_tapes):
+                self.monde.ajouter_caractere_tape()
+            
             if erreur:
                 self.monde.set_nb_erreurs(self.monde.get_nb_erreurs() + erreur)
                 # Enregistrer l'erreur détaillée si disponible
@@ -192,6 +230,9 @@ class Jeu:
             
             # Vérifier si le mot vient d'être complété (animation)
             if self.monde.get_mot_state_precedent() and not self.mot._state:
+                # Finaliser le tracking de frappe pour ce mot
+                self.monde.finaliser_mot_actuel(pygame.time.get_ticks())
+                
                 self.monde.set_compteur_mot(self.monde.get_compteur_mot() + 1)
                 self.monde.set_mechant_move_to_man(True)
                 self.monde.set_animation_in_progress(False)
@@ -247,6 +288,9 @@ class Jeu:
                                 self.liste_mots[self.monde.get_compteur_mot()],
                                 Donnees.MOT_COULEUR
                             )
+                            
+                            # Démarrer le tracking de frappe pour le nouveau mot
+                            self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
                         
                         self.monde.set_animation_in_progress(False)
                         self.monde.set_delai_nouveau_mot(0)

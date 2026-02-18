@@ -1007,7 +1007,7 @@ class Menu:
             stat_text = [
                 f"Parties jouées: {nb_parties}",
                 f"Mots réussis (total): {mots_reussis}",
-                f"Vitesse moyenne: {vitesse_moyenne:.2f} mots/min",
+                f"Vitesse moyenne: {vitesse_moyenne:.2f} caractères/s",
                 f"Erreurs (total): {erreurs_total}"
             ]
             

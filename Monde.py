@@ -44,6 +44,11 @@ class Monde(object):
         self.temps_debut = None
         self.total_caracteres = 0
         self.vitesse_finale = None
+        
+        # Tracking pour le calcul de la vitesse de frappe précise (caractères/min)
+        self.temps_apparition_mot = None  # Temps d'apparition du mot actuel
+        self.caracteres_tapes_mot_actuel = 0  # Nombre de caractères tapés pour le mot actuel
+        self.donnees_frappe = []  # Liste des données de frappe: {'temps_frappe': ms, 'caracteres_tapes': int}
     
     def initialiser_niveau(self, niveau):
         """Initialise tous les éléments du monde pour le niveau sélectionné."""
@@ -253,6 +258,47 @@ class Monde(object):
     
     def set_vitesse_finale(self, value):
         self.vitesse_finale = value
+    
+    # Méthodes pour le tracking de frappe précis
+    def demarrer_nouveau_mot(self, temps_actuel):
+        """Démarre le tracking pour un nouveau mot."""
+        import pygame
+        self.temps_apparition_mot = temps_actuel if temps_actuel else pygame.time.get_ticks()
+        self.caracteres_tapes_mot_actuel = 0
+    
+    def ajouter_caractere_tape(self):
+        """Incrémente le compteur de caractères tapés pour le mot actuel."""
+        self.caracteres_tapes_mot_actuel += 1
+    
+    def finaliser_mot_actuel(self, temps_actuel):
+        """Enregistre les données de frappe du mot actuel et réinitialise."""
+        import pygame
+        if self.temps_apparition_mot is not None:
+            temps_fin = temps_actuel if temps_actuel else pygame.time.get_ticks()
+            temps_frappe = temps_fin - self.temps_apparition_mot
+            self.donnees_frappe.append({
+                'temps_frappe': temps_frappe,
+                'caracteres_tapes': self.caracteres_tapes_mot_actuel
+            })
+            self.temps_apparition_mot = None
+            self.caracteres_tapes_mot_actuel = 0
+    
+    def calculer_vitesse_frappe(self):
+        """Calcule la vitesse de frappe en caractères par seconde."""
+        if not self.donnees_frappe:
+            return 0.0
+        
+        temps_total_ms = sum(d['temps_frappe'] for d in self.donnees_frappe)
+        caracteres_total = sum(d['caracteres_tapes'] for d in self.donnees_frappe)
+        
+        if temps_total_ms == 0:
+            return 0.0
+        
+        # Convertir en caractères par seconde
+        temps_total_s = temps_total_ms / 1000.0
+        vitesse = caracteres_total / temps_total_s if temps_total_s > 0 else 0.0
+        
+        return vitesse
     
     def get_obstacle_actuel_config(self):
         return self.obstacle_actuel_config

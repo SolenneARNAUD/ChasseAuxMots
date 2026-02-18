@@ -635,7 +635,7 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
         monde: Nom du monde (ex: 'foret_bleue')
         niveau: Numéro du niveau (1-5)
         erreurs_detaillees: Liste de dict {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
-        vitesse_frappe: Vitesse de frappe en mots/min
+        vitesse_frappe: Vitesse de frappe en caractères/s
         vitesse_defilement: Vitesse de défilement du sol
         reset_mots_actif: Boolean indiquant si le reset est activé
         score: Score final (nombre de mots réussis)
