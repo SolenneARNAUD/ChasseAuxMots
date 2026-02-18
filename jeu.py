@@ -57,7 +57,7 @@ class Jeu:
     def _initialiser_monde(self):
         """Initialise le monde et tous ses éléments pour le niveau sélectionné."""
         self.monde = Monde.Monde()
-        self.monde.initialiser_niveau(self.niveau)
+        self.monde.initialiser_niveau(self.niveau, self.monde_choisi)
         
         self.sol_gauche = self.monde.get_sol_gauche()
         self.sol_droite = self.monde.get_sol_droite()
@@ -257,22 +257,8 @@ class Jeu:
                 self.sol_gauche.defiler(Donnees.SOL_VITESSE)
                 self.sol_droite.defiler(Donnees.SOL_VITESSE)
                 self.mot.update_position(Donnees.SOL_VITESSE)
+                # La mise à jour du mechant gère aussi son animation interne
                 self.mechant.update_position(Donnees.SOL_VITESSE)
-                
-                # Gestion de l'animation du méchant
-                frame_counter = self.monde.get_frame_counter() + 1
-                self.monde.set_frame_counter(frame_counter)
-                
-                if frame_counter >= self.mechant.animation_delay:
-                    self.monde.set_frame_counter(0)
-                    num_img = self.monde.get_num_img()
-                    if num_img == self.mechant.nb_images:
-                        self.monde.set_num_img(1)
-                    else:
-                        self.monde.set_num_img(num_img + 1)
-                    
-                    sprite_obstacle = f"{self.monde.get_obstacle_actuel_config()['chemin_base']}{self.monde.get_num_img()}.png"
-                    self.mechant.set_image(sprite_obstacle)
                 
                 # Mise à jour de l'animation du personnage
                 self.man.update_animation()

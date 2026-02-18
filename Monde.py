@@ -20,6 +20,7 @@ class Monde(object):
         self.obstacle_actuel_config = None
         self.personnage_type = "viking"  # Type de personnage par défaut
         self.personnage_animation = "attaque"  # Animation par défaut
+        self.univers = "foret_bleue"  # Univers par défaut
 
     
         self.mot = None
@@ -45,9 +46,9 @@ class Monde(object):
         self.total_caracteres = 0
         self.vitesse_finale = None
     
-    def initialiser_niveau(self, niveau):
+    def initialiser_niveau(self, niveau, univers="foret_bleue"):
         """Initialise tous les éléments du monde pour le niveau sélectionné."""
-        
+        self.univers = univers  # Stocker l'univers choisi
         # Initialisation des sols
         self.sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
                                   Donnees.SOL_DEPART_X,
@@ -86,35 +87,76 @@ class Monde(object):
             Donnees.MOT_COULEUR)
         
     def initialiser_liste_obstacles(self):
-        """Génère une liste aléatoire d'obstacles pour le niveau."""
-        obstacles_types = list(BaseDonnees.OBSTACLES_CONFIG.keys())
-        self.liste_obstacles = [random.choice(obstacles_types) 
-                            for _ in range(self.total_mots)]
+        """Génère une liste aléatoire de méchants de l'univers pour le niveau."""
+        # Récupérer la liste des méchants disponibles dans l'univers
+        mechants_disponibles = BaseDonnees.get_mechants_univers(self.univers)
+        
+        if not mechants_disponibles:
+            # Fallback vers ancienne config si univers invalide
+            obstacles_types = list(BaseDonnees.OBSTACLES_CONFIG.keys())
+            self.liste_obstacles = [random.choice(obstacles_types) 
+                                for _ in range(self.total_mots)]
+        else:
+            # Utiliser les méchants de l'univers
+            self.liste_obstacles = [random.choice(mechants_disponibles) 
+                                for _ in range(self.total_mots)]
+        
         return self.liste_obstacles
     
     def creer_obstacle(self, index):
-        """Crée un obstacle basé sur l'index dans la liste."""
+        """Crée un obstacle (méchant) basé sur l'index dans la liste."""
         if index >= len(self.liste_obstacles):
             return None
         
         obstacle_type = self.liste_obstacles[index]
-        config = BaseDonnees.OBSTACLES_CONFIG[obstacle_type]
         
-        # Stocker la configuration de l'obstacle actuel
-        self.obstacle_actuel_type = obstacle_type
-        self.obstacle_actuel_config = config
+        # Essayer de charger avec la configuration d'univers
+        mechants_disponibles = BaseDonnees.get_mechants_univers(self.univers)
         
-        # Le premier obstacle spawn dans la fenêtre, les autres hors écran
-        position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
+        if mechants_disponibles and obstacle_type in mechants_disponibles:
+            # Charger depuis l'univers
+            config = BaseDonnees.get_mechant_config(self.univers, obstacle_type)
+            
+            if config and 'frames' in config:
+                # Stocker la configuration de l'obstacle actuel
+                self.obstacle_actuel_type = obstacle_type
+                self.obstacle_actuel_config = config
+                
+                # Le premier obstacle spawn dans la fenêtre, les autres hors écran
+                position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
+                
+                # Créer l'obstacle avec les frames d'animation
+                return Obstacles.Obstacles(
+                    config['frames'][0],  # Utiliser la première frame
+                    position_x,
+                    Donnees.OBSTACLE_DEPART_Y,
+                    config['type'],
+                    config['animation_delay'],
+                    config['nb_images'],
+                    animation_frames=config['frames']  # Passer les frames d'animation
+                )
         
-        return Obstacles.Obstacles(
-            f"{config['chemin_base']}1.png",
-            position_x,
-            Donnees.OBSTACLE_DEPART_Y,
-            config['type'],
-            config['animation_delay'],
-            config['nb_images']
-        )
+        # Fallback vers ancienne config
+        if obstacle_type in BaseDonnees.OBSTACLES_CONFIG:
+            config = BaseDonnees.OBSTACLES_CONFIG[obstacle_type]
+            
+            # Stocker la configuration de l'obstacle actuel
+            self.obstacle_actuel_type = obstacle_type
+            self.obstacle_actuel_config = config
+            
+            # Le premier obstacle spawn dans la fenêtre, les autres hors écran
+            position_x = Donnees.OBSTACLE_DEPART_X_PREMIER if index == 0 else Donnees.OBSTACLE_DEPART_X
+            
+            return Obstacles.Obstacles(
+                f"{config['chemin_base']}1.png",
+                position_x,
+                Donnees.OBSTACLE_DEPART_Y,
+                config['type'],
+                config['animation_delay'],
+                config['nb_images']
+            )
+        
+        return None
     
     # Getter et Setter
     def get_sol_gauche(self):
