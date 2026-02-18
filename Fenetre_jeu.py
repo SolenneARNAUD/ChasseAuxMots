@@ -1,5 +1,6 @@
 import Donnees
 import pygame as pg
+import CoucheParallaxe
 
 
 class Fenetre(object):
@@ -11,6 +12,7 @@ class Fenetre(object):
         self.size = (Donnees.WIDTH, Donnees.HEIGHT)
         self.couleur_fond = Donnees.COULEUR_FOND
         self._images = []  # Liste d'images pour le fond multicouche
+        self._couches_parallaxe = []  # Liste des couches de parallaxe
         self.set_image(image)
         self.bandeau = str(Donnees.BANDEAU_TEXTE)
 
@@ -38,10 +40,44 @@ class Fenetre(object):
         # Si c'est déjà une Surface
         elif isinstance(image, pg.Surface):
             self._images.append(image)
+    
+    def initialiser_parallaxe(self, chemins_images):
+        """Initialise les couches de parallaxe avec les chemins d'images fournis.
+        
+        Args:
+            chemins_images: Liste de chemins d'images ordonnés du plus éloigné au plus proche
+                          (index 0 = couche 7, la plus lente)
+        """
+        self._couches_parallaxe = []
+        nb_couches = len(chemins_images)
+        
+        for i, chemin in enumerate(chemins_images):
+            # Calculer le facteur de vitesse : 
+            # - Couche 0 (image 7, la plus éloignée) : vitesse_facteur très faible
+            # - Couche n-1 (image 1, la plus proche) : vitesse_facteur proche de 1
+            # Formule : vitesse augmente progressivement de 0.1 à 1.0
+            vitesse_facteur = 0.1 + (i / (nb_couches - 1)) * 0.9 if nb_couches > 1 else 0.5
+            
+            couche = CoucheParallaxe.CoucheParallaxe(chemin, vitesse_facteur, 0)
+            self._couches_parallaxe.append(couche)
+    
+    def defiler_parallaxe(self, vitesse_sol):
+        """Fait défiler toutes les couches de parallaxe.
+        
+        Args:
+            vitesse_sol: vitesse de défilement du sol
+        """
+        for couche in self._couches_parallaxe:
+            couche.defiler(vitesse_sol)
             
     def afficher_fond(self, screen):
-        """Affiche le fond (une ou plusieurs images superposées)."""
-        if self._images:
+        """Affiche le fond (une ou plusieurs images superposées ou couches de parallaxe)."""
+        # Si on utilise la parallaxe, afficher les couches
+        if self._couches_parallaxe:
+            for couche in self._couches_parallaxe:
+                couche.afficher(screen)
+        # Sinon, afficher les images statiques
+        elif self._images:
             # Afficher les images en ordre inversé (indice le plus grand = arrière-plan)
             for img in reversed(self._images):
                 screen.blit(img, (0, 0))

@@ -18,6 +18,8 @@ class Jeu:
         # Créer le screen et la fenêtre
         self.screen = pygame.display.set_mode((Donnees.WIDTH, Donnees.HEIGHT))
         self.fenetre = Fenetre_jeu.Fenetre(Donnees.FOND_SKIN)
+        # Initialiser la parallaxe dès le démarrage
+        self.fenetre.initialiser_parallaxe(Donnees.FOND_SKIN)
     
     def _initialiser_variables(self):
         """Initialise/réinitialise les variables de jeu."""
@@ -301,6 +303,9 @@ class Jeu:
             
             # Mise à jour des positions (déplacement avec le sol)
             if self.jeu_demarre:
+                # Faire défiler la parallaxe
+                self.fenetre.defiler_parallaxe(Donnees.SOL_VITESSE)
+                # Faire défiler le sol
                 self.sol_gauche.defiler(Donnees.SOL_VITESSE)
                 self.sol_droite.defiler(Donnees.SOL_VITESSE)
                 self.mot.update_position(Donnees.SOL_VITESSE)
@@ -363,6 +368,8 @@ class Jeu:
                 Donnees.SOL_SKIN = chemins_monde['sol_skin']
                 Donnees.FOND_SKIN = chemins_monde['fond_skin']
                 self.fenetre.set_image(Donnees.FOND_SKIN)
+                # Initialiser la parallaxe avec les 7 couches du fond
+                self.fenetre.initialiser_parallaxe(Donnees.FOND_SKIN)
                 
                 # Boucle de sélection de niveau et jeu
                 while True:

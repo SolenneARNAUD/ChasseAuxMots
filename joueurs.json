@@ -364,6 +364,25 @@
                         "vitesse_defilement": 500,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:26:26",
+                        "erreurs": [
+                            {
+                                "mot": "dent",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "dent",
+                                "lettre_attendue": "d",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 1.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
                     }
                 ],
                 "niveau_3": [
@@ -408,7 +427,40 @@
                     }
                 ],
                 "niveau_4": [],
-                "niveau_5": []
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-18 11:30:42",
+                        "erreurs": [
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            }
+                        ],
+                        "vitesse_frappe": 1.86,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:31:35",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.92,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ]
             },
             "foret_aux_champignons": {
                 "niveau_1": [],

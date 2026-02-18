@@ -497,7 +497,9 @@ class Menu:
         
         # Construire les chemins complets
         sol_skin = Donnees.resource_path(chemin_background + "1.png")
-        fond_skin = [Donnees.resource_path(chemin_background + f"{i}.png") for i in range(2, 8)]
+        # Fond avec parallaxe : images de 7 à 2 (du plus éloigné au plus proche)
+        # L'image 1 est le sol, gérée par la classe Sol
+        fond_skin = [Donnees.resource_path(chemin_background + f"{i}.png") for i in range(7, 1, -1)]
         
         return {
             "sol_skin": sol_skin,

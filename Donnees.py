@@ -56,8 +56,11 @@ SOL_DEPART_X = WIDTH / 2
 SOL_DEPART_Y = HEIGHT
 SOL_SKIN = resource_path(Univers["foret_bleue"]["background"]["chemin"] + "1.png")
 SOL_VITESSE = 0.5
-# Fond
-FOND_SKIN = [resource_path(Univers["foret_bleue"]["background"]["chemin"] + f"{i}.png") for i in range(2, 8)]
+# Fond avec parallaxe (6 couches, de la plus éloignée à la plus proche)
+# L'image 7 est la plus éloignée (défille le moins vite)
+# L'image 2 est la plus proche (défille presque aussi vite que le sol)
+# L'image 1 est gérée par la classe Sol
+FOND_SKIN = [resource_path(Univers["foret_bleue"]["background"]["chemin"] + f"{i}.png") for i in range(7, 1, -1)]
 FOND_GAME_OVER = resource_path("images/Fond/volcan_erruption.jpg")
 
 # Bandeau
