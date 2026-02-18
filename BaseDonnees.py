@@ -218,101 +218,221 @@ PERSONNAGES_CONFIG = {
 Univers = {
     "foret_bleue":{
         "background": { 
-            "chemin": "images/Foret_bleue/Background/" #ajouter le numéro de 1 a nombre de fichier-1 et .png
+            "chemin": "images/Foret_bleue/Background/"
         },
         "personnages": {
             "Skelette_Crusader_1": {
-                "running": "images/Foret_bleue/Skeleton_Crusader_1/PNG/PNG Sequences/Running/0_Skeleton_Crusader_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_1/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Skelette_Crusader_2": {
-                "running": "images/Foret_bleue/Skeleton_Crusader_2/PNG/PNG Sequences/Running/0_Skeleton_Crusader_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_2/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Skelette_Crusader_3": {
-                "running": "images/Foret_bleue/Skeleton_Crusader_3/PNG/PNG Sequences/Running/0_Skeleton_Crusader_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Crusader_3/PNG/PNG Sequences/Walking/0_Skeleton_Crusader_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Skelette_warrior_1": {
-                "running": "images/Foret_bleue/Skeleton_Warrior_1/PNG/PNG Sequences/Running/0_Skeleton_Warrior_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_1/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Skelette_warrior_2": {
-                "running": "images/Foret_bleue/Skeleton_Warrior_2/PNG/PNG Sequences/Running/0_Skeleton_Warrior_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_2/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Skelette_warrior_3": {
-                "running": "images/Foret_bleue/Skeleton_Warrior_3/PNG/PNG Sequences/Running/0_Skeleton_Warrior_Running_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_bleue/Skeleton_Warrior_3/PNG/PNG Sequences/Walking/0_Skeleton_Warrior_Walking_",
+                    "nb_images": 24,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             }
         }
     },
     "foret_violette":{
         "background": { 
-            "chemin": "images/Foret_violette/Background/" #ajouter le numéro de 1 a nombre de fichier-1 et .png
+            "chemin": "images/Foret_violette/Background/"
         },
         "personnages": {
             "Golem_01": {
-                "walking": "images/Foret_violette/Golem_01/PNG Sequences/Walking/0_Golem_01_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Golem_01/PNG Sequences/Walking/Golem_01_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Golem_02": {
-                "walking": "images/Foret_violette/Golem_02/PNG Sequences/Walking/0_Golem_02_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Golem_02/PNG Sequences/Walking/Golem_02_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Golem_03": {
-                "walking": "images/Foret_violette/Golem_03/PNG Sequences/Walking/0_Golem_03_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Golem_03/PNG Sequences/Walking/Golem_03_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Wraith_01": {
-                "walking": "images/Foret_violette/Wraith_01/PNG Sequences/Walking/0_Wraith_01_Moving Forward_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Walking/Wraith_01_Moving Forward_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Wraith_02": {
-                "walking": "images/Foret_violette/Wraith_02/PNG Sequences/Walking/0_Wraith_02_Moving Forward_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Walking/Wraith_02_Moving Forward_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Wraith_03": {
-                "walking": "images/Foret_violette/Wraith_03/PNG Sequences/Walking/0_Wraith_03_Moving Forward_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Walking/Wraith_03_Moving Forward_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             }
         }
     },
     "foret_au_champignon":{
         "background": { 
-            "chemin": "images/Foret_au_champignon/Background/" #ajouter le numéro de 1 a nombre de fichier-1 et .png
+            "chemin": "images/Foret_au_champignon/Background/"
         },
         "personnages": {
             "Golem_1": {
-                "walking": "images/Foret_au_champignon/Golem_1/PNG/PNG Sequences/Walking/0_Golem_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_1/PNG/PNG Sequences/Walking/0_Golem_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Golem_2": {
-                "walking": "images/Foret_au_champignon/Golem_2/PNG/PNG Sequences/Walking/0_Golem_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_2/PNG/PNG Sequences/Walking/0_Golem_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Golem_3": {
-                "walking": "images/Foret_au_champignon/Golem_3/PNG/PNG Sequences/Walking/0_Golem_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Golem_3/PNG/PNG Sequences/Walking/0_Golem_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Satyr_01": {
-                "walking": "images/Foret_au_champignon/Satyr_01/PNG Sequences/Walking/Satyr_01_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_01/PNG Sequences/Walking/Satyr_01_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Satyr_02": {
-                "walking": "images/Foret_au_champignon/Satyr_02/PNG Sequences/Walking/Satyr_02_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_02/PNG Sequences/Walking/Satyr_02_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Satyr_03": {
-                "walking": "images/Foret_au_champignon/Satyr_03/PNG Sequences/Walking/Satyr_03_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Foret_au_champignon/Satyr_03/PNG Sequences/Walking/Satyr_03_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             }
         }
     },
     "vallee_verte":{
         "background": { 
-            "chemin": "images/Vallee_verte/Background/" #ajouter le numéro de 1 a nombre de fichier-1 et .png
+            "chemin": "images/Vallee_verte/Background/"
         },
         "personnages": {
             "Forest_Ranger_1": {
-                "walking": "images/Vallee_verte/Forest_Ranger_1/PNG/PNG Sequences/Walking/0_Forest_Ranger_1_Walking_00_Forest_Ranger_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_1/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Forest_Ranger_2": {
-                "walking": "images/Vallee_verte/Forest_Ranger_2/PNG/PNG Sequences/Walking/0_Forest_Ranger_2_Walking_00_Forest_Ranger_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_2/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
             "Forest_Ranger_3": {
-                "walking": "images/Vallee_verte/Forest_Ranger_3/PNG/PNG Sequences/Walking/0_Forest_Ranger_3_Walking_00_Forest_Ranger_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Forest_Ranger_3/PNG/PNG Sequences/Walking/0_Forest_Ranger_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
-            "Minautor_1": {
-                "walking": "images/Vallee_verte/Minautor_1/PNG/PNG Sequences/Walking/0_Minotaur_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+            "Minotaur_1": {
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_1/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
-            "Minautor_2": {
-                "walking": "images/Vallee_verte/Minautor_2/PNG/PNG Sequences/Walking/0_Minotaur_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+            "Minotaur_2": {
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_2/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             },
-            "Minautor_3": {
-                "walking": "images/Vallee_verte/Minautor_3/PNG/PNG Sequences/Walking/0_Minotaur_Walking_0" #ajouter le numéro de 00 a nombre de fichier-1 et .png
+            "Minotaur_3": {
+                "walking": {
+                    "chemin_base": "images/Vallee_verte/Minotaur_3/PNG/PNG Sequences/Walking/0_Minotaur_Walking_",
+                    "nb_images": 18,
+                    "animation_delay": 5,
+                    "format": "{:03d}.png"
+                }
             }
         }
     }
@@ -409,6 +529,88 @@ def get_animation_delay(personnage_type, animation_name):
         return 5
     
     return config['animations'][animation_name].get('animation_delay', 5)
+
+def get_mechants_univers(univers_cle):
+    """
+    Retourne la liste des méchants disponibles pour un univers donné.
+    
+    Args:
+        univers_cle: Clé de l'univers (ex: "foret_bleue", "foret_violette", etc.)
+    
+    Returns:
+        Liste des noms des méchants disponibles ou liste vide if univers not found
+    """
+    if univers_cle not in Univers:
+        return []
+    
+    return list(Univers[univers_cle]["personnages"].keys())
+
+def get_mechant_animation_frames(univers_cle, mechant_nom, animation_name="walking"):
+    """
+    Génère la liste des chemins des frames d'animation pour un méchant.
+    
+    Args:
+        univers_cle: Clé de l'univers (ex: "foret_bleue")
+        mechant_nom: Nom du méchant (ex: "Skelette_Crusader_1")
+        animation_name: Nom de l'animation (par défaut "walking")
+    
+    Returns:
+        Tuple (liste des chemins des frames, nombre d'images, délai animation)
+        ou (None, 0, 5) if not found
+    """
+    if univers_cle not in Univers:
+        return None, 0, 5
+    
+    if mechant_nom not in Univers[univers_cle]["personnages"]:
+        return None, 0, 5
+    
+    mechant = Univers[univers_cle]["personnages"][mechant_nom]
+    
+    if animation_name not in mechant:
+        return None, 0, 5
+    
+    anim_config = mechant[animation_name]
+    
+    chemin_base = anim_config.get('chemin_base', '')
+    nb_images = anim_config.get('nb_images', 1)
+    animation_delay = anim_config.get('animation_delay', 5)
+    format_str = anim_config.get('format', '{:03d}.png')
+    
+    # Générer les chemins des frames
+    frames = []
+    for i in range(nb_images):
+        # Format utilise des indices de 0 à n-1
+        if '{}' in format_str or '{:03d}' in format_str:
+            frame_path = f"{chemin_base}{format_str.format(i)}"
+        else:
+            # Si pas de format, utiliser le chemin tel quel
+            frame_path = chemin_base
+        frames.append(frame_path)
+    
+    return frames, nb_images, animation_delay
+
+def get_mechant_config(univers_cle, mechant_nom):
+    """
+    Retourne la configuration complète d'un méchant pour un univers donné.
+    
+    Args:
+        univers_cle: Clé de l'univers
+        mechant_nom: Nom du méchant
+    
+    Returns:
+        Dict avec 'frames', 'nb_images', 'animation_delay' ou empty dict if not found
+    """
+    frames, nb_images, animation_delay = get_mechant_animation_frames(univers_cle, mechant_nom)
+    
+    if frames is None:
+        return {}
+    
+    return {
+        'frames': frames,
+        'nb_images': nb_images,
+        'animation_delay': animation_delay,
+        'type': 2  # Type 2 = méchant
+    }
 
 # Dictionnaire pour enregistrer les joueurs
 def migrer_ancienne_structure(joueurs):
