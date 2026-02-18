@@ -844,9 +844,140 @@ class Menu:
         return input_nom.get_text(), input_prenom.get_text()
 
     @staticmethod
+    def fenetre_confirmation_suppression(screen, nom, prenom):
+        """
+        Affiche une fenêtre de confirmation avec double vérification pour supprimer un joueur.
+        Retourne True si l'utilisateur confirme, False sinon.
+        """
+        # Première confirmation
+        confirmation1 = False
+        bouton_oui = pg.Rect(Donnees.WIDTH // 4 - 75, Donnees.HEIGHT // 2 + 50, 150, 50)
+        bouton_non = pg.Rect(3 * Donnees.WIDTH // 4 - 75, Donnees.HEIGHT // 2 + 50, 150, 50)
+        
+        while True:
+            events = pg.event.get()
+            
+            for event in events:
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    exit()
+                
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_oui.collidepoint(event.pos):
+                        confirmation1 = True
+                        break
+                    elif bouton_non.collidepoint(event.pos):
+                        return False
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return False
+            
+            if confirmation1:
+                break
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 50)
+            titre = font_titre.render("Supprimer ce profil ?", True, (200, 0, 0))
+            titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 100))
+            screen.blit(titre, titre_rect)
+            
+            # Nom du joueur
+            font_nom = pg.font.Font(None, 40)
+            nom_texte = font_nom.render(f"{prenom} {nom}", True, (0, 0, 0))
+            nom_rect = nom_texte.get_rect(center=(Donnees.WIDTH // 2, 180))
+            screen.blit(nom_texte, nom_rect)
+            
+            # Message d'avertissement
+            font_msg = pg.font.Font(None, 30)
+            msg1 = font_msg.render("Cette action est irréversible.", True, (100, 0, 0))
+            msg2 = font_msg.render("Toutes les statistiques seront perdues.", True, (100, 0, 0))
+            screen.blit(msg1, (Donnees.WIDTH // 2 - 200, 250))
+            screen.blit(msg2, (Donnees.WIDTH // 2 - 220, 280))
+            
+            # Boutons
+            pg.draw.rect(screen, (200, 100, 100), bouton_oui)
+            pg.draw.rect(screen, (0, 0, 0), bouton_oui, 3)
+            texte_oui = font_nom.render("Oui", True, (255, 255, 255))
+            texte_oui_rect = texte_oui.get_rect(center=bouton_oui.center)
+            screen.blit(texte_oui, texte_oui_rect)
+            
+            pg.draw.rect(screen, (100, 200, 100), bouton_non)
+            pg.draw.rect(screen, (0, 0, 0), bouton_non, 3)
+            texte_non = font_nom.render("Non", True, (255, 255, 255))
+            texte_non_rect = texte_non.get_rect(center=bouton_non.center)
+            screen.blit(texte_non, texte_non_rect)
+            
+            pg.display.flip()
+        
+        # Deuxième confirmation
+        confirmation2 = False
+        bouton_confirmer = pg.Rect(Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2 + 50, 200, 50)
+        bouton_annuler = pg.Rect(3 * Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2 + 50, 200, 50)
+        
+        while True:
+            events = pg.event.get()
+            
+            for event in events:
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    exit()
+                
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_confirmer.collidepoint(event.pos):
+                        confirmation2 = True
+                        break
+                    elif bouton_annuler.collidepoint(event.pos):
+                        return False
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return False
+            
+            if confirmation2:
+                break
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 50)
+            titre = font_titre.render("Êtes-vous vraiment sûr ?", True, (200, 0, 0))
+            titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 100))
+            screen.blit(titre, titre_rect)
+            
+            # Message final
+            font_msg = pg.font.Font(None, 35)
+            msg = font_msg.render("Dernière chance pour annuler !", True, (0, 0, 0))
+            msg_rect = msg.get_rect(center=(Donnees.WIDTH // 2, 200))
+            screen.blit(msg, msg_rect)
+            
+            # Boutons
+            pg.draw.rect(screen, (200, 0, 0), bouton_confirmer)
+            pg.draw.rect(screen, (0, 0, 0), bouton_confirmer, 3)
+            texte_confirmer = font_titre.render("Confirmer", True, (255, 255, 255))
+            texte_confirmer_rect = texte_confirmer.get_rect(center=bouton_confirmer.center)
+            screen.blit(texte_confirmer, texte_confirmer_rect)
+            
+            pg.draw.rect(screen, (100, 200, 100), bouton_annuler)
+            pg.draw.rect(screen, (0, 0, 0), bouton_annuler, 3)
+            texte_annuler = font_titre.render("Annuler", True, (255, 255, 255))
+            texte_annuler_rect = texte_annuler.get_rect(center=bouton_annuler.center)
+            screen.blit(texte_annuler, texte_annuler_rect)
+            
+            pg.display.flip()
+        
+        return True
+
+    @staticmethod
     def fenetre_charger_joueur(screen):
         """
         Affiche une liste de joueurs existants pour en sélectionner un.
+        Supporte le défilement avec la molette si la liste est longue.
+        Permet de supprimer un profil avec la touche Suppr ou le clic droit.
         Retourne un tuple (nom, prenom) du joueur sélectionné.
         """
         import BaseDonnees
@@ -867,9 +998,15 @@ class Menu:
             return None
         
         selected_index = 0
+        scroll_offset = 0  # Décalage pour le défilement
         selection_complete = False
-        joueur_rects = []
         escape_pressed = False
+        
+        # Paramètres d'affichage
+        item_height = 60
+        zone_liste_y = 150  # Y de début de la liste
+        zone_liste_height = Donnees.HEIGHT - zone_liste_y - 60  # Hauteur de la zone d'affichage
+        max_items_visibles = zone_liste_height // item_height  # Nombre max d'éléments affichables
         
         while not selection_complete and not escape_pressed:
             events = pg.event.get()
@@ -879,22 +1016,94 @@ class Menu:
                     pg.quit()
                     exit()
                 
+                # Gestion de la molette de la souris
+                if event.type == pg.MOUSEWHEEL:
+                    if event.y > 0:  # Molette vers le haut
+                        scroll_offset = max(0, scroll_offset - 1)
+                    else:  # Molette vers le bas
+                        max_scroll = max(0, len(joueurs_list) - max_items_visibles)
+                        scroll_offset = min(max_scroll, scroll_offset + 1)
+                
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
                         selected_index = (selected_index - 1) % len(joueurs_list)
+                        # Ajuster le scroll pour garder la sélection visible
+                        if selected_index < scroll_offset:
+                            scroll_offset = selected_index
+                        
                     elif event.key == pg.K_DOWN:
                         selected_index = (selected_index + 1) % len(joueurs_list)
+                        # Ajuster le scroll pour garder la sélection visible
+                        if selected_index >= scroll_offset + max_items_visibles:
+                            scroll_offset = selected_index - max_items_visibles + 1
+                    
                     elif event.key == pg.K_RETURN:
                         selection_complete = True
+                    
                     elif event.key == pg.K_ESCAPE:
                         escape_pressed = True
+                    
+                    elif event.key == pg.K_DELETE:
+                        # Supprimer le joueur sélectionné
+                        nom, prenom = joueurs_list[selected_index]
+                        if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
+                            succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                            if succes:
+                                # Recharger la liste
+                                joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                if not joueurs_list:
+                                    # Plus de joueurs
+                                    screen.fill(Donnees.COULEUR_FOND)
+                                    font = pg.font.Font(None, 48)
+                                    texte = font.render("Tous les joueurs ont été supprimés!", True, (0, 0, 0))
+                                    texte_rect = texte.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+                                    screen.blit(texte, texte_rect)
+                                    pg.display.flip()
+                                    pg.time.wait(2000)
+                                    return None
+                                # Ajuster la sélection
+                                selected_index = min(selected_index, len(joueurs_list) - 1)
+                                scroll_offset = min(scroll_offset, max(0, len(joueurs_list) - max_items_visibles))
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    # Gestion des clics sur les joueurs
-                    for i, rect in enumerate(joueur_rects):
-                        if rect.collidepoint(event.pos):
-                            selected_index = i
-                            selection_complete = True
+                    # Calculer les rectangles visibles
+                    joueur_rects = []
+                    for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
+                        display_index = i - scroll_offset
+                        joueur_rect = pg.Rect(Donnees.WIDTH // 4, zone_liste_y + display_index * item_height, 
+                                            Donnees.WIDTH // 2, item_height - 10)
+                        joueur_rects.append((i, joueur_rect))
+                    
+                    # Clic gauche : sélectionner
+                    if event.button == 1:
+                        for i, rect in joueur_rects:
+                            if rect.collidepoint(event.pos):
+                                selected_index = i
+                                selection_complete = True
+                    
+                    # Clic droit : supprimer
+                    elif event.button == 3:
+                        for i, rect in joueur_rects:
+                            if rect.collidepoint(event.pos):
+                                nom, prenom = joueurs_list[i]
+                                if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
+                                    succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                                    if succes:
+                                        # Recharger la liste
+                                        joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                        if not joueurs_list:
+                                            # Plus de joueurs
+                                            screen.fill(Donnees.COULEUR_FOND)
+                                            font = pg.font.Font(None, 48)
+                                            texte = font.render("Tous les joueurs ont été supprimés!", True, (0, 0, 0))
+                                            texte_rect = texte.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 2))
+                                            screen.blit(texte, texte_rect)
+                                            pg.display.flip()
+                                            pg.time.wait(2000)
+                                            return None
+                                        # Ajuster la sélection
+                                        selected_index = min(selected_index, len(joueurs_list) - 1)
+                                        scroll_offset = min(scroll_offset, max(0, len(joueurs_list) - max_items_visibles))
             
             # Affichage
             screen.fill(Donnees.COULEUR_FOND)
@@ -905,15 +1114,23 @@ class Menu:
             titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 50))
             screen.blit(titre, titre_rect)
             
-            # Liste des joueurs
-            font_joueur = pg.font.Font(None, 40)
-            joueur_rects = []
-            y_offset = 150
+            # Indicateur de scroll si nécessaire
+            if len(joueurs_list) > max_items_visibles:
+                font_scroll = pg.font.Font(None, 25)
+                scroll_info = font_scroll.render(f"({scroll_offset + 1}-{min(scroll_offset + max_items_visibles, len(joueurs_list))} / {len(joueurs_list)})", 
+                                                True, (100, 100, 100))
+                screen.blit(scroll_info, (Donnees.WIDTH // 2 - 50, 110))
             
-            for i, (nom, prenom) in enumerate(joueurs_list):
+            # Liste des joueurs visibles
+            font_joueur = pg.font.Font(None, 40)
+            
+            for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
+                display_index = i - scroll_offset
+                nom, prenom = joueurs_list[i]
+                
                 couleur = (100, 200, 100) if i == selected_index else (200, 200, 200)
-                joueur_rect = pg.Rect(Donnees.WIDTH // 4, y_offset + i * 60, Donnees.WIDTH // 2, 50)
-                joueur_rects.append(joueur_rect)
+                joueur_rect = pg.Rect(Donnees.WIDTH // 4, zone_liste_y + display_index * item_height, 
+                                    Donnees.WIDTH // 2, item_height - 10)
                 
                 pg.draw.rect(screen, couleur, joueur_rect)
                 pg.draw.rect(screen, (0, 0, 0), joueur_rect, 2)
@@ -923,9 +1140,11 @@ class Menu:
                 screen.blit(texte_joueur, texte_rect)
             
             # Instructions
-            font_info = pg.font.Font(None, 30)
-            info = font_info.render("Haut/Bas: naviguer | Entrée: valider | Esc: retour", True, (100, 100, 100))
-            screen.blit(info, (20, Donnees.HEIGHT - 50))
+            font_info = pg.font.Font(None, 25)
+            info1 = font_info.render("Haut/Bas ou molette: naviguer | Entree ou clic gauche: valider", True, (100, 100, 100))
+            info2 = font_info.render("Suppr ou clic droit: supprimer | Esc: retour", True, (100, 100, 100))
+            screen.blit(info1, (20, Donnees.HEIGHT - 50))
+            screen.blit(info2, (20, Donnees.HEIGHT - 25))
             
             pg.display.flip()
         

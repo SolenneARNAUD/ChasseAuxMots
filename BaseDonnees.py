@@ -979,6 +979,40 @@ def get_joueur(nom, prenom):
         return dict_joueurs[cle]
     return None
 
+def supprimer_joueur(nom, prenom):
+    """Supprime un joueur du dictionnaire et sauvegarde"""
+    global dict_joueurs
+    
+    # Créer la clé unique
+    cle = f"{nom}_{prenom}".lower()
+    
+    # Vérifier si le joueur existe
+    if cle not in dict_joueurs:
+        return False, "Ce joueur n'existe pas!"
+    
+    # Supprimer le joueur
+    del dict_joueurs[cle]
+    
+    print(f"[DEBUG] Joueur supprimé: {nom} {prenom}")
+    print(f"[DEBUG] Dictionnaire en mémoire: {len(dict_joueurs)} joueurs")
+    
+    # Sauvegarder
+    try:
+        succes = sauvegarder_joueurs()
+        
+        if succes:
+            print("[DEBUG] Suppression sauvegardée avec succès!")
+            print(f"[INFO] Joueur supprimé et sauvegardé dans: {FICHIER_JOUEURS}")
+            return True, "Joueur supprimé avec succès!"
+        else:
+            return True, "Joueur supprimé en mémoire (erreur sauvegarde)"
+        
+    except Exception as e:
+        print(f"[DEBUG] ERREUR lors de la sauvegarde: {e}")
+        import traceback
+        traceback.print_exc()
+        return True, f"Joueur supprimé en mémoire (erreur sauvegarde: {e})"
+
 def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
     """Met a jour les statistiques du joueur apres une partie (fonction maintenue pour compatibilité)"""
     # Cette fonction est maintenant obsolète mais conservée pour compatibilité

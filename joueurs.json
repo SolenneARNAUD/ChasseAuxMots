@@ -34,41 +34,6 @@
             }
         }
     },
-    "test_test": {
-        "nom": "Test",
-        "prenom": "Test",
-        "date_inscription": "2026-02-11 09:32:49",
-        "historique": {
-            "vallee_verte": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_bleue": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_aux_champignons": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            }
-        }
-    },
     "arnaud_solenne": {
         "nom": "Arnaud",
         "prenom": "Solenne",
@@ -756,6 +721,41 @@
                         "score": 3
                     }
                 ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "moi_moi": {
+        "nom": "Moi",
+        "prenom": "Moi",
+        "date_inscription": "2026-02-18 11:47:49",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
                 "niveau_2": [],
                 "niveau_3": [],
                 "niveau_4": [],
