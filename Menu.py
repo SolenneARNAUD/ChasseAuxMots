@@ -730,7 +730,7 @@ class Menu:
     def fenetre_joueur(screen):
         """
         Affiche le menu d'entrée du nom et prénom du joueur.
-        Retourne un tuple (nom, prenom) lorsque l'utilisateur valide.
+        Retourne un tuple (nom, prenom) lorsque l'utilisateur valide, ou None si Échap est pressé.
         """
         
         class InputBox:
@@ -805,6 +805,9 @@ class Menu:
                     if event.key == pg.K_RETURN:
                         if input_nom.get_text() and input_prenom.get_text():
                             entree_complete = True
+                    elif event.key == pg.K_ESCAPE:
+                        # Retourner None pour indiquer l'annulation
+                        return None
             
             # Affichage
             screen.fill(Donnees.COULEUR_FOND)
@@ -837,6 +840,11 @@ class Menu:
                    for event in events) and not (input_nom.get_text() and input_prenom.get_text()):
                 message_erreur = font_label.render("Veuillez remplir tous les champs!", True, (255, 0, 0))
                 screen.blit(message_erreur, (Donnees.WIDTH // 2 - 150, Donnees.HEIGHT - 70))
+            
+            # Message pour la touche Échap
+            font_small = pg.font.Font(None, 28)
+            message_echap = font_small.render("Échap : retour", True, (100, 100, 100))
+            screen.blit(message_echap, (20, Donnees.HEIGHT - 35))
             
             pg.display.flip()
         
@@ -1175,7 +1183,13 @@ class Menu:
             if choix == "nouveau":
                 # Créer un nouveau joueur
                 while True:
-                    nom, prenom = Menu.fenetre_joueur(screen)
+                    result = Menu.fenetre_joueur(screen)
+                    
+                    # Si l'utilisateur a appuyé sur Échap, retourner au menu de choix
+                    if result is None:
+                        break
+                    
+                    nom, prenom = result
                     succes, message = BaseDonnees.ajouter_joueur(nom, prenom)
                     
                     if succes:
