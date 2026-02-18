@@ -35,6 +35,13 @@ OBSTACLE_SKIN_DINO_VOLANT = resource_path("images/Mechant/dino_volant")
 OBSTACLE_TYPE = 2  # Méchant
 OBSTACLE_HEIGHT = 120
 
+# ⚙️ ALIGNEMENT DES PIEDS DES MÉCHANTS
+# Offset vertical global pour aligner les pieds visuels des méchants avec ceux du personnage
+# - Si les méchants sont TROP BAS : utilisez un offset NÉGATIF (ex: -10)
+# - Si les méchants sont TROP HAUT : utilisez un offset POSITIF (ex: +10)
+# - 0 = pas d'ajustement
+MECHANT_FOOT_OFFSET = 17
+
 # Mots
 TAILLE_POLICE = 36
 MOT_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran

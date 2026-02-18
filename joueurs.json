@@ -13,80 +13,14 @@
             },
             "foret_violette": {
                 "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:12:15",
-                        "erreurs": [],
-                        "vitesse_frappe": 24.41,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
+                "niveau_2": [],
                 "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
             },
             "foret_bleue": {
                 "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:09:02",
-                        "erreurs": [],
-                        "vitesse_frappe": 10.6,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:10:28",
-                        "erreurs": [],
-                        "vitesse_frappe": 14.21,
-                        "vitesse_defilement": 150,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:10:46",
-                        "erreurs": [],
-                        "vitesse_frappe": 13.38,
-                        "vitesse_defilement": 150,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:11:08",
-                        "erreurs": [
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "o",
-                                "lettre_tapee": "e"
-                            },
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "b",
-                                "lettre_tapee": "a"
-                            },
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "b",
-                                "lettre_tapee": "u"
-                            }
-                        ],
-                        "vitesse_frappe": 12.44,
-                        "vitesse_defilement": 200,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:11:30",
-                        "erreurs": [],
-                        "vitesse_frappe": 22.24,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
+                "niveau_2": [],
                 "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
@@ -397,6 +331,36 @@
                             }
                         ],
                         "vitesse_frappe": 2.51,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:37:08",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:53:03",
+                        "erreurs": [
+                            {
+                                "mot": "queue",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 1.8,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:09:33",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.43,
                         "vitesse_defilement": 500,
                         "reset_mots_actif": true,
                         "score": 3
