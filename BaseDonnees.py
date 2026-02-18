@@ -115,6 +115,20 @@ mots={
         'carapace', 'marécage', 'sédiment', 'tonnerre', 'astéroïde', 'empreinte', 'libellule',
         'prédateur', 'squelette', 'grenouille', 'tricératops', 'vélociraptor'
         ],
+    "niveau4": [
+        'tribu', 'argile', 'chasse', 'fourmi', 'griffe', 'loutre', 'lézard', 'marais',
+        'mousse', 'museau', 'pierre', 'plante', 'raptor', 'renard', 'tortue', 'volcan',
+        'bambou', 'boueux', 'braise', 'cabane', 'cactus', 'canine', 'cendre', 'corail',
+        'croûte', 'désert', 'étoile', 'grotte', 'harpon', 'ivoire', 'jungle', 'plaine',
+        'pollen', 'racine', 'radeau', 'résine', 'rivage', 'rocher', 'savane', 'source',
+        'steppe', 'vallée', 'caverne', 'cratère', 'fossile', 'fougère', 'griffes',
+        'insecte', 'météore', 'serpent', 'branche', 'caillou', 'colline', 'cristal',
+        'défense', 'falaise', 'feuille', 'matière', 'minéral', 'poisson', 'prairie',
+        'rivière', 'rocheux', 'tanière', 'terrier', 'torrent', 'toundra', 'végétal',
+        'ammonite', 'araignée', 'chasseur', 'écailles', 'mâchoire', 'mammouth', 'scarabée',
+        'carapace', 'marécage', 'sédiment', 'tonnerre', 'astéroïde', 'empreinte', 'libellule',
+        'prédateur', 'squelette', 'grenouille', 'tricératops', 'vélociraptor'
+        ],
     "niveau5": [
         'un os', 'un roc', 'un bec', 'un nid', 'un feu', 'un lac', 'un cri', 'une dent',
         'une peau', 'un T-Rex', 'un crâne', 'une aile', 'du sable', 'une trace', 'un raptor',
@@ -972,7 +986,7 @@ def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
     return True
 
 def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_frappe, 
-                     vitesse_defilement, reset_mots_actif, score):
+                     vitesse_defilement, reset_mots_actif, score, delai_niveau4=1500):
     """Enregistre un essai complet dans l'historique du joueur.
     
     Args:
@@ -985,6 +999,7 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
         vitesse_defilement: Vitesse de défilement du sol
         reset_mots_actif: Boolean indiquant si le reset est activé
         score: Score final (nombre de mots réussis)
+        delai_niveau4: Délai d'affichage des mots au niveau 4 (en ms)
     
     Returns:
         bool: True si sauvegarde réussie
@@ -1020,7 +1035,8 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
         'vitesse_frappe': round(vitesse_frappe, 2),
         'vitesse_defilement': round(vitesse_defilement, 2),
         'reset_mots_actif': reset_mots_actif,
-        'score': score
+        'score': score,
+        'delai_niveau4': delai_niveau4
     }
     
     # Ajouter l'essai à l'historique du niveau
@@ -1105,7 +1121,7 @@ def get_derniers_parametres_joueur(nom, prenom):
         prenom: Prénom du joueur
     
     Returns:
-        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool} ou None si pas d'historique
+        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int} ou None si pas d'historique
     """
     cle = f"{nom}_{prenom}".lower()
     
@@ -1134,7 +1150,8 @@ def get_derniers_parametres_joueur(nom, prenom):
     if dernier_essai:
         return {
             'vitesse_defilement': dernier_essai.get('vitesse_defilement', 100),
-            'reset_mots_actif': dernier_essai.get('reset_mots_actif', True)
+            'reset_mots_actif': dernier_essai.get('reset_mots_actif', True),
+            'delai_niveau4': dernier_essai.get('delai_niveau4', 1500)
         }
     
     return None
