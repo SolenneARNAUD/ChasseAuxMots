@@ -1112,6 +1112,44 @@ def set_derniere_vitesse(pseudo, valeur):
     # Cette fonction ne fait plus rien car la structure a changé
     pass
 
+def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500):
+    """Sauvegarde les paramètres actuels d'un joueur sans créer un essai complet.
+    
+    Args:
+        pseudo: Pseudo du joueur
+        vitesse_defilement: Vitesse de défilement en pourcentage (25-500)
+        reset_mots_actif: Si True, les mots sont réinitialisés en cas d'erreur
+        delai_niveau4: Délai avant disparition du mot au niveau 4 (500-10000 ms)
+    
+    Returns:
+        bool: True si la sauvegarde a réussi, False sinon
+    """
+    cle = pseudo.lower()
+    
+    if cle not in dict_joueurs:
+        print(f"[WARNING] Impossible de sauvegarder les paramètres pour {pseudo}: joueur inconnu")
+        return False
+    
+    joueur = dict_joueurs[cle]
+    
+    # Créer ou mettre à jour le champ parametres_actuels
+    joueur['parametres_actuels'] = {
+        'vitesse_defilement': vitesse_defilement,
+        'reset_mots_actif': reset_mots_actif,
+        'delai_niveau4': delai_niveau4,
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Sauvegarder dans le fichier
+    succes = sauvegarder_joueurs()
+    
+    if succes:
+        print(f"[INFO] Paramètres sauvegardés pour {pseudo}: vitesse={vitesse_defilement}%, reset={reset_mots_actif}")
+    else:
+        print(f"[WARNING] Erreur lors de la sauvegarde des paramètres pour {pseudo}")
+    
+    return succes
+
 def get_statistiques_joueur(pseudo, monde=None, niveau=None):
     """Récupère les statistiques d'un joueur.
     
@@ -1183,6 +1221,15 @@ def get_derniers_parametres_joueur(pseudo):
     
     joueur = dict_joueurs[cle]
     
+    # D'abord chercher dans parametres_actuels (sauvegarde explicite)
+    if 'parametres_actuels' in joueur:
+        return {
+            'vitesse_defilement': joueur['parametres_actuels'].get('vitesse_defilement', 100),
+            'reset_mots_actif': joueur['parametres_actuels'].get('reset_mots_actif', True),
+            'delai_niveau4': joueur['parametres_actuels'].get('delai_niveau4', 1500)
+        }
+    
+    # Sinon chercher dans l'historique (ancien comportement)
     if 'historique' not in joueur:
         return None
     

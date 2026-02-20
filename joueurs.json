@@ -83,6 +83,30 @@
                         "reset_mots_actif": true,
                         "score": 20,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 10:59:30",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.19,
+                        "vitesse_defilement": 400,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 11:04:15",
+                        "erreurs": [
+                            {
+                                "mot": "tribu",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "b"
+                            }
+                        ],
+                        "vitesse_frappe": 0.79,
+                        "vitesse_defilement": 400,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_5": []
@@ -492,7 +516,13 @@
                 "niveau_5": []
             }
         },
-        "pseudo": "arnaud_solenne"
+        "pseudo": "arnaud_solenne",
+        "parametres_actuels": {
+            "vitesse_defilement": 200,
+            "reset_mots_actif": true,
+            "delai_niveau4": 1500,
+            "timestamp": "2026-02-20 11:04:40"
+        }
     },
     "la_best": {
         "date_inscription": "2026-02-16 18:36:42",

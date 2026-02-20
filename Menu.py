@@ -955,6 +955,121 @@ class Menu:
         return True
 
     @staticmethod
+    def fenetre_confirmation_quitter(screen, pseudo=None, vitesse_defilement=None, reset_mots_actif=None):
+        """
+        Affiche une fenêtre de confirmation avant de quitter le jeu.
+        Propose de sauvegarder les paramètres et avertit que la progression ne sera pas sauvegardée.
+        
+        Args:
+            screen: L'écran pygame
+            pseudo: Pseudo du joueur (optionnel, pour la sauvegarde des paramètres)
+            vitesse_defilement: Vitesse actuelle en pourcentage (optionnel)
+            reset_mots_actif: État du reset des mots (optionnel)
+        
+        Returns:
+            str: 'quitter' pour quitter sans sauvegarder, 'sauvegarder' pour sauvegarder et quitter, 
+                 'annuler' pour annuler et continuer
+        """
+        # Positions des boutons (3 boutons côte à côte)
+        bouton_largeur = 180
+        bouton_hauteur = 50
+        espacement = 20
+        total_largeur = 3 * bouton_largeur + 2 * espacement
+        debut_x = (Donnees.WIDTH - total_largeur) // 2
+        bouton_y = Donnees.HEIGHT // 2 + 100
+        
+        bouton_sauvegarder = pg.Rect(debut_x, bouton_y, bouton_largeur, bouton_hauteur)
+        bouton_quitter = pg.Rect(debut_x + bouton_largeur + espacement, bouton_y, bouton_largeur, bouton_hauteur)
+        bouton_annuler = pg.Rect(debut_x + 2 * (bouton_largeur + espacement), bouton_y, bouton_largeur, bouton_hauteur)
+        
+        # Vérifier si on peut sauvegarder les paramètres
+        peut_sauvegarder = (pseudo is not None and vitesse_defilement is not None and reset_mots_actif is not None)
+        
+        while True:
+            events = pg.event.get()
+            
+            for event in events:
+                if event.type == pg.QUIT:
+                    # Si l'utilisateur clique à nouveau sur la croix rouge, quitter directement
+                    return 'quitter'
+                
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_annuler.collidepoint(event.pos):
+                        return 'annuler'
+                    elif bouton_quitter.collidepoint(event.pos):
+                        return 'quitter'
+                    elif peut_sauvegarder and bouton_sauvegarder.collidepoint(event.pos):
+                        # Sauvegarder les paramètres avant de quitter
+                        import BaseDonnees
+                        BaseDonnees.sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif)
+                        return 'sauvegarder'
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return 'annuler'
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 56)
+            titre = font_titre.render("Voulez-vous quitter ?", True, (200, 0, 0))
+            titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 80))
+            screen.blit(titre, titre_rect)
+            
+            # Message d'avertissement
+            font_msg = pg.font.Font(None, 32)
+            msg1 = font_msg.render("Votre progression ne sera pas sauvegardée.", True, (100, 0, 0))
+            msg1_rect = msg1.get_rect(center=(Donnees.WIDTH // 2, 150))
+            screen.blit(msg1, msg1_rect)
+            
+            # Afficher ou pas le message sur la sauvegarde des paramètres
+            if peut_sauvegarder:
+                font_note = pg.font.Font(None, 30)
+                msg2 = font_note.render("Sauvegarder vos paramètres avant de quitter ?", True, (0, 0, 0))
+                msg2_rect = msg2.get_rect(center=(Donnees.WIDTH // 2, 210))
+                screen.blit(msg2, msg2_rect)
+            else:
+                font_note = pg.font.Font(None, 28)
+                msg2 = font_note.render("(Connectez-vous pour sauvegarder vos paramètres)", True, (120, 120, 120))
+                msg2_rect = msg2.get_rect(center=(Donnees.WIDTH // 2, 210))
+                screen.blit(msg2, msg2_rect)
+            
+            # Boutons
+            font_bouton = pg.font.Font(None, 48)
+            
+            # Bouton Oui (vert, sauvegarder et quitter - seulement si possible)
+            if peut_sauvegarder:
+                pg.draw.rect(screen, (100, 200, 100), bouton_sauvegarder)
+                pg.draw.rect(screen, (0, 0, 0), bouton_sauvegarder, 3)
+                texte_oui = font_bouton.render("Oui", True, (255, 255, 255))
+                texte_oui_rect = texte_oui.get_rect(center=bouton_sauvegarder.center)
+                screen.blit(texte_oui, texte_oui_rect)
+            else:
+                # Bouton grisé si pas de joueur
+                pg.draw.rect(screen, (150, 150, 150), bouton_sauvegarder)
+                pg.draw.rect(screen, (100, 100, 100), bouton_sauvegarder, 3)
+                texte_oui = font_bouton.render("Oui", True, (200, 200, 200))
+                texte_oui_rect = texte_oui.get_rect(center=bouton_sauvegarder.center)
+                screen.blit(texte_oui, texte_oui_rect)
+            
+            # Bouton Non (rouge, quitter sans sauvegarder)
+            pg.draw.rect(screen, (200, 100, 100), bouton_quitter)
+            pg.draw.rect(screen, (0, 0, 0), bouton_quitter, 3)
+            texte_non = font_bouton.render("Non", True, (255, 255, 255))
+            texte_non_rect = texte_non.get_rect(center=bouton_quitter.center)
+            screen.blit(texte_non, texte_non_rect)
+            
+            # Bouton Annuler (bleu, continuer le jeu)
+            pg.draw.rect(screen, (100, 150, 200), bouton_annuler)
+            pg.draw.rect(screen, (0, 0, 0), bouton_annuler, 3)
+            texte_annuler = font_bouton.render("Annuler", True, (255, 255, 255))
+            texte_annuler_rect = texte_annuler.get_rect(center=bouton_annuler.center)
+            screen.blit(texte_annuler, texte_annuler_rect)
+            
+            pg.display.flip()
+
+    @staticmethod
     def fenetre_charger_joueur(screen):
         """
         Affiche une liste de joueurs existants pour en sélectionner un.

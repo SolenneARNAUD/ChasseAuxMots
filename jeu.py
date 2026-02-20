@@ -40,7 +40,17 @@ class Jeu:
         """Traite les événements globaux (fermeture, etc.). Retourne False si l'application doit se fermer."""
         for event in events:
             if event.type == pygame.QUIT:
-                sys.exit()
+                # Afficher la fenêtre de confirmation avant de quitter
+                # Passer les paramètres actuels si disponibles
+                pseudo = getattr(self, 'pseudo_joueur', None)
+                vitesse = getattr(self, 'vitesse_pourcentage', None)
+                reset = getattr(self, 'reset_on_error', None)
+                
+                resultat = Menu.Menu.fenetre_confirmation_quitter(self.screen, pseudo, vitesse, reset)
+                
+                if resultat in ['quitter', 'sauvegarder']:
+                    sys.exit()
+                # Si resultat == 'annuler', on ne fait rien et on continue le jeu
     
     def _appliquer_vitesse(self, vitesse_pourcentage):
         """Applique la vitesse configurée au jeu."""
