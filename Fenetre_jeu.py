@@ -169,8 +169,8 @@ class Fenetre(object):
         
         return bouton_rect
 
-    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees):
-        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, et zone pour historique."""
+    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees, caracteres_justes=0, caracteres_tapes=0):
+        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, précision et zone pour historique."""
         # Fond semi-transparent
         overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
         overlay.fill(Donnees.COULEUR_NOIR)
@@ -203,15 +203,27 @@ class Fenetre(object):
         
         # Vitesse de frappe
         x_stats = Donnees.STATS_DETAILS_GRAPH_X + Donnees.STATS_DETAILS_GRAPH_WIDTH + 50
+        y_current = Donnees.STATS_DETAILS_VITESSE_Y
+        
         vitesse_texte = font_texte.render(f"Vitesse de frappe : {vitesse_wpm:.1f} caractères/s", True, Donnees.COULEUR_BLANC)
-        screen.blit(vitesse_texte, (x_stats, Donnees.STATS_DETAILS_VITESSE_Y))
+        screen.blit(vitesse_texte, (x_stats, y_current))
+        y_current += 50  # Espacement après la vitesse
+        
+        # Précision
+        if caracteres_tapes > 0:
+            precision_pourcent = (caracteres_justes / caracteres_tapes) * 100
+            precision_texte = font_texte.render(f"Précision : {caracteres_justes}/{caracteres_tapes} ({precision_pourcent:.1f}%)", True, Donnees.COULEUR_BLANC)
+            screen.blit(precision_texte, (x_stats, y_current))
+            y_current += 60  # Espacement après la précision
+        else:
+            y_current += 10  # Petit espacement si pas de précision
         
         # Affichage des erreurs
         if erreurs_detaillees:
-            y_offset = Donnees.STATS_DETAILS_ERREUR_Y
+            y_offset = y_current
             erreur_titre = font_texte.render("Mots avec erreurs :", True, Donnees.COULEUR_BLANC)
             screen.blit(erreur_titre, (x_stats, y_offset))
-            y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT
+            y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT + 5  # Espacement après le titre des erreurs
             
             # Dictionnaire pour regrouper les erreurs par mot puis par lettre
             erreurs_par_mot = {}
@@ -275,7 +287,7 @@ class Fenetre(object):
                         screen.blit(texte_lettre_tapee, (x_pos, y_offset))
                         x_pos += texte_lettre_tapee.get_width()
                 
-                y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT
+                y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT + 10  # Espacement entre chaque mot avec erreur
                 
                 # Limiter l'affichage pour ne pas déborder de l'écran
                 if y_offset > Donnees.HEIGHT - 100:
@@ -284,7 +296,7 @@ class Fenetre(object):
                     break
         else:
             texte_no_erreur = font_texte.render("Aucune erreur - Parfait !", True, Donnees.COULEUR_BLANC)
-            screen.blit(texte_no_erreur, (x_stats, Donnees.STATS_DETAILS_ERREUR_Y))
+            screen.blit(texte_no_erreur, (x_stats, y_current))
         
         # Message pour retourner
         info_retour = font_erreur.render("Appuyez sur Échap pour retourner au menu", True, Donnees.COULEUR_GRIS_TEXTE)

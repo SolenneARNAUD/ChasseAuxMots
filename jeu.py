@@ -111,7 +111,9 @@ class Jeu:
                 self.fenetre.afficher_stats_detaillees(
                     self.screen,
                     vitesse_défaite,
-                    self.monde.get_erreurs_detaillees()
+                    self.monde.get_erreurs_detaillees(),
+                    self.monde.get_total_caracteres(),
+                    self.monde.get_total_caracteres_tapes()
                 )
             
             pygame.display.flip()
@@ -169,7 +171,9 @@ class Jeu:
                 self.fenetre.afficher_stats_detaillees(
                     self.screen,
                     self.monde.get_vitesse_finale(),
-                    self.monde.get_erreurs_detaillees()
+                    self.monde.get_erreurs_detaillees(),
+                    self.monde.get_total_caracteres(),
+                    self.monde.get_total_caracteres_tapes()
                 )
             
             pygame.display.flip()

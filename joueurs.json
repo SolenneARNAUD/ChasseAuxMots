@@ -107,6 +107,15 @@
                         "reset_mots_actif": true,
                         "score": 0,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 11:23:39",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.38,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_5": []
@@ -190,6 +199,76 @@
                         "vitesse_defilement": 100,
                         "reset_mots_actif": true,
                         "score": 3,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 11:18:38",
+                        "erreurs": [
+                            {
+                                "mot": "craie",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "craie",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "cerf",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "cerf",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "cerf",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "cerf",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "k"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "bois",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "h"
+                            }
+                        ],
+                        "vitesse_frappe": 2.37,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
                         "delai_niveau4": 1500
                     }
                 ],
@@ -518,10 +597,10 @@
         },
         "pseudo": "arnaud_solenne",
         "parametres_actuels": {
-            "vitesse_defilement": 200,
+            "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "timestamp": "2026-02-20 11:04:40"
+            "timestamp": "2026-02-20 11:23:51"
         }
     },
     "la_best": {

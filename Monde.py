@@ -359,6 +359,10 @@ class Monde(object):
         
         return vitesse
     
+    def get_total_caracteres_tapes(self):
+        """Retourne le nombre total de caractères tapés (corrects + erreurs)."""
+        return sum(d['caracteres_tapes'] for d in self.donnees_frappe)
+    
     def get_obstacle_actuel_config(self):
         return self.obstacle_actuel_config
     
