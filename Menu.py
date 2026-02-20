@@ -8,19 +8,16 @@ class Menu:
     """Classe regroupant tous les menus du jeu."""
     
     @staticmethod
-    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, delai_niveau4_actuel=1500, joueur=None):
+    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, joueur=None):
         """
         Affiche une fenêtre modale pour configurer les paramètres du jeu.
-        Retourne un tuple (vitesse_pourcentage, reset_on_error, delai_niveau4) ou None si annulé.
+        Retourne un tuple (vitesse_pourcentage, reset_on_error) ou None si annulé.
         """
         vitesse_str = ""
         vitesse_affichee = str(vitesse_actuelle)
         reset_on_error = reset_on_error_actuel
-        delai_str = ""
-        delai_affiche = str(delai_niveau4_actuel)
         clock = pg.time.Clock()
         input_active = False
-        input_delai_active = False
         
         # Division de l'écran en 3 zones
         zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
@@ -28,14 +25,13 @@ class Menu:
         zone_boutons_y = zone_titre_height + zone_params_height
         
         # Zone du milieu : calcul de l'espacement vertical
-        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
+        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
         param_height = Donnees.PARAMS_PARAM_HEIGHT
-        spacing = (zone_params_height - 3 * param_height) // 4  # Espacement X pour 3 paramètres
+        spacing = (zone_params_height - 2 * param_height) // 3  # Espacement X pour 2 paramètres
         
         # Position verticale des paramètres dans la zone milieu
         param1_y = zone_titre_height + spacing
         param2_y = param1_y + param_height + spacing
-        param3_y = param2_y + param_height + spacing
         
         # Alignement horizontal : labels à gauche, inputs à droite alignés
         label_x = Donnees.WIDTH // Donnees.PARAMS_LABEL_X_RATIO
@@ -45,7 +41,6 @@ class Menu:
         input_box = pg.Rect(input_x, param1_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         checkbox_rect = pg.Rect(input_x + Donnees.PARAMS_CHECKBOX_OFFSET_X, param2_y + Donnees.PARAMS_CHECKBOX_OFFSET_Y, 
                                Donnees.PARAMS_CHECKBOX_SIZE, Donnees.PARAMS_CHECKBOX_SIZE)
-        input_delai_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
@@ -67,12 +62,7 @@ class Menu:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
                         input_active = True
-                        input_delai_active = False
                         vitesse_str = ""
-                    elif input_delai_box.collidepoint(event.pos):
-                        input_delai_active = True
-                        input_active = False
-                        delai_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
                     elif bouton_retour.collidepoint(event.pos):
@@ -85,13 +75,6 @@ class Menu:
                         val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
                         vitesse_affichee = str(val)
                         
-                        try:
-                            delai_val = int(delai_str) if delai_str else delai_niveau4_actuel
-                        except Exception:
-                            delai_val = delai_niveau4_actuel
-                        delai_val = max(Donnees.DELAI_NIVEAU4_MIN, min(Donnees.DELAI_NIVEAU4_MAX, delai_val))
-                        delai_affiche = str(delai_val)
-                        
                         # Sauvegarder la dernière valeur pour le joueur
                         if joueur is not None:
                             try:
@@ -101,20 +84,10 @@ class Menu:
                             except Exception:
                                 pass
                         
-                        return (int(val), reset_on_error, int(delai_val))
+                        return (int(val), reset_on_error)
                 
                 if event.type == pg.KEYDOWN:
                     if input_active:
-                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER or event.key == pg.K_TAB:
-                            input_active = False
-                            input_delai_active = True
-                        elif event.key == pg.K_ESCAPE:
-                            return None
-                        elif event.key == pg.K_BACKSPACE:
-                            vitesse_str = vitesse_str[:-1]
-                        elif event.unicode.isdigit() and len(vitesse_str) < 3:
-                            vitesse_str += event.unicode
-                    elif input_delai_active:
                         if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
                             try:
                                 val = int(vitesse_str) if vitesse_str else vitesse_actuelle
@@ -122,13 +95,6 @@ class Menu:
                                 val = vitesse_actuelle
                             val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
                             vitesse_affichee = str(val)
-                            
-                            try:
-                                delai_val = int(delai_str) if delai_str else delai_niveau4_actuel
-                            except Exception:
-                                delai_val = delai_niveau4_actuel
-                            delai_val = max(Donnees.DELAI_NIVEAU4_MIN, min(Donnees.DELAI_NIVEAU4_MAX, delai_val))
-                            delai_affiche = str(delai_val)
                             
                             if joueur is not None:
                                 try:
@@ -138,13 +104,13 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(delai_val))
+                            return (int(val), reset_on_error)
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
-                            delai_str = delai_str[:-1]
-                        elif event.unicode.isdigit() and len(delai_str) < 5:
-                            delai_str += event.unicode
+                            vitesse_str = vitesse_str[:-1]
+                        elif event.unicode.isdigit() and len(vitesse_str) < 3:
+                            vitesse_str += event.unicode
                     else:
                         if event.key == pg.K_ESCAPE:
                             return None
@@ -205,23 +171,6 @@ class Menu:
                             (checkbox_rect.right - Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.top + Donnees.PARAMS_CHECKMARK_MARGIN_TOP), 
                             Donnees.PARAMS_CHECKMARK_EPAISSEUR)
             
-            # Paramètre 3 : Délai d'affichage niveau 4
-            label_delai = font_label.render("Délai affichage Niveau 4", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_delai, (label_x, param3_y + 10))
-            
-            # Input box délai
-            pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_delai_box)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR if not input_delai_active else Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE, 
-                        input_delai_box, Donnees.PARAMS_INPUT_BOX_BORDURE)
-            
-            if input_delai_active:
-                texte_delai = font_input.render(delai_str + "|", True, Donnees.COULEUR_NOIR)
-            else:
-                texte_delai = font_input.render(delai_affiche + " ms", True, (100, 100, 100))
-            
-            screen.blit(texte_delai, (input_delai_box.centerx - texte_delai.get_width() // 2, 
-                                      input_delai_box.centery - texte_delai.get_height() // 2))
-            
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
                         (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
@@ -266,10 +215,10 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, delai_niveau4_defaut=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, delai_niveau4).
+        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error).
         Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
@@ -278,7 +227,6 @@ class Menu:
         niveau_survole = 0  # Index du niveau actuellement sélectionné au clavier (0-4)
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
-        delai_niveau4 = delai_niveau4_defaut if delai_niveau4_defaut is not None else Donnees.DELAI_NIVEAU4_PAR_DEFAUT
         
         # Définir le bouton paramètres (en bas à droite)
         btn_params = pg.Rect(
@@ -323,9 +271,9 @@ class Menu:
                     
                     # Vérifier le clic sur le bouton paramètres
                     if btn_params.collidepoint(position):
-                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, delai_niveau4, joueur)
+                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, joueur)
                         if resultat is not None:
-                            vitesse_pourcentage, reset_on_error, delai_niveau4 = resultat
+                            vitesse_pourcentage, reset_on_error = resultat
                     
                     # Event 2 : Clic sur un niveau
                     for i in range(Donnees.NB_NIVEAUX):
@@ -391,7 +339,7 @@ class Menu:
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
-        return niveau_selectionne, vitesse_pourcentage, reset_on_error, delai_niveau4
+        return niveau_selectionne, vitesse_pourcentage, reset_on_error
 
     @staticmethod
     def selection_monde(screen):
