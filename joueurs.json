@@ -284,7 +284,17 @@
                     }
                 ],
                 "niveau_4": [],
-                "niveau_5": []
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-20 17:50:09",
+                        "erreurs": [],
+                        "vitesse_frappe": 4.42,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    }
+                ]
             },
             "foret_bleue": {
                 "niveau_1": [],
@@ -600,7 +610,7 @@
             "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "timestamp": "2026-02-20 11:23:51"
+            "timestamp": "2026-02-20 17:50:15"
         }
     },
     "la_best": {
@@ -923,5 +933,538 @@
             }
         },
         "pseudo": "test_sauvegarde"
+    },
+    "vieux singe": {
+        "pseudo": "vieux singe",
+        "date_inscription": "2026-02-20 12:23:29",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-20 12:34:38",
+                        "erreurs": [
+                            {
+                                "mot": "raptor",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "raptor",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "raptor",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 2.08,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:34:53",
+                        "erreurs": [
+                            {
+                                "mot": "fossile",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "b"
+                            },
+                            {
+                                "mot": "fossile",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "fossile",
+                                "lettre_attendue": "f",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "fossile",
+                                "lettre_attendue": "f",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 3.53,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:35:39",
+                        "erreurs": [
+                            {
+                                "mot": "rocheux",
+                                "lettre_attendue": "x",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "prédateur",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "prédateur",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "y"
+                            }
+                        ],
+                        "vitesse_frappe": 2.98,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 8,
+                        "delai_niveau4": 1500
+                    }
+                ],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-20 12:41:02",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.54,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
+                    }
+                ],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-20 12:37:16",
+                        "erreurs": [
+                            {
+                                "mot": "scarabée",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "c"
+                            }
+                        ],
+                        "vitesse_frappe": 2.27,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 8,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:38:35",
+                        "erreurs": [
+                            {
+                                "mot": "cratère",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "y"
+                            },
+                            {
+                                "mot": "cratère",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "è"
+                            },
+                            {
+                                "mot": "cratère",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "cratère",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 2.32,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 13,
+                        "delai_niveau4": 1500
+                    }
+                ],
+                "niveau_4": [],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-20 12:39:05",
+                        "erreurs": [
+                            {
+                                "mot": "une pierre taillée",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "une pierre taillée",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "une pierre taillée",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "é"
+                            },
+                            {
+                                "mot": "une pierre taillée",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 3.92,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 2,
+                        "delai_niveau4": 1500
+                    }
+                ]
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "kyky": {
+        "pseudo": "kyky",
+        "date_inscription": "2026-02-20 12:41:49",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-20 12:43:01",
+                        "erreurs": [
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "k"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "x"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "u"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 3.5,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:43:36",
+                        "erreurs": [
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "q"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "z"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "q"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "b"
+                            },
+                            {
+                                "mot": "insecte",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "q"
+                            }
+                        ],
+                        "vitesse_frappe": 2.52,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:45:57",
+                        "erreurs": [
+                            {
+                                "mot": "toundra",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "caillou",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "tanière",
+                                "lettre_attendue": "è",
+                                "lettre_tapee": "é"
+                            },
+                            {
+                                "mot": "tanière",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "b"
+                            },
+                            {
+                                "mot": "tanière",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "i"
+                            }
+                        ],
+                        "vitesse_frappe": 1.89,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
+                    }
+                ],
+                "niveau_4": [],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-20 12:46:26",
+                        "erreurs": [
+                            {
+                                "mot": "un raptor affamé",
+                                "lettre_attendue": " ",
+                                "lettre_tapee": "z"
+                            },
+                            {
+                                "mot": "un raptor affamé",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": " "
+                            },
+                            {
+                                "mot": "un raptor affamé",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "un raptor affamé",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "o"
+                            }
+                        ],
+                        "vitesse_frappe": 1.91,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:47:20",
+                        "erreurs": [
+                            {
+                                "mot": "un museau pointu",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "un museau pointu",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "un museau pointu",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "="
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "une empreinte de T-Rex",
+                                "lettre_attendue": "-",
+                                "lettre_tapee": "°"
+                            }
+                        ],
+                        "vitesse_frappe": 2.75,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 4,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 12:49:58",
+                        "erreurs": [
+                            {
+                                "mot": "une peau",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "y"
+                            },
+                            {
+                                "mot": "une corne de tricératops",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "une peau de mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "une peau de mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "y"
+                            },
+                            {
+                                "mot": "une forêt",
+                                "lettre_attendue": "ê",
+                                "lettre_tapee": "p"
+                            },
+                            {
+                                "mot": "une forêt",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "une forêt",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "ï",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "ï",
+                                "lettre_tapee": "i"
+                            }
+                        ],
+                        "vitesse_frappe": 3.02,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 16,
+                        "delai_niveau4": 1500
+                    }
+                ]
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
     }
 }

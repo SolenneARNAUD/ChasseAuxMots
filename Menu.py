@@ -254,13 +254,16 @@ class Menu:
                 print(f"Erreur lors du chargement du fond: {e}")
                 fond_surface = None
         
-        # Définir le bouton paramètres (en bas à droite)
+        # Définir le bouton paramètres (en bas à gauche)
         btn_params = pg.Rect(
-            Donnees.WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
-            Donnees.HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
+            30,
+            Donnees.HEIGHT - 80,
             Donnees.NIVEAU_BOUTON_PARAMS_WIDTH,
-            Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT
+            50
         )
+        
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
         
         while niveau_selectionne is None:
             events = pg.event.get()
@@ -294,6 +297,10 @@ class Menu:
                 
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     position = event.pos
+                    
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(position):
+                        return None
                     
                     # Vérifier le clic sur le bouton paramètres
                     if btn_params.collidepoint(position):
@@ -346,25 +353,33 @@ class Menu:
                 texte_rect = texte.get_rect(center=rect.center)
                 screen.blit(texte, texte_rect)
             
-            # Affichage 3 : Bouton paramètres
+            # Affichage 3 : Bouton paramètres (en bas à gauche)
             pg.draw.rect(screen, Donnees.COULEUR_BLEU_BOUTON, btn_params)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, Donnees.NIVEAU_BOUTON_PARAMS_BORDURE)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, 3)
             texte_params = font_small.render("Paramètres", True, Donnees.COULEUR_BLANC)
             texte_params_rect = texte_params.get_rect(center=btn_params.center)
             screen.blit(texte_params, texte_params_rect)
             
-            # Affichage 4 : Vitesse actuelle
-            info_vitesse = font_small.render(f"Vitesse: {vitesse_pourcentage}%", True, Donnees.COULEUR_GRIS_FONCE)
-            screen.blit(info_vitesse, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_VITESSE_Y))
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
-            # Affichage 5 : Mode reset
+            # Affichage 4 : Vitesse actuelle (au-dessus du bouton paramètres)
+            info_vitesse = font_small.render(f"Vitesse: {vitesse_pourcentage}%", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_vitesse, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 120))
+            
+            # Affichage 5 : Mode reset (au-dessus du bouton paramètres)
             reset_mode = "Reset: OUI" if reset_on_error else "Reset: NON"
             reset_color = Donnees.COULEUR_VERT_FONCE if reset_on_error else Donnees.COULEUR_ROUGE_FONCE
             info_reset = font_small.render(reset_mode, True, reset_color)
-            screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_RESET_Y))
+            screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 100))
             
-            # Affichage 6 : Message Échap pour retour
-            info_echap = font_small.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
+            # Affichage 6 : Message navigation
+            info_echap = font_small.render("Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
             screen.blit(info_echap, (Donnees.WIDTH // 2 - info_echap.get_width() // 2, Donnees.HEIGHT - 30))
             
             pg.display.flip()
@@ -415,6 +430,9 @@ class Menu:
             y = start_y + row * (taille_carre + espacement)
             rectangles_mondes.append(pg.Rect(x, y, taille_carre, taille_carre))
         
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
+        
         while monde_selectionne is None:
             events = pg.event.get()
             
@@ -454,6 +472,10 @@ class Menu:
                 
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     position = event.pos
+                    
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(position):
+                        return None
                     
                     # Vérifier le clic sur un des carrés de monde
                     for i, rect in enumerate(rectangles_mondes):
@@ -502,6 +524,14 @@ class Menu:
             # Message d'information Échap
             info_text = font_info.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
             screen.blit(info_text, (Donnees.WIDTH // 2 - info_text.get_width() // 2, Donnees.HEIGHT - 40))
+            
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()
             clock.tick(Donnees.FPS)
@@ -567,6 +597,9 @@ class Menu:
         except Exception:
             moyenne = None
             derniere = None
+        
+        # Bouton Retour
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT - 120, 150, 40)
 
         clock = pg.time.Clock()
         while True:
@@ -575,6 +608,9 @@ class Menu:
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        return None
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         try:
@@ -642,6 +678,14 @@ class Menu:
                 dx = rx + range_text.get_width() + 20
                 dy = ry
                 screen.blit(d, (dx, dy))
+            
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 32)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 2)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
 
             pg.display.flip()
             clock.tick(30)
@@ -759,6 +803,9 @@ class Menu:
         # Bouton Valider
         bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT // 2 + 100, 150, 40)
         
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
+        
         entree_complete = False
         
         while not entree_complete:
@@ -771,11 +818,13 @@ class Menu:
                 
                 input_pseudo.handle_event(event)
                 
-                # Vérifier si le bouton Valider est cliqué
+                # Vérifier si le bouton Valider ou Retour est cliqué
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_valider.collidepoint(event.pos):
                         if input_pseudo.get_text():
                             entree_complete = True
+                    elif bouton_retour.collidepoint(event.pos):
+                        return None
                 
                 # Valider aussi avec la touche Entrée
                 if event.type == pg.KEYDOWN:
@@ -808,6 +857,14 @@ class Menu:
             bouton_texte = font_label.render("Valider", True, (255, 255, 255))
             bouton_texte_rect = bouton_texte.get_rect(center=bouton_valider.center)
             screen.blit(bouton_texte, bouton_texte_rect)
+            
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             # Message d'erreur si champ vide
             if any(event.type == pg.MOUSEBUTTONDOWN and bouton_valider.collidepoint(event.pos) 
@@ -1099,6 +1156,9 @@ class Menu:
         selection_complete = False
         escape_pressed = False
         
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
+        
         # Paramètres d'affichage
         item_height = 60
         zone_liste_y = 150  # Y de début de la liste
@@ -1163,6 +1223,11 @@ class Menu:
                                 scroll_offset = min(scroll_offset, max(0, len(joueurs_list) - max_items_visibles))
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(event.pos):
+                        escape_pressed = True
+                        break
+                    
                     # Calculer les rectangles visibles
                     joueur_rects = []
                     for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
@@ -1242,6 +1307,14 @@ class Menu:
             info2 = font_info.render("Suppr ou clic droit: supprimer | Esc: retour", True, (100, 100, 100))
             screen.blit(info1, (20, Donnees.HEIGHT - 50))
             screen.blit(info2, (20, Donnees.HEIGHT - 25))
+            
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()
         
@@ -1338,6 +1411,9 @@ class Menu:
         if stats is None:
             return
         
+        # Bouton Retour
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, Donnees.HEIGHT - 100, 200, 50)
+        
         attente_stats = True
         while attente_stats:
             events = pg.event.get()
@@ -1347,7 +1423,11 @@ class Menu:
                     pg.quit()
                     sys.exit()
                 if event.type == pg.KEYDOWN:
-                    attente_stats = False
+                    if event.key == pg.K_ESCAPE:
+                        attente_stats = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        attente_stats = False
             
             # Affichage
             screen.fill(Donnees.COULEUR_FOND)
@@ -1388,9 +1468,12 @@ class Menu:
                 screen.blit(texte, (Donnees.WIDTH // 4, y_offset))
                 y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT
             
-            # Message pour revenir
-            info_text = font_label.render("Appuyez sur une touche pour continuer", True, Donnees.COULEUR_GRIS_MOYEN)
-            info_rect = info_text.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - Donnees.STATS_JOUEUR_INFO_MARGIN_BOTTOM))
-            screen.blit(info_text, info_rect)
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()

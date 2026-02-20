@@ -108,7 +108,7 @@ class Jeu:
                 # Afficher le fond normal pour les stats
                 self.fenetre.set_image(Donnees.FOND_SKIN)
                 self.fenetre.afficher_fond(self.screen)
-                self.fenetre.afficher_stats_detaillees(
+                bouton_retour = self.fenetre.afficher_stats_detaillees(
                     self.screen,
                     vitesse_défaite,
                     self.monde.get_erreurs_detaillees(),
@@ -129,10 +129,17 @@ class Jeu:
                         self.fenetre.set_image(Donnees.FOND_SKIN)
                         return True  # Retourner au menu
                 
-                # Gestion du clic sur le bouton Statistiques
+                # Gestion du clic sur le bouton Statistiques (depuis game over)
                 if ecran_actuel == 'gameover' and event.type == pygame.MOUSEBUTTONDOWN:
                     if bouton_stats.collidepoint(event.pos):
                         ecran_actuel = 'stats'
+                
+                # Gestion du clic sur le bouton Retour (depuis stats)
+                if ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        # Réinitialiser le fond normal après le game over
+                        self.fenetre.set_image(Donnees.FOND_SKIN)
+                        return True  # Retourner au menu
     
     def _gerer_niveau_reussi(self):
         """Gère l'affichage et la logique de fin de niveau réussi."""
@@ -168,7 +175,7 @@ class Jeu:
             if ecran_actuel == 'reussite':
                 bouton_stats = self.fenetre.afficher_niveau_reussi(self.screen)
             else:  # écran 'stats'
-                self.fenetre.afficher_stats_detaillees(
+                bouton_retour = self.fenetre.afficher_stats_detaillees(
                     self.screen,
                     self.monde.get_vitesse_finale(),
                     self.monde.get_erreurs_detaillees(),
@@ -187,10 +194,15 @@ class Jeu:
                     if event.key == pygame.K_ESCAPE:
                         return True  # Retourner au menu
                 
-                # Gestion du clic sur le bouton Statistiques
+                # Gestion du clic sur le bouton Statistiques (depuis réussite)
                 if ecran_actuel == 'reussite' and event.type == pygame.MOUSEBUTTONDOWN:
                     if bouton_stats.collidepoint(event.pos):
                         ecran_actuel = 'stats'
+                
+                # Gestion du clic sur le bouton Retour (depuis stats)
+                if ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        return True  # Retourner au menu
 
 
     def _boucle_jeu(self):

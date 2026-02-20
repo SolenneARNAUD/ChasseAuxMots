@@ -298,10 +298,25 @@ class Fenetre(object):
             texte_no_erreur = font_texte.render("Aucune erreur - Parfait !", True, Donnees.COULEUR_BLANC)
             screen.blit(texte_no_erreur, (x_stats, y_current))
         
-        # Message pour retourner
-        info_retour = font_erreur.render("Appuyez sur Échap pour retourner au menu", True, Donnees.COULEUR_GRIS_TEXTE)
-        info_rect = info_retour.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 30))
-        screen.blit(info_retour, info_rect)
+        # Bouton Retour
+        bouton_retour = pg.Rect(
+            Donnees.WIDTH // 2 - 100,
+            Donnees.HEIGHT - 80,
+            200,
+            50
+        )
+        
+        # Dessiner le bouton
+        pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_retour, 3)
+        
+        # Texte du bouton
+        font_bouton = pg.font.Font(None, 40)
+        texte_bouton = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+        rect_texte_bouton = texte_bouton.get_rect(center=bouton_retour.center)
+        screen.blit(texte_bouton, rect_texte_bouton)
+        
+        return bouton_retour
     
     def afficher_menu_pause(self, screen, capture_ecran):
         """
