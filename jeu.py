@@ -78,8 +78,7 @@ class Jeu:
         
         # Enregistrer l'essai complet
         BaseDonnees.enregistrer_essai(
-            nom=self.nom_joueur,
-            prenom=self.prenom_joueur,
+            pseudo=self.pseudo_joueur,
             monde=self.monde_choisi,
             niveau=self.niveau,
             erreurs_detaillees=self.monde.get_erreurs_detaillees(),
@@ -135,8 +134,7 @@ class Jeu:
         
         # Enregistrer l'essai complet
         BaseDonnees.enregistrer_essai(
-            nom=self.nom_joueur,
-            prenom=self.prenom_joueur,
+            pseudo=self.pseudo_joueur,
             monde=self.monde_choisi,
             niveau=self.niveau,
             erreurs_detaillees=self.monde.get_erreurs_detaillees(),
@@ -369,10 +367,10 @@ class Jeu:
         # Boucle principale permettant de revenir à la sélection du joueur
         while True:
             # Menu d'entrée du joueur
-            self.nom_joueur, self.prenom_joueur = Menu.Menu.menu_selection_joueur(self.screen)
+            self.pseudo_joueur = Menu.Menu.menu_selection_joueur(self.screen)
             
             # Récupérer les derniers paramètres utilisés par le joueur
-            derniers_params = BaseDonnees.get_derniers_parametres_joueur(self.nom_joueur, self.prenom_joueur)
+            derniers_params = BaseDonnees.get_derniers_parametres_joueur(self.pseudo_joueur)
             if derniers_params:
                 # Initialiser avec les derniers paramètres du joueur
                 self.vitesse_pourcentage = derniers_params['vitesse_defilement']
@@ -410,7 +408,7 @@ class Jeu:
                     # Fenêtre des niveaux (et paramètres)
                     resultat = Menu.Menu.fenetre_niveau(
                         self.screen, 
-                        joueur=(self.nom_joueur, self.prenom_joueur),
+                        joueur=self.pseudo_joueur,
                         vitesse_par_defaut=self.vitesse_pourcentage,
                         reset_on_error_defaut=self.reset_on_error,
                         delai_niveau4_defaut=self.delai_niveau4

@@ -6,251 +6,6 @@
         "historique": {
             "vallee_verte": {
                 "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:15:59",
-                        "erreurs": [],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:23:04",
-                        "erreurs": [],
-                        "vitesse_frappe": 21.69,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:12:15",
-                        "erreurs": [],
-                        "vitesse_frappe": 24.41,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_bleue": {
-                "niveau_1": [],
-                "niveau_2": [
-                    {
-                        "timestamp": "2026-02-18 10:09:02",
-                        "erreurs": [],
-                        "vitesse_frappe": 10.6,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:10:28",
-                        "erreurs": [],
-                        "vitesse_frappe": 14.21,
-                        "vitesse_defilement": 150,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:10:46",
-                        "erreurs": [],
-                        "vitesse_frappe": 13.38,
-                        "vitesse_defilement": 150,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:11:08",
-                        "erreurs": [
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "o",
-                                "lettre_tapee": "e"
-                            },
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "b",
-                                "lettre_tapee": "a"
-                            },
-                            {
-                                "mot": "bâton",
-                                "lettre_attendue": "b",
-                                "lettre_tapee": "u"
-                            }
-                        ],
-                        "vitesse_frappe": 12.44,
-                        "vitesse_defilement": 200,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:11:30",
-                        "erreurs": [],
-                        "vitesse_frappe": 22.24,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 11:01:34",
-                        "erreurs": [],
-                        "vitesse_frappe": 1.5,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
-                "niveau_3": [],
-                "niveau_4": [
-                    {
-                        "timestamp": "2026-02-18 10:38:43",
-                        "erreurs": [],
-                        "vitesse_frappe": 8.78,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 1
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:41:06",
-                        "erreurs": [],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:43:18",
-                        "erreurs": [],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:44:30",
-                        "erreurs": [],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:44:57",
-                        "erreurs": [
-                            {
-                                "mot": "libellule",
-                                "lettre_attendue": "b",
-                                "lettre_tapee": "l"
-                            }
-                        ],
-                        "vitesse_frappe": 8.79,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:55:09",
-                        "erreurs": [
-                            {
-                                "mot": "toundra",
-                                "lettre_attendue": "t",
-                                "lettre_tapee": " "
-                            }
-                        ],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 10:57:32",
-                        "erreurs": [
-                            {
-                                "mot": "astéroïde",
-                                "lettre_attendue": "a",
-                                "lettre_tapee": " "
-                            }
-                        ],
-                        "vitesse_frappe": 0.0,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 0
-                    },
-                    {
-                        "timestamp": "2026-02-18 11:02:45",
-                        "erreurs": [],
-                        "vitesse_frappe": 1.69,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 11:06:00",
-                        "erreurs": [],
-                        "vitesse_frappe": 1.31,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 11:09:11",
-                        "erreurs": [
-                            {
-                                "mot": "cabane",
-                                "lettre_attendue": "c",
-                                "lettre_tapee": " "
-                            }
-                        ],
-                        "vitesse_frappe": 1.13,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    },
-                    {
-                        "timestamp": "2026-02-18 11:17:00",
-                        "erreurs": [
-                            {
-                                "mot": "fougère",
-                                "lettre_attendue": "f",
-                                "lettre_tapee": " "
-                            }
-                        ],
-                        "vitesse_frappe": 1.2,
-                        "vitesse_defilement": 100,
-                        "reset_mots_actif": true,
-                        "score": 3
-                    }
-                ],
-                "niveau_5": []
-            },
-            "foret_aux_champignons": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            }
-        }
-    },
-    "test_test": {
-        "nom": "Test",
-        "prenom": "Test",
-        "date_inscription": "2026-02-11 09:32:49",
-        "historique": {
-            "vallee_verte": {
-                "niveau_1": [],
                 "niveau_2": [],
                 "niveau_3": [],
                 "niveau_4": [],
@@ -294,10 +49,45 @@
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:23:31",
+                        "erreurs": [
+                            {
+                                "mot": "sabre",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "sabre",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "a"
+                            }
+                        ],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
                     }
                 ],
                 "niveau_3": [],
-                "niveau_4": [],
+                "niveau_4": [
+                    {
+                        "timestamp": "2026-02-18 15:32:08",
+                        "erreurs": [
+                            {
+                                "mot": "pollen",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 1.16,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
+                    }
+                ],
                 "niveau_5": []
             },
             "foret_violette": {
@@ -306,6 +96,14 @@
                         "timestamp": "2026-02-16 13:57:40",
                         "erreurs": [],
                         "vitesse_frappe": 19.96,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 09:51:06",
+                        "erreurs": [],
+                        "vitesse_frappe": 20.23,
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
@@ -338,9 +136,53 @@
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:07:13",
+                        "erreurs": [
+                            {
+                                "mot": "piste",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "os",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "f"
+                            }
+                        ],
+                        "vitesse_frappe": 17.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 15:23:42",
+                        "erreurs": [
+                            {
+                                "mot": "forêt",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 1.23,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
                     }
                 ],
-                "niveau_3": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-18 13:49:03",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.43,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
+                    }
+                ],
                 "niveau_4": [],
                 "niveau_5": []
             },
@@ -407,6 +249,155 @@
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 09:59:25",
+                        "erreurs": [],
+                        "vitesse_frappe": 25.8,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:00:08",
+                        "erreurs": [
+                            {
+                                "mot": "sol",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "meute",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "j"
+                            }
+                        ],
+                        "vitesse_frappe": 16.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:10:24",
+                        "erreurs": [
+                            {
+                                "mot": "épine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "ambre",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "b"
+                            }
+                        ],
+                        "vitesse_frappe": 17.06,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:32:51",
+                        "erreurs": [],
+                        "vitesse_frappe": 154.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:33:23",
+                        "erreurs": [],
+                        "vitesse_frappe": 193.76,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:34:45",
+                        "erreurs": [
+                            {
+                                "mot": "terre",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "f"
+                            },
+                            {
+                                "mot": "terre",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 2.51,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:37:08",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 10:53:03",
+                        "erreurs": [
+                            {
+                                "mot": "queue",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 1.8,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:09:33",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.43,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:26:26",
+                        "erreurs": [
+                            {
+                                "mot": "dent",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "dent",
+                                "lettre_attendue": "d",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 1.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 15:15:15",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.28,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_3": [
@@ -450,6 +441,520 @@
                         "score": 3
                     }
                 ],
+                "niveau_4": [
+                    {
+                        "timestamp": "2026-02-18 11:37:07",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.38,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
+                    }
+                ],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-18 11:30:42",
+                        "erreurs": [
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un nid abandonné",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            }
+                        ],
+                        "vitesse_frappe": 1.86,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 11:31:35",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.92,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ]
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "la_best": {
+        "nom": "La",
+        "prenom": "Best",
+        "date_inscription": "2026-02-16 18:36:42",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-16 18:39:27",
+                        "erreurs": [],
+                        "vitesse_frappe": 20.9,
+                        "vitesse_defilement": 400,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-16 18:38:21",
+                        "erreurs": [
+                            {
+                                "mot": "un raptor rapide",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "p"
+                            },
+                            {
+                                "mot": "un raptor rapide",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "un raptor rapide",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "d"
+                            }
+                        ],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:38:26",
+                        "erreurs": [
+                            {
+                                "mot": "un mammouth laineux",
+                                "lettre_attendue": " ",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "un mammouth laineux",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "un mammouth laineux",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "un mammouth laineux",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "m"
+                            }
+                        ],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:38:35",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:38:46",
+                        "erreurs": [
+                            {
+                                "mot": "une herbe haute",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 7.52,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 1
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:38:53",
+                        "erreurs": [
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "une chasse au mammouth",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "o"
+                            }
+                        ],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:39:06",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 400,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:39:14",
+                        "erreurs": [
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "z"
+                            }
+                        ],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 400,
+                        "reset_mots_actif": true,
+                        "score": 0
+                    }
+                ]
+            },
+            "foret_violette": {
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-16 18:37:10",
+                        "erreurs": [],
+                        "vitesse_frappe": 13.34,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-16 18:37:40",
+                        "erreurs": [],
+                        "vitesse_frappe": 14.32,
+                        "vitesse_defilement": 200,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-16 18:38:07",
+                        "erreurs": [],
+                        "vitesse_frappe": 13.15,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ]
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "muller_tom": {
+        "nom": "Muller",
+        "prenom": "Tom",
+        "date_inscription": "2026-02-18 10:11:14",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-18 10:13:51",
+                        "erreurs": [],
+                        "vitesse_frappe": 27.67,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-18 10:13:37",
+                        "erreurs": [],
+                        "vitesse_frappe": 31.72,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [
+                    {
+                        "timestamp": "2026-02-18 10:13:19",
+                        "erreurs": [],
+                        "vitesse_frappe": 15.03,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3
+                    }
+                ],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "moi_moi": {
+        "nom": "Moi",
+        "prenom": "Moi",
+        "date_inscription": "2026-02-18 11:47:49",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "\u001bnouveau_nouveau": {
+        "nom": "\u001bnouveau",
+        "prenom": "Nouveau",
+        "date_inscription": "2026-02-18 14:56:00",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "test_test": {
+        "nom": "Test",
+        "prenom": "Test",
+        "date_inscription": "2026-02-18 16:52:26",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [
+                    {
+                        "timestamp": "2026-02-18 16:53:50",
+                        "erreurs": [
+                            {
+                                "mot": "scarabée",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "végétal",
+                                "lettre_attendue": "g",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "végétal",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "é"
+                            }
+                        ],
+                        "vitesse_frappe": 2.24,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 10,
+                        "delai_niveau4": 1000
+                    }
+                ],
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-18 16:54:23",
+                        "erreurs": [
+                            {
+                                "mot": "un volcan en éruption",
+                                "lettre_attendue": "i",
+                                "lettre_tapee": "o"
+                            }
+                        ],
+                        "vitesse_frappe": 3.89,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 2,
+                        "delai_niveau4": 1000
+                    }
+                ]
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_aux_champignons": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            }
+        }
+    },
+    "test_sauvegarde": {
+        "nom": "Test",
+        "prenom": "Sauvegarde",
+        "date_inscription": "2026-02-18 17:49:22",
+        "historique": {
+            "vallee_verte": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_violette": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
+                "niveau_4": [],
+                "niveau_5": []
+            },
+            "foret_bleue": {
+                "niveau_1": [],
+                "niveau_2": [],
+                "niveau_3": [],
                 "niveau_4": [],
                 "niveau_5": []
             },

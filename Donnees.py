@@ -49,7 +49,7 @@ MOT_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier mot (dans la fenêtre)
 MOT_DEPART_Y = HEIGHT - 180  # 140 pixels au-dessus du monstre
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
-TOTAL_MOTS = 3
+TOTAL_MOTS = 20
 
 # Sol
 SOL_DEPART_X = WIDTH / 2

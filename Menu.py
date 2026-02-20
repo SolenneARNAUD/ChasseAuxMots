@@ -95,9 +95,9 @@ class Menu:
                         # Sauvegarder la dernière valeur pour le joueur
                         if joueur is not None:
                             try:
-                                nom_j, prenom_j = joueur
+                                pseudo_j = joueur
                                 val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
-                                BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val_wpm)
+                                BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
                             except Exception:
                                 pass
                         
@@ -132,9 +132,9 @@ class Menu:
                             
                             if joueur is not None:
                                 try:
-                                    nom_j, prenom_j = joueur
+                                    pseudo_j = joueur
                                     val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
-                                    BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val_wpm)
+                                    BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
                                 except Exception:
                                     pass
                             
@@ -574,8 +574,8 @@ class Menu:
         derniere = None
         try:
             if joueur is not None:
-                nom_j, prenom_j = joueur
-                j = BaseDonnees.get_joueur(nom_j, prenom_j)
+                pseudo_j = joueur
+                j = BaseDonnees.get_joueur(pseudo_j)
                 if j is not None:
                     try:
                         moyenne = float(j.get('Vitesse_Moyenne_WPM', 0.0))
@@ -595,7 +595,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         try:
@@ -607,10 +607,10 @@ class Menu:
                         if joueur is not None:
                             try:
                                 import BaseDonnees
-                                nom_j, prenom_j = joueur
-                                BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val)
+                                pseudo_j = joueur
+                                BaseDonnees.set_derniere_vitesse(pseudo_j, val)
                                 derniere = float(val)
-                                print(f"Enregistré dernière vitesse {val} WPM pour {prenom_j} {nom_j}")
+                                print(f"Enregistré dernière vitesse {val} WPM pour {pseudo_j}")
                             except Exception:
                                 pass
                         return int(val)
@@ -685,7 +685,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_nouveau.collidepoint(event.pos):
@@ -729,8 +729,8 @@ class Menu:
     @staticmethod
     def fenetre_joueur(screen):
         """
-        Affiche le menu d'entrée du nom et prénom du joueur.
-        Retourne un tuple (nom, prenom) lorsque l'utilisateur valide, ou None si Échap est pressé.
+        Affiche le menu d'entrée du pseudo du joueur.
+        Retourne le pseudo lorsque l'utilisateur valide, ou None si Échap est pressé.
         """
         
         class InputBox:
@@ -764,7 +764,7 @@ class Menu:
             
             def update_text(self):
                 font = pg.font.Font(None, 32)
-                self.txt_surface = font.render(self.text if self.text else 'Entrez le texte...', True, (0, 0, 0))
+                self.txt_surface = font.render(self.text if self.text else 'Entrez votre pseudo...', True, (0, 0, 0))
             
             def draw(self, screen):
                 screen.blit(self.txt_surface, (self.rect.x + 10, self.rect.y + 7))
@@ -774,12 +774,11 @@ class Menu:
                 return self.text.strip()
         
         
-        # Initialisation des boîtes de saisie
-        input_nom = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2 - 50, 300, 40)
-        input_prenom = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2 + 50, 300, 40)
+        # Initialisation de la boîte de saisie
+        input_pseudo = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2, 300, 40)
         
         # Bouton Valider
-        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT // 2 + 130, 150, 40)
+        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT // 2 + 100, 150, 40)
         
         entree_complete = False
         
@@ -789,21 +788,20 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
-                input_nom.handle_event(event)
-                input_prenom.handle_event(event)
+                input_pseudo.handle_event(event)
                 
                 # Vérifier si le bouton Valider est cliqué
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_valider.collidepoint(event.pos):
-                        if input_nom.get_text() and input_prenom.get_text():
+                        if input_pseudo.get_text():
                             entree_complete = True
                 
                 # Valider aussi avec la touche Entrée
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
-                        if input_nom.get_text() and input_prenom.get_text():
+                        if input_pseudo.get_text():
                             entree_complete = True
                     elif event.key == pg.K_ESCAPE:
                         # Retourner None pour indiquer l'annulation
@@ -818,16 +816,13 @@ class Menu:
             titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 80))
             screen.blit(titre, titre_rect)
             
-            # Labels
+            # Label
             font_label = pg.font.Font(None, 36)
-            label_nom = font_label.render("Nom:", True, (0, 0, 0))
-            label_prenom = font_label.render("Prénom:", True, (0, 0, 0))
-            screen.blit(label_nom, (Donnees.WIDTH // 4 - 80, Donnees.HEIGHT // 2 - 50))
-            screen.blit(label_prenom, (Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2 + 50))
+            label_pseudo = font_label.render("Pseudo:", True, (0, 0, 0))
+            screen.blit(label_pseudo, (Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2))
             
-            # Boîtes de saisie
-            input_nom.draw(screen)
-            input_prenom.draw(screen)
+            # Boîte de saisie
+            input_pseudo.draw(screen)
             
             # Bouton Valider
             pg.draw.rect(screen, (100, 200, 100), bouton_valider)
@@ -835,10 +830,10 @@ class Menu:
             bouton_texte_rect = bouton_texte.get_rect(center=bouton_valider.center)
             screen.blit(bouton_texte, bouton_texte_rect)
             
-            # Message d'erreur si champs vides
+            # Message d'erreur si champ vide
             if any(event.type == pg.MOUSEBUTTONDOWN and bouton_valider.collidepoint(event.pos) 
-                   for event in events) and not (input_nom.get_text() and input_prenom.get_text()):
-                message_erreur = font_label.render("Veuillez remplir tous les champs!", True, (255, 0, 0))
+                   for event in events) and not input_pseudo.get_text():
+                message_erreur = font_label.render("Veuillez entrer un pseudo!", True, (255, 0, 0))
                 screen.blit(message_erreur, (Donnees.WIDTH // 2 - 150, Donnees.HEIGHT - 70))
             
             # Message pour la touche Échap
@@ -848,11 +843,11 @@ class Menu:
             
             pg.display.flip()
         
-        # Retourner les données du joueur
-        return input_nom.get_text(), input_prenom.get_text()
+        # Retourner le pseudo du joueur
+        return input_pseudo.get_text()
 
     @staticmethod
-    def fenetre_confirmation_suppression(screen, nom, prenom):
+    def fenetre_confirmation_suppression(screen, pseudo):
         """
         Affiche une fenêtre de confirmation avec double vérification pour supprimer un joueur.
         Retourne True si l'utilisateur confirme, False sinon.
@@ -868,7 +863,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_oui.collidepoint(event.pos):
@@ -893,9 +888,9 @@ class Menu:
             titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 100))
             screen.blit(titre, titre_rect)
             
-            # Nom du joueur
+            # Pseudo du joueur
             font_nom = pg.font.Font(None, 40)
-            nom_texte = font_nom.render(f"{prenom} {nom}", True, (0, 0, 0))
+            nom_texte = font_nom.render(f"{pseudo}", True, (0, 0, 0))
             nom_rect = nom_texte.get_rect(center=(Donnees.WIDTH // 2, 180))
             screen.blit(nom_texte, nom_rect)
             
@@ -932,7 +927,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_confirmer.collidepoint(event.pos):
@@ -986,13 +981,13 @@ class Menu:
         Affiche une liste de joueurs existants pour en sélectionner un.
         Supporte le défilement avec la molette si la liste est longue.
         Permet de supprimer un profil avec la touche Suppr ou le clic droit.
-        Retourne un tuple (nom, prenom) du joueur sélectionné.
+        Retourne le pseudo du joueur sélectionné.
         """
         import BaseDonnees
         
         joueurs_list = []
         if BaseDonnees.dict_joueurs:
-            joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+            joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
         
         if not joueurs_list:
             # Aucun joueur enregistré, revenir au menu
@@ -1022,7 +1017,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 # Gestion de la molette de la souris
                 if event.type == pg.MOUSEWHEEL:
@@ -1053,12 +1048,12 @@ class Menu:
                     
                     elif event.key == pg.K_DELETE:
                         # Supprimer le joueur sélectionné
-                        nom, prenom = joueurs_list[selected_index]
-                        if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
-                            succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                        pseudo = joueurs_list[selected_index]
+                        if Menu.fenetre_confirmation_suppression(screen, pseudo):
+                            succes, message = BaseDonnees.supprimer_joueur(pseudo)
                             if succes:
                                 # Recharger la liste
-                                joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
                                 if not joueurs_list:
                                     # Plus de joueurs
                                     screen.fill(Donnees.COULEUR_FOND)
@@ -1093,12 +1088,12 @@ class Menu:
                     elif event.button == 3:
                         for i, rect in joueur_rects:
                             if rect.collidepoint(event.pos):
-                                nom, prenom = joueurs_list[i]
-                                if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
-                                    succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                                pseudo = joueurs_list[i]
+                                if Menu.fenetre_confirmation_suppression(screen, pseudo):
+                                    succes, message = BaseDonnees.supprimer_joueur(pseudo)
                                     if succes:
                                         # Recharger la liste
-                                        joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                        joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
                                         if not joueurs_list:
                                             # Plus de joueurs
                                             screen.fill(Donnees.COULEUR_FOND)
@@ -1134,7 +1129,7 @@ class Menu:
             
             for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
                 display_index = i - scroll_offset
-                nom, prenom = joueurs_list[i]
+                pseudo = joueurs_list[i]
                 
                 couleur = (100, 200, 100) if i == selected_index else (200, 200, 200)
                 joueur_rect = pg.Rect(Donnees.WIDTH // 4, zone_liste_y + display_index * item_height, 
@@ -1143,7 +1138,7 @@ class Menu:
                 pg.draw.rect(screen, couleur, joueur_rect)
                 pg.draw.rect(screen, (0, 0, 0), joueur_rect, 2)
                 
-                texte_joueur = font_joueur.render(f"{prenom} {nom}", True, (0, 0, 0))
+                texte_joueur = font_joueur.render(f"{pseudo}", True, (0, 0, 0))
                 texte_rect = texte_joueur.get_rect(center=joueur_rect.center)
                 screen.blit(texte_joueur, texte_rect)
             
@@ -1160,21 +1155,20 @@ class Menu:
             return None
         
         # Retourner le joueur sélectionné
-        nom, prenom = joueurs_list[selected_index]
-        return nom, prenom
+        pseudo = joueurs_list[selected_index]
+        return pseudo
 
     @staticmethod
     def menu_selection_joueur(screen):
         """
         Gère le menu complet de sélection/création d'un joueur.
-        Retourne un tuple (nom, prenom) une fois qu'un joueur valide est sélectionné.
+        Retourne le pseudo une fois qu'un joueur valide est sélectionné.
         """
         import BaseDonnees
         import sys
         
         joueur_valide = False
-        nom_joueur = None
-        prenom_joueur = None
+        pseudo_joueur = None
         
         while not joueur_valide:
             # Afficher le menu de choix
@@ -1189,14 +1183,13 @@ class Menu:
                     if result is None:
                         break
                     
-                    nom, prenom = result
-                    succes, message = BaseDonnees.ajouter_joueur(nom, prenom)
+                    pseudo = result
+                    succes, message = BaseDonnees.ajouter_joueur(pseudo)
                     
                     if succes:
-                        nom_joueur = nom
-                        prenom_joueur = prenom
+                        pseudo_joueur = pseudo
                         joueur_valide = True
-                        print(f"Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                        print(f"Bienvenue {pseudo}! (Nouveau joueur créé)")
                         break
                     else:
                         # Le joueur existe déjà - afficher message et revenir au choix
@@ -1226,27 +1219,27 @@ class Menu:
                 result = Menu.fenetre_charger_joueur(screen)
                 
                 if result is not None:
-                    nom_joueur, prenom_joueur = result
+                    pseudo_joueur = result
                     joueur_valide = True
-                    print(f"Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+                    print(f"Bienvenue {pseudo_joueur}! (Joueur existant)")
                 # else: retourner au menu de choix
         
-        return nom_joueur, prenom_joueur
+        return pseudo_joueur
 
     @staticmethod
-    def fenetre_afficher_stats_joueur(screen, nom, prenom):
+    def fenetre_afficher_stats_joueur(screen, pseudo):
         """
         Affiche les statistiques du joueur courant.
         """
         import BaseDonnees
         
-        joueur = BaseDonnees.get_joueur(nom, prenom)
+        joueur = BaseDonnees.get_joueur(pseudo)
         
         if joueur is None:
             return
         
         # Récupérer les statistiques calculées depuis l'historique
-        stats = BaseDonnees.get_statistiques_joueur(nom, prenom)
+        stats = BaseDonnees.get_statistiques_joueur(pseudo)
         
         if stats is None:
             return
@@ -1258,7 +1251,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pg.KEYDOWN:
                     attente_stats = False
             
@@ -1277,8 +1270,8 @@ class Menu:
             
             y_offset = Donnees.STATS_JOUEUR_STATS_Y
             
-            # Nom et prénom
-            joueur_nom = font_info.render(f"{joueur['prenom']} {joueur['nom']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
+            # Pseudo
+            joueur_nom = font_info.render(f"{joueur['pseudo']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
             screen.blit(joueur_nom, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, y_offset))
             
             y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT + Donnees.STATS_JOUEUR_SECTION_SPACING
