@@ -270,6 +270,31 @@
                         "reset_mots_actif": true,
                         "score": 20,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 19:28:11",
+                        "erreurs": [
+                            {
+                                "mot": "océan",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "époux",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "&"
+                            }
+                        ],
+                        "vitesse_frappe": 2.01,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_3": [
@@ -280,6 +305,15 @@
                         "vitesse_defilement": 100,
                         "reset_mots_actif": true,
                         "score": 3,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 19:26:43",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.83,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
                         "delai_niveau4": 1500
                     }
                 ],

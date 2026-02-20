@@ -203,7 +203,7 @@ class Jeu:
                         ecran_actuel = 'stats'
                 
                 # Gestion du clic sur le bouton Retour (depuis stats)
-                if ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
+                elif ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
                     if bouton_retour.collidepoint(event.pos):
                         return True  # Retourner au menu
 
@@ -343,8 +343,12 @@ class Jeu:
                     if animation_frames:
                         self.man.start_animation(animation_frames, animation_delay=animation_delay)
                 else:
+                    # Le méchant accélère vers le personnage - on le déplace manuellement
+                    # L'animation de scrolling sera gérée plus bas pour synchroniser avec le sol
                     self.mechant.position_x -= self.mechant_step
                     self.mechant.position_y = self.man.position_y  # Aligner les pieds pendant le déplacement
+                    # Mettre à jour l'animation du méchant même pendant le déplacement manuel
+                    self.mechant.update_animation()
             
             # Bloquer le méchant à la bonne position pendant l'animation
             if self.monde.get_animation_in_progress() and not self.monde.get_mechant_move_to_man():
@@ -379,14 +383,25 @@ class Jeu:
             
             # Mise à jour des positions (déplacement avec le sol)
             if self.jeu_demarre:
+                # Calculer la vitesse de défilement en fonction de l'état du méchant
+                # Si le méchant accélère vers le personnage, tout accélère avec lui
+                if self.monde.get_mechant_move_to_man():
+                    vitesse_defilement = self.mechant_step
+                else:
+                    vitesse_defilement = Donnees.SOL_VITESSE
+                
                 # Faire défiler la parallaxe
-                self.fenetre.defiler_parallaxe(Donnees.SOL_VITESSE)
+                self.fenetre.defiler_parallaxe(vitesse_defilement)
                 # Faire défiler le sol
-                self.sol_gauche.defiler(Donnees.SOL_VITESSE)
-                self.sol_droite.defiler(Donnees.SOL_VITESSE)
-                self.mot.update_position(Donnees.SOL_VITESSE)
+                self.sol_gauche.defiler(vitesse_defilement)
+                self.sol_droite.defiler(vitesse_defilement)
+                self.mot.update_position(vitesse_defilement)
+                
                 # La mise à jour du mechant gère aussi son animation interne
-                self.mechant.update_position(Donnees.SOL_VITESSE)
+                # Pendant l'accélération vers le joueur, on ne fait PAS de update_position
+                # car le déplacement manuel suffit (et le sol accélère pour correspondre)
+                if not self.monde.get_mechant_move_to_man():
+                    self.mechant.update_position(vitesse_defilement)
                 
                 # Mise à jour de l'animation du personnage
                 self.man.update_animation()

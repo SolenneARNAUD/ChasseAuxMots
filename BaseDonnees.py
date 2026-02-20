@@ -380,13 +380,13 @@ Univers = {
             "Wraith_01": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Idle/Wraith_01_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Walking/Wraith_01_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
@@ -394,13 +394,13 @@ Univers = {
             "Wraith_02": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Idle/Wraith_02_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Walking/Wraith_02_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
@@ -408,13 +408,13 @@ Univers = {
             "Wraith_03": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Idle/Wraith_03_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Walking/Wraith_03_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
