@@ -215,7 +215,7 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, monde_choisi=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
         Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error).
@@ -227,6 +227,32 @@ class Menu:
         niveau_survole = 0  # Index du niveau actuellement sélectionné au clavier (0-4)
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
+        
+        # Charger le fond du monde sélectionné avec transparence
+        fond_surface = None
+        if monde_choisi is not None:
+            try:
+                from BaseDonnees import Univers
+                chemin_background = Univers[monde_choisi]["background"]["chemin"]
+                # Charger les images de fond (de 7 à 1, du plus éloigné au sol)
+                fond_images = []
+                for i in range(7, 0, -1):
+                    chemin = Donnees.resource_path(chemin_background + f"{i}.png")
+                    img = pg.image.load(chemin).convert_alpha()
+                    # Redimensionner pour couvrir toute la fenêtre
+                    img = pg.transform.scale(img, (Donnees.WIDTH, Donnees.HEIGHT))
+                    fond_images.append(img)
+                
+                # Créer une surface combinée avec toutes les couches
+                fond_surface = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
+                for img in fond_images:
+                    fond_surface.blit(img, (0, 0))
+                
+                # Appliquer la transparence (alpha = 128 pour 50% de transparence)
+                fond_surface.set_alpha(128)
+            except Exception as e:
+                print(f"Erreur lors du chargement du fond: {e}")
+                fond_surface = None
         
         # Définir le bouton paramètres (en bas à droite)
         btn_params = pg.Rect(
@@ -285,6 +311,11 @@ class Menu:
             ## Affichage ##
             # Affichage 1 : Fond
             screen.fill(Donnees.COULEUR_FOND)
+            
+            # Afficher le fond du monde sélectionné avec transparence
+            if fond_surface is not None:
+                screen.blit(fond_surface, (0, 0))
+            
             font = pg.font.Font(None, Donnees.NIVEAU_TITRE_POLICE)
             font_small = pg.font.Font(None, Donnees.NIVEAU_POLICE_INFO)
             

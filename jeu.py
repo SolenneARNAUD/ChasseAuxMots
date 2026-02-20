@@ -437,7 +437,8 @@ class Jeu:
                         self.screen, 
                         joueur=self.pseudo_joueur,
                         vitesse_par_defaut=self.vitesse_pourcentage,
-                        reset_on_error_defaut=self.reset_on_error
+                        reset_on_error_defaut=self.reset_on_error,
+                        monde_choisi=self.monde_choisi
                     )
                     
                     # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du monde
