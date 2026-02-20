@@ -40,7 +40,7 @@ OBSTACLE_HEIGHT = 120
 # - Si les méchants sont TROP BAS : utilisez un offset NÉGATIF (ex: -10)
 # - Si les méchants sont TROP HAUT : utilisez un offset POSITIF (ex: +10)
 # - 0 = pas d'ajustement
-MECHANT_FOOT_OFFSET = 14
+MECHANT_FOOT_OFFSET = 16
 
 # Mots
 TAILLE_POLICE = 36
