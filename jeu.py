@@ -104,6 +104,9 @@ class Jeu:
             # Afficher l'écran approprié
             if ecran_actuel == 'gameover':
                 bouton_stats = self.fenetre.afficher_game_over(self.screen)
+                # Afficher les sols même en game over
+                self.sol_gauche.afficher(self.screen)
+                self.sol_droite.afficher(self.screen)
             else:  # écran 'stats'
                 # Afficher le fond normal pour les stats
                 self.fenetre.set_image(Donnees.FOND_SKIN)

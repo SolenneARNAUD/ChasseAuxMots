@@ -283,7 +283,26 @@
                         "delai_niveau4": 1500
                     }
                 ],
-                "niveau_4": [],
+                "niveau_4": [
+                    {
+                        "timestamp": "2026-02-20 19:18:28",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.38,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 19:18:55",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.0,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    }
+                ],
                 "niveau_5": [
                     {
                         "timestamp": "2026-02-20 17:50:09",

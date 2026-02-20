@@ -54,9 +54,9 @@ class Fenetre(object):
         for i, chemin in enumerate(chemins_images):
             # Calculer le facteur de vitesse : 
             # - Couche 0 (image 7, la plus éloignée) : vitesse_facteur très faible
-            # - Couche n-1 (image 1, la plus proche) : vitesse_facteur proche de 1
-            # Formule : vitesse augmente progressivement de 0.1 à 1.0
-            vitesse_facteur = 0.1 + (i / (nb_couches - 1)) * 0.9 if nb_couches > 1 else 0.5
+            # - Couche n-1 (image 1, la plus proche) : vitesse_facteur < 1 pour rester en dessous du sol
+            # Formule : vitesse augmente progressivement de 0.1 à 0.8 (le sol est à 1.0)
+            vitesse_facteur = 0.1 + (i / (nb_couches - 1)) * 0.7 if nb_couches > 1 else 0.5
             
             couche = CoucheParallaxe.CoucheParallaxe(chemin, vitesse_facteur, 0)
             self._couches_parallaxe.append(couche)
