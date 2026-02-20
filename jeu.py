@@ -185,12 +185,46 @@ class Jeu:
 
     def _boucle_jeu(self):
         """Boucle principale du gameplay."""
+        en_pause = False
+        capture_ecran = None
+        
         while True:
             events = pygame.event.get()
             self._traiter_events_globaux(events) # Ex : fermeture de la fenêtre
             
+            # Gestion du menu pause
+            if en_pause:
+                # Afficher le menu pause
+                bouton_continuer, bouton_quitter = self.fenetre.afficher_menu_pause(self.screen, capture_ecran)
+                pygame.display.flip()
+                
+                # Gérer les événements pendant la pause
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            # Reprendre le jeu
+                            en_pause = False
+                    
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if bouton_continuer.collidepoint(event.pos):
+                            # Continuer le jeu
+                            en_pause = False
+                        elif bouton_quitter.collidepoint(event.pos):
+                            # Quitter sans sauvegarder - retour au menu
+                            return True
+                
+                self.clock.tick(Donnees.FPS)
+                continue  # Sauter le reste de la boucle pendant la pause
+            
             for event in events:
                 if event.type == pygame.KEYDOWN:
+                    # Gestion de la touche Échap pour mettre en pause
+                    if event.key == pygame.K_ESCAPE:
+                        # Capturer l'écran actuel avant d'afficher le menu pause
+                        capture_ecran = self.screen.copy()
+                        en_pause = True
+                        continue
+                    
                     # Démarrage du jeu
                     if not self.jeu_demarre:
                         self.jeu_demarre = True

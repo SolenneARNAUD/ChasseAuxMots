@@ -1,7 +1,5 @@
 {
     "kapfer_vincent": {
-        "nom": "Kapfer",
-        "prenom": "Vincent",
         "date_inscription": "2026-02-09 11:06:44",
         "historique": {
             "vallee_verte": {
@@ -32,11 +30,10 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
-        }
+        },
+        "pseudo": "kapfer_vincent"
     },
     "arnaud_solenne": {
-        "nom": "Arnaud",
-        "prenom": "Solenne",
         "date_inscription": "2026-02-16 11:46:34",
         "historique": {
             "vallee_verte": {
@@ -494,11 +491,10 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
-        }
+        },
+        "pseudo": "arnaud_solenne"
     },
     "la_best": {
-        "nom": "La",
-        "prenom": "Best",
         "date_inscription": "2026-02-16 18:36:42",
         "historique": {
             "vallee_verte": {
@@ -721,11 +717,10 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
-        }
+        },
+        "pseudo": "la_best"
     },
     "muller_tom": {
-        "nom": "Muller",
-        "prenom": "Tom",
         "date_inscription": "2026-02-18 10:11:14",
         "historique": {
             "vallee_verte": {
@@ -783,158 +778,10 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
-        }
-    },
-    "moi_moi": {
-        "nom": "Moi",
-        "prenom": "Moi",
-        "date_inscription": "2026-02-18 11:47:49",
-        "historique": {
-            "vallee_verte": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_bleue": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_aux_champignons": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            }
-        }
-    },
-    "\u001bnouveau_nouveau": {
-        "nom": "\u001bnouveau",
-        "prenom": "Nouveau",
-        "date_inscription": "2026-02-18 14:56:00",
-        "historique": {
-            "vallee_verte": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_bleue": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_aux_champignons": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            }
-        }
-    },
-    "test_test": {
-        "nom": "Test",
-        "prenom": "Test",
-        "date_inscription": "2026-02-18 16:52:26",
-        "historique": {
-            "vallee_verte": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [
-                    {
-                        "timestamp": "2026-02-18 16:53:50",
-                        "erreurs": [
-                            {
-                                "mot": "scarabée",
-                                "lettre_attendue": "s",
-                                "lettre_tapee": "c"
-                            },
-                            {
-                                "mot": "végétal",
-                                "lettre_attendue": "g",
-                                "lettre_tapee": "r"
-                            },
-                            {
-                                "mot": "végétal",
-                                "lettre_attendue": "v",
-                                "lettre_tapee": "é"
-                            }
-                        ],
-                        "vitesse_frappe": 2.24,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 10,
-                        "delai_niveau4": 1000
-                    }
-                ],
-                "niveau_5": [
-                    {
-                        "timestamp": "2026-02-18 16:54:23",
-                        "erreurs": [
-                            {
-                                "mot": "un volcan en éruption",
-                                "lettre_attendue": "i",
-                                "lettre_tapee": "o"
-                            }
-                        ],
-                        "vitesse_frappe": 3.89,
-                        "vitesse_defilement": 500,
-                        "reset_mots_actif": true,
-                        "score": 2,
-                        "delai_niveau4": 1000
-                    }
-                ]
-            },
-            "foret_violette": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_bleue": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            },
-            "foret_aux_champignons": {
-                "niveau_1": [],
-                "niveau_2": [],
-                "niveau_3": [],
-                "niveau_4": [],
-                "niveau_5": []
-            }
-        }
+        },
+        "pseudo": "muller_tom"
     },
     "test_sauvegarde": {
-        "nom": "Test",
-        "prenom": "Sauvegarde",
         "date_inscription": "2026-02-18 17:49:22",
         "historique": {
             "vallee_verte": {
@@ -965,6 +812,7 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
-        }
+        },
+        "pseudo": "test_sauvegarde"
     }
 }

@@ -290,4 +290,73 @@ class Fenetre(object):
         info_retour = font_erreur.render("Appuyez sur Échap pour retourner au menu", True, Donnees.COULEUR_GRIS_TEXTE)
         info_rect = info_retour.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 30))
         screen.blit(info_retour, info_rect)
+    
+    def afficher_menu_pause(self, screen, capture_ecran):
+        """
+        Affiche le menu pause avec l'écran de jeu en transparence.
+        Retourne les rectangles des boutons (continuer, quitter).
+        
+        Args:
+            screen: Surface pygame principale
+            capture_ecran: Capture d'écran du jeu à afficher en fond
+        
+        Returns:
+            tuple: (bouton_continuer, bouton_quitter)
+        """
+        # Afficher la capture d'écran du jeu
+        screen.blit(capture_ecran, (0, 0))
+        
+        # Overlay semi-transparent
+        overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
+        overlay.fill(Donnees.COULEUR_NOIR)
+        overlay.set_alpha(Donnees.PAUSE_OVERLAY_ALPHA)
+        screen.blit(overlay, (0, 0))
+        
+        # Titre "PAUSE"
+        font_titre = pg.font.Font(None, Donnees.PAUSE_TITRE_POLICE)
+        texte_titre = font_titre.render("PAUSE", True, Donnees.COULEUR_BLANC)
+        rect_titre = texte_titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 3))
+        screen.blit(texte_titre, rect_titre)
+        
+        # Calcul des positions des boutons (centrés verticalement)
+        bouton_w = Donnees.PAUSE_BOUTON_WIDTH
+        bouton_h = Donnees.PAUSE_BOUTON_HEIGHT
+        bouton_spacing = Donnees.PAUSE_BOUTON_SPACING
+        total_boutons_height = 2 * bouton_h + bouton_spacing
+        bouton_y_start = Donnees.HEIGHT // 2 - total_boutons_height // 2 + 50
+        
+        # Rectangle bouton Continuer
+        bouton_continuer = pg.Rect(
+            Donnees.WIDTH // 2 - bouton_w // 2,
+            bouton_y_start,
+            bouton_w,
+            bouton_h
+        )
+        
+        # Rectangle bouton Quitter
+        bouton_quitter = pg.Rect(
+            Donnees.WIDTH // 2 - bouton_w // 2,
+            bouton_y_start + bouton_h + bouton_spacing,
+            bouton_w,
+            bouton_h
+        )
+        
+        # Dessiner bouton Continuer
+        pg.draw.rect(screen, Donnees.PAUSE_BOUTON_COULEUR_CONTINUER, bouton_continuer)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_continuer, 3)
+        
+        font_bouton = pg.font.Font(None, Donnees.PAUSE_BOUTON_POLICE)
+        texte_continuer = font_bouton.render("Continuer", True, Donnees.COULEUR_BLANC)
+        rect_texte_continuer = texte_continuer.get_rect(center=bouton_continuer.center)
+        screen.blit(texte_continuer, rect_texte_continuer)
+        
+        # Dessiner bouton Quitter
+        pg.draw.rect(screen, Donnees.PAUSE_BOUTON_COULEUR_QUITTER, bouton_quitter)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_quitter, 3)
+        
+        texte_quitter = font_bouton.render("Quitter sans sauvegarder", True, Donnees.COULEUR_BLANC)
+        rect_texte_quitter = texte_quitter.get_rect(center=bouton_quitter.center)
+        screen.blit(texte_quitter, rect_texte_quitter)
+        
+        return bouton_continuer, bouton_quitter
 
