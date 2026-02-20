@@ -37,6 +37,7 @@ class Jeu:
             self.delai_niveau4 = Donnees.DELAI_NIVEAU4_PAR_DEFAUT  # Délai d'affichage niveau 4
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
+        self.tab_enfoncee = False   # Pour réafficher le mot temporairement au niveau 4
     
     def _traiter_events_globaux(self, events):
         """Traite les événements globaux (fermeture, etc.). Retourne False si l'application doit se fermer."""
@@ -218,6 +219,10 @@ class Jeu:
             
             for event in events:
                 if event.type == pygame.KEYDOWN:
+                    # Niveau 4 : Tab pour réafficher le mot
+                    if event.key == pygame.K_TAB and self.niveau == 4:
+                        self.tab_enfoncee = True
+                    
                     # Gestion de la touche Échap pour mettre en pause
                     if event.key == pygame.K_ESCAPE:
                         # Capturer l'écran actuel avant d'afficher le menu pause
@@ -233,6 +238,11 @@ class Jeu:
                             self.monde.set_temps_debut(temps_actuel)
                             # Démarrer le tracking pour le premier mot
                             self.monde.demarrer_nouveau_mot(temps_actuel)
+                
+                if event.type == pygame.KEYUP:
+                    # Niveau 4 : Relâcher Tab
+                    if event.key == pygame.K_TAB and self.niveau == 4:
+                        self.tab_enfoncee = False
             
             # GAME OVER : Si collision détectée
             if self.man.check_collision(self.mechant):
@@ -247,8 +257,11 @@ class Jeu:
             if self.monde.get_compteur_mot() >= self.monde.get_total_mots():
                 return self._gerer_niveau_reussi()
             
+            # Filtrer les événements Tab pour qu'ils ne soient pas traités comme des entrées de texte
+            events_filtres = [e for e in events if not (e.type == pygame.KEYDOWN and e.key == pygame.K_TAB)]
+            
             # Traitement des entrées clavier pour le mot
-            erreur, caracteres_corrects, info_erreur = self.mot.process_input(events, reset_on_error=self.reset_on_error)
+            erreur, caracteres_corrects, info_erreur = self.mot.process_input(events_filtres, reset_on_error=self.reset_on_error)
             
             # Pour le niveau 4 : démarrer le timer de disparition lors de la première frappe correcte
             if self.niveau == 4 and caracteres_corrects > 0 and self.monde.temps_entree_complete is None:
@@ -371,8 +384,8 @@ class Jeu:
             self.man.afficher(self.screen)
             self.mechant.afficher(self.screen)
             if self.monde.get_mot_visible():
-                # Au niveau 4, après disparition, afficher seulement les lettres tapées
-                if self.niveau == 4 and self.monde.afficher_seulement_lettres_tapees:
+                # Au niveau 4, après disparition, afficher seulement les lettres tapées (sauf si Tab est enfoncée)
+                if self.niveau == 4 and self.monde.afficher_seulement_lettres_tapees and not self.tab_enfoncee:
                     self.mot.afficher(self.screen, afficher_seulement_tapees=True)
                 else:
                     self.mot.afficher(self.screen)
