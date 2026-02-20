@@ -33,6 +33,8 @@ class Jeu:
             self.vitesse_pourcentage = 100     # Vitesse par défaut (en %) choisie par le joueur
         if not hasattr(self, 'reset_on_error'):
             self.reset_on_error = True          # Réinitialiser le mot en cas d'erreur
+        if not hasattr(self, 'total_mots'):
+            self.total_mots = Donnees.TOTAL_MOTS  # Nombre de mots par partie
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
@@ -69,7 +71,7 @@ class Jeu:
     def _initialiser_monde(self):
         """Initialise le monde et tous ses éléments pour le niveau sélectionné."""
         self.monde = Monde.Monde()
-        self.monde.initialiser_niveau(self.niveau, self.monde_choisi)
+        self.monde.initialiser_niveau(self.niveau, self.monde_choisi, self.total_mots)
         
         self.sol_gauche = self.monde.get_sol_gauche()
         self.sol_droite = self.monde.get_sol_droite()
@@ -482,6 +484,7 @@ class Jeu:
                         joueur=self.pseudo_joueur,
                         vitesse_par_defaut=self.vitesse_pourcentage,
                         reset_on_error_defaut=self.reset_on_error,
+                        total_mots_defaut=self.total_mots,
                         monde_choisi=self.monde_choisi
                     )
                     
@@ -489,7 +492,7 @@ class Jeu:
                     if resultat is None:
                         break  # Sortir de la boucle de niveau pour retourner à la sélection du monde
                     
-                    self.niveau, self.vitesse_pourcentage, self.reset_on_error = resultat
+                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.total_mots = resultat
                     
                     # Appliquer la vitesse configurée
                     self._appliquer_vitesse(self.vitesse_pourcentage)

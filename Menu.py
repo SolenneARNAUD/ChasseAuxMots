@@ -8,16 +8,19 @@ class Menu:
     """Classe regroupant tous les menus du jeu."""
     
     @staticmethod
-    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, joueur=None):
+    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None):
         """
         Affiche une fenêtre modale pour configurer les paramètres du jeu.
-        Retourne un tuple (vitesse_pourcentage, reset_on_error) ou None si annulé.
+        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots) ou None si annulé.
         """
         vitesse_str = ""
         vitesse_affichee = str(vitesse_actuelle)
+        total_mots_str = ""
+        total_mots_affiche = str(total_mots_actuel)
         reset_on_error = reset_on_error_actuel
         clock = pg.time.Clock()
         input_active = False
+        input_mots_active = False
         
         # Division de l'écran en 3 zones
         zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
@@ -27,11 +30,12 @@ class Menu:
         # Zone du milieu : calcul de l'espacement vertical
         # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
         param_height = Donnees.PARAMS_PARAM_HEIGHT
-        spacing = (zone_params_height - 2 * param_height) // 3  # Espacement X pour 2 paramètres
+        spacing = (zone_params_height - 3 * param_height) // 4  # Espacement X pour 3 paramètres
         
         # Position verticale des paramètres dans la zone milieu
         param1_y = zone_titre_height + spacing
         param2_y = param1_y + param_height + spacing
+        param3_y = param2_y + param_height + spacing
         
         # Alignement horizontal : labels à gauche, inputs à droite alignés
         label_x = Donnees.WIDTH // Donnees.PARAMS_LABEL_X_RATIO
@@ -41,6 +45,7 @@ class Menu:
         input_box = pg.Rect(input_x, param1_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         checkbox_rect = pg.Rect(input_x + Donnees.PARAMS_CHECKBOX_OFFSET_X, param2_y + Donnees.PARAMS_CHECKBOX_OFFSET_Y, 
                                Donnees.PARAMS_CHECKBOX_SIZE, Donnees.PARAMS_CHECKBOX_SIZE)
+        input_mots_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
@@ -62,7 +67,12 @@ class Menu:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
                         input_active = True
+                        input_mots_active = False
                         vitesse_str = ""
+                    elif input_mots_box.collidepoint(event.pos):
+                        input_mots_active = True
+                        input_active = False
+                        total_mots_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
                     elif bouton_retour.collidepoint(event.pos):
@@ -75,6 +85,13 @@ class Menu:
                         val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
                         vitesse_affichee = str(val)
                         
+                        try:
+                            val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
+                        except Exception:
+                            val_mots = total_mots_actuel
+                        val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                        total_mots_affiche = str(val_mots)
+                        
                         # Sauvegarder la dernière valeur pour le joueur
                         if joueur is not None:
                             try:
@@ -84,7 +101,7 @@ class Menu:
                             except Exception:
                                 pass
                         
-                        return (int(val), reset_on_error)
+                        return (int(val), reset_on_error, int(val_mots))
                 
                 if event.type == pg.KEYDOWN:
                     if input_active:
@@ -96,6 +113,13 @@ class Menu:
                             val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
                             vitesse_affichee = str(val)
                             
+                            try:
+                                val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
+                            except Exception:
+                                val_mots = total_mots_actuel
+                            val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                            total_mots_affiche = str(val_mots)
+                            
                             if joueur is not None:
                                 try:
                                     pseudo_j = joueur
@@ -104,13 +128,44 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error)
+                            return (int(val), reset_on_error, int(val_mots))
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
                             vitesse_str = vitesse_str[:-1]
                         elif event.unicode.isdigit() and len(vitesse_str) < 3:
                             vitesse_str += event.unicode
+                    elif input_mots_active:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            try:
+                                val = int(vitesse_str) if vitesse_str else vitesse_actuelle
+                            except Exception:
+                                val = vitesse_actuelle
+                            val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
+                            vitesse_affichee = str(val)
+                            
+                            try:
+                                val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
+                            except Exception:
+                                val_mots = total_mots_actuel
+                            val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                            total_mots_affiche = str(val_mots)
+                            
+                            if joueur is not None:
+                                try:
+                                    pseudo_j = joueur
+                                    val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
+                                    BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
+                                except Exception:
+                                    pass
+                            
+                            return (int(val), reset_on_error, int(val_mots))
+                        elif event.key == pg.K_ESCAPE:
+                            return None
+                        elif event.key == pg.K_BACKSPACE:
+                            total_mots_str = total_mots_str[:-1]
+                        elif event.unicode.isdigit() and len(total_mots_str) < 3:
+                            total_mots_str += event.unicode
                     else:
                         if event.key == pg.K_ESCAPE:
                             return None
@@ -171,6 +226,23 @@ class Menu:
                             (checkbox_rect.right - Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.top + Donnees.PARAMS_CHECKMARK_MARGIN_TOP), 
                             Donnees.PARAMS_CHECKMARK_EPAISSEUR)
             
+            # Paramètre 3 : Nombre de mots par partie
+            label_mots = font_label.render("Nombre de mots par partie", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_mots, (label_x, param3_y + 10))
+            
+            # Input box nombre de mots
+            pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_mots_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR if not input_mots_active else Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE, 
+                        input_mots_box, Donnees.PARAMS_INPUT_BOX_BORDURE)
+            
+            if input_mots_active:
+                texte_mots = font_input.render(total_mots_str + "|", True, Donnees.COULEUR_NOIR)
+            else:
+                texte_mots = font_input.render(total_mots_affiche, True, (100, 100, 100))
+            
+            screen.blit(texte_mots, (input_mots_box.centerx - texte_mots.get_width() // 2, 
+                                     input_mots_box.centery - texte_mots.get_height() // 2))
+            
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
                         (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
@@ -215,10 +287,10 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, monde_choisi=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error).
+        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots).
         Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
@@ -227,6 +299,7 @@ class Menu:
         niveau_survole = 0  # Index du niveau actuellement sélectionné au clavier (0-4)
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
+        total_mots = total_mots_defaut if total_mots_defaut is not None else Donnees.TOTAL_MOTS
         
         # Charger le fond du monde sélectionné avec transparence
         fond_surface = None
@@ -304,9 +377,9 @@ class Menu:
                     
                     # Vérifier le clic sur le bouton paramètres
                     if btn_params.collidepoint(position):
-                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, joueur)
+                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, total_mots, joueur)
                         if resultat is not None:
-                            vitesse_pourcentage, reset_on_error = resultat
+                            vitesse_pourcentage, reset_on_error, total_mots = resultat
                     
                     # Event 2 : Clic sur un niveau
                     for i in range(Donnees.NB_NIVEAUX):
@@ -378,14 +451,18 @@ class Menu:
             info_reset = font_small.render(reset_mode, True, reset_color)
             screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 100))
             
-            # Affichage 6 : Message navigation
+            # Affichage 6 : Nombre de mots (au-dessus du bouton paramètres)
+            info_mots = font_small.render(f"Mots: {total_mots}", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_mots, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 80))
+            
+            # Affichage 7 : Message navigation
             info_echap = font_small.render("Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
             screen.blit(info_echap, (Donnees.WIDTH // 2 - info_echap.get_width() // 2, Donnees.HEIGHT - 30))
             
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
-        return niveau_selectionne, vitesse_pourcentage, reset_on_error
+        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots
 
     @staticmethod
     def selection_monde(screen):

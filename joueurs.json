@@ -561,6 +561,21 @@
                         "reset_mots_actif": true,
                         "score": 3,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-20 19:44:46",
+                        "erreurs": [
+                            {
+                                "mot": "cerf",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "s"
+                            }
+                        ],
+                        "vitesse_frappe": 1.74,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 10,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_3": [

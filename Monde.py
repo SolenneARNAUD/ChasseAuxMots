@@ -58,10 +58,15 @@ class Monde(object):
         self.temps_entree_complete = None  # Temps où le mot est devenu entièrement visible
         self.afficher_seulement_lettres_tapees = False  # Pour n'afficher que les lettres tapées
     
-    def initialiser_niveau(self, niveau, univers="foret_bleue"):
+    def initialiser_niveau(self, niveau, univers="foret_bleue", total_mots=None):
         """Initialise tous les éléments du monde pour le niveau sélectionné."""
         self.niveau = niveau  # Stocker le niveau actuel
         self.univers = univers  # Stocker l'univers choisi
+        
+        # Utiliser le total_mots passé en paramètre ou la valeur par défaut
+        if total_mots is None:
+            total_mots = Donnees.TOTAL_MOTS
+        
         # Initialisation des sols
         self.sol_gauche = Sol.Sol(Donnees.SOL_SKIN,
                                   Donnees.SOL_DEPART_X,
@@ -82,9 +87,9 @@ class Monde(object):
             sprite_defaut)
         
         # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
-        self.total_mots = Donnees.TOTAL_MOTS
+        self.total_mots = total_mots
         all_words = BaseDonnees.mots["niveau" + str(niveau)]
-        self.liste_mots = random.sample(all_words, min(Donnees.TOTAL_MOTS, len(all_words)))
+        self.liste_mots = random.sample(all_words, min(total_mots, len(all_words)))
         
         # Initialiser la liste d'obstacles aléatoires
         self.liste_obstacles = self.initialiser_liste_obstacles()

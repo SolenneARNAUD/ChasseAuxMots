@@ -50,6 +50,8 @@ MOT_DEPART_Y = HEIGHT - 180  # 140 pixels au-dessus du monstre
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
 TOTAL_MOTS = 20
+TOTAL_MOTS_MIN = 5  # Minimum de mots par partie
+TOTAL_MOTS_MAX = 100  # Maximum de mots par partie
 
 # Sol
 SOL_DEPART_X = WIDTH / 2
