@@ -250,6 +250,10 @@ class Jeu:
             # Traitement des entrées clavier pour le mot
             erreur, caracteres_corrects, info_erreur = self.mot.process_input(events, reset_on_error=self.reset_on_error)
             
+            # Pour le niveau 4 : démarrer le timer de disparition lors de la première frappe correcte
+            if self.niveau == 4 and caracteres_corrects > 0 and self.monde.temps_entree_complete is None:
+                self.monde.temps_entree_complete = pygame.time.get_ticks()
+            
             # Compter tous les caractères tapés (corrects + erreurs) pour le calcul de vitesse
             total_caracteres_tapes = caracteres_corrects + erreur
             for _ in range(total_caracteres_tapes):
@@ -351,20 +355,8 @@ class Jeu:
                 # Mise à jour de l'animation du personnage
                 self.man.update_animation()
                 
-                # Pour le niveau 4 : vérifier si le mot est entièrement dans la fenêtre
-                if self.niveau == 4 and not self.monde.mot_entierement_visible:
-                    # Calculer si le mot est entièrement visible
-                    largeur_mot = self.mot.get_largeur()
-                    bord_droit_mot = self.mot.position_x + largeur_mot / 2
-                    bord_gauche_mot = self.mot.position_x - largeur_mot / 2
-                    
-                    # Le mot est entièrement visible si ses deux bords sont dans la fenêtre
-                    if bord_droit_mot <= Donnees.WIDTH and bord_gauche_mot >= 0:
-                        self.monde.mot_entierement_visible = True
-                        self.monde.temps_entree_complete = pygame.time.get_ticks()
-                
-                # Vérifier si 1.5 secondes se sont écoulées depuis l'entrée complète
-                if self.niveau == 4 and self.monde.mot_entierement_visible and self.monde.temps_entree_complete is not None:
+                # Vérifier si le délai est écoulé depuis la première frappe (niveau 4)
+                if self.niveau == 4 and self.monde.temps_entree_complete is not None:
                     temps_actuel = pygame.time.get_ticks()
                     temps_ecoule = temps_actuel - self.monde.temps_entree_complete
                     if temps_ecoule >= self.delai_niveau4 and not self.monde.print_disparition_affiche:
