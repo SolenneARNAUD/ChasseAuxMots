@@ -91,73 +91,79 @@ def copier_fichier_vers_projet():
 # Enregistrer la fonction pour qu'elle s'exécute à la fermeture
 atexit.register(copier_fichier_vers_projet)
 
-mots={
-    "niveau1": [
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 
-        'à', 'é', 'è', 'ù', 'ç', 'ê', 'ü'
-        ],
-    "niveau2": [
-        'os', 'bec', 'cou', 'cri', 'dos', 'eau', 'feu', 'lac', 'nid', 'roc', 'sol',
-        'vol', 'adn', 'age', 'île', 'aile', 'bois', 'boue', 'cerf', 'croc', 'dent',
-        'loup', 'lave', 'main', 'mini', 'ours', 'peau', 'vent', 'abri', 'arme', 'baie',
-        'clan', 'côte', 'cuir', 'dune', 'épée', 'miel', 'mont', 'poil', 'site', 'suie',
-        'arbre', 'bison', 'corne', 'forêt', 'géant', 'herbe', 'hyène', 'liane', 'neige',
-        'patte', 'plume', 'proie', 'queue', 'rugit', 'sable', 'sabre', 't-rex', 'terre',
-        'trace', 'tyran', 'algue', 'ambre', 'antre', 'bâton', 'brume', 'chaud', 'craie',
-        'épine', 'époux', 'froid', 'galet', 'hache', 'horde', 'lance', 'meute', 'nuage',
-        'océan', 'ongle', 'outil', 'paroi', 'pente', 'piste', 'pluie', 'ravin', 'silex'
-        ],
-    "niveau3": [
-        'tribu', 'argile', 'chasse', 'fourmi', 'griffe', 'loutre', 'lézard', 'marais',
-        'mousse', 'museau', 'pierre', 'plante', 'raptor', 'renard', 'tortue', 'volcan',
-        'bambou', 'boueux', 'braise', 'cabane', 'cactus', 'canine', 'cendre', 'corail',
-        'croûte', 'désert', 'étoile', 'grotte', 'harpon', 'ivoire', 'jungle', 'plaine',
-        'pollen', 'racine', 'radeau', 'résine', 'rivage', 'rocher', 'savane', 'source',
-        'steppe', 'vallée', 'caverne', 'cratère', 'fossile', 'fougère', 'griffes',
-        'insecte', 'météore', 'serpent', 'branche', 'caillou', 'colline', 'cristal',
-        'défense', 'falaise', 'feuille', 'matière', 'minéral', 'poisson', 'prairie',
-        'rivière', 'rocheux', 'tanière', 'terrier', 'torrent', 'toundra', 'végétal',
-        'ammonite', 'araignée', 'chasseur', 'écailles', 'mâchoire', 'mammouth', 'scarabée',
-        'carapace', 'marécage', 'sédiment', 'tonnerre', 'astéroïde', 'empreinte', 'libellule',
-        'prédateur', 'squelette', 'grenouille', 'tricératops', 'vélociraptor'
-        ],
-    "niveau4": [
-        'tribu', 'argile', 'chasse', 'fourmi', 'griffe', 'loutre', 'lézard', 'marais',
-        'mousse', 'museau', 'pierre', 'plante', 'raptor', 'renard', 'tortue', 'volcan',
-        'bambou', 'boueux', 'braise', 'cabane', 'cactus', 'canine', 'cendre', 'corail',
-        'croûte', 'désert', 'étoile', 'grotte', 'harpon', 'ivoire', 'jungle', 'plaine',
-        'pollen', 'racine', 'radeau', 'résine', 'rivage', 'rocher', 'savane', 'source',
-        'steppe', 'vallée', 'caverne', 'cratère', 'fossile', 'fougère', 'griffes',
-        'insecte', 'météore', 'serpent', 'branche', 'caillou', 'colline', 'cristal',
-        'défense', 'falaise', 'feuille', 'matière', 'minéral', 'poisson', 'prairie',
-        'rivière', 'rocheux', 'tanière', 'terrier', 'torrent', 'toundra', 'végétal',
-        'ammonite', 'araignée', 'chasseur', 'écailles', 'mâchoire', 'mammouth', 'scarabée',
-        'carapace', 'marécage', 'sédiment', 'tonnerre', 'astéroïde', 'empreinte', 'libellule',
-        'prédateur', 'squelette', 'grenouille', 'tricératops', 'vélociraptor'
-        ],
-    "niveau5": [
-        'un os', 'un roc', 'un bec', 'un nid', 'un feu', 'un lac', 'un cri', 'une dent',
-        'une peau', 'un T-Rex', 'un crâne', 'une aile', 'du sable', 'une trace', 'un raptor',
-        'une patte', 'une corne', 'une queue', 'un museau', 'un marais', 'un volcan', 'une forêt',
-        'une herbe', 'une proie', 'une plume', 'un lézard', 'une griffe', 'un fossile', 'une chasse',
-        'une grotte', 'une pierre', 'un serpent', 'une tortue', 'une fourmi', 'un mammouth', 'un astéroïde',
-        'un squelette', 'une empreinte', 'un T-Rex géant', 'du sable chaud', 'un cri perçant',
-        'une dent acérée', 'un crâne massif', 'un volcan actif', 'une forêt dense', 'une herbe haute',
-        'un lézard géant', 'une peau épaisse', 'un nid abandonné', 'un raptor rapide', 'une longue queue',
-        'un museau pointu', 'un marais boueux', 'une proie facile', 'un raptor affamé', 'une trace fraîche',
-        'une grotte sombre', 'une plume colorée', 'une tortue géante', 'une fourmi géante', 'une dent de T-Rex',
-        'une griffe pointue', 'une chasse réussie', 'une pierre taillée', 'un astéroïde géant', 'une trace de patte',
-        'une grotte habitée', 'une patte puissante', 'un mammouth laineux', 'un serpent venimeux', 'un nid de dinosaure',
-        'un T-Rex redoutable', 'un museau de raptor', 'une corne tranchante', 'un lac préhistorique', 'une griffe de raptor',
-        'un squelette complet', 'une peau de mammouth', 'un crâne de dinosaure', 'un volcan en éruption', 'une forêt de fougères',
-        'une pierre volcanique', 'une empreinte profonde', 'une patte de dinosaure', 'une empreinte de T-Rex',
-        'une chasse au mammouth', 'une queue de stégosaure', 'un marais préhistorique', 'un fossile bien conservé',
-        'une corne de tricératops', 'une aile de ptérodactyle', 'un lac de la préhistoire'
-        ]
+# ============================================================================
+# GESTION DES MOTS
+# ============================================================================
+
+# Définir le chemin du fichier de mots
+FICHIER_MOTS = os.path.join(SCRIPT_DIR, "mots.json")
+
+def charger_mots_depuis_json():
+    """Charge tous les mots depuis le fichier JSON."""
+    try:
+        if not os.path.exists(FICHIER_MOTS):
+            print(f"[WARNING] Fichier {FICHIER_MOTS} introuvable. Utilisation de la liste par défaut.")
+            return []
+        
+        with open(FICHIER_MOTS, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data.get("mots", [])
+    except Exception as e:
+        print(f"[ERROR] Erreur lors du chargement des mots: {e}")
+        return []
+
+def a_caracteres_speciaux(mot):
+    """Vérifie si un mot contient des caractères spéciaux (accents, etc.)."""
+    import string
+    # Caractères autorisés sans accents : lettres ASCII + tiret
+    caracteres_simples = string.ascii_letters + "-"
+    
+    for char in mot:
+        if char not in caracteres_simples and char != ' ':
+            return True
+    return False
+
+def trier_mots_par_niveau(liste_mots):
+    """
+    Trie les mots dans les 5 niveaux selon les critères :
+    - Niveau 1 : un seul caractère (ex : u, j, â, è ...)
+    - Niveau 2 : mots de moins de 5 lettres sans caractères spéciaux
+    - Niveau 3 : mots d'au moins 5 lettres (avec ou sans caractères spéciaux)
+    - Niveau 4 : identique au niveau 3
+    - Niveau 5 : groupes nominaux (contenant des espaces)
+    
+    Returns:
+        dict: Dictionnaire avec les clés "niveau1" à "niveau5"
+    """
+    mots_tries = {
+        "niveau1": [],
+        "niveau2": [],
+        "niveau3": [],
+        "niveau4": [],
+        "niveau5": []
     }
+    
+    for mot in liste_mots:
+        # Niveau 5 : groupes nominaux (contient des espaces)
+        if ' ' in mot:
+            mots_tries["niveau5"].append(mot)
+        # Niveau 1 : un seul caractère
+        elif len(mot) == 1:
+            mots_tries["niveau1"].append(mot)
+        # Niveau 2 : moins de 5 lettres sans caractères spéciaux
+        elif len(mot) < 5 and not a_caracteres_speciaux(mot):
+            mots_tries["niveau2"].append(mot)
+        # Niveau 3 et 4 : au moins 5 lettres OU mots avec caractères spéciaux
+        # (ceci inclut les mots courts avec accents comme "île", "épée", etc.)
+        else:
+            mots_tries["niveau3"].append(mot)
+            mots_tries["niveau4"].append(mot)
+    
+    return mots_tries
+
+# Charger et trier les mots au démarrage
+tous_les_mots = charger_mots_depuis_json()
+mots = trier_mots_par_niveau(tous_les_mots)
 
 # Note: Le dictionnaire 'mots' est directement accessible pour obtenir les mots par niveau
 # Exemple: mots["niveau1"], mots["niveau2"], etc.
