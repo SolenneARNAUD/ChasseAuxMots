@@ -117,19 +117,32 @@ class Menu:
             return None
     
     @staticmethod
-    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None):
+    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None, bibliotheques_actuelles=None):
         """
         Affiche une fenêtre modale pour configurer les paramètres du jeu.
-        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots) ou None si annulé.
+        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots, bibliotheques) ou None si annulé.
         """
         vitesse_str = ""
         vitesse_affichee = str(vitesse_actuelle)
         total_mots_str = ""
         total_mots_affiche = str(total_mots_actuel)
         reset_on_error = reset_on_error_actuel
+        
+        # Gérer la sélection multiple de bibliothèques
+        if bibliotheques_actuelles is None:
+            bibliotheques_selectionnees = {"dinosaure"}
+        elif isinstance(bibliotheques_actuelles, str):
+            bibliotheques_selectionnees = {bibliotheques_actuelles}
+        else:
+            bibliotheques_selectionnees = set(bibliotheques_actuelles)
+        
         clock = pg.time.Clock()
         input_active = False
         input_mots_active = False
+        
+        # Charger la liste des bibliothèques
+        bibliotheques = BaseDonnees.lister_bibliotheques()
+        scroll_offset = 0
         
         # Division de l'écran en 3 zones
         zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
@@ -139,12 +152,13 @@ class Menu:
         # Zone du milieu : calcul de l'espacement vertical
         # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
         param_height = Donnees.PARAMS_PARAM_HEIGHT
-        spacing = (zone_params_height - 3 * param_height) // 4  # Espacement X pour 3 paramètres
+        spacing = (zone_params_height - 4 * param_height) // 5  # Espacement X pour 4 paramètres
         
         # Position verticale des paramètres dans la zone milieu
         param1_y = zone_titre_height + spacing
         param2_y = param1_y + param_height + spacing
         param3_y = param2_y + param_height + spacing
+        param4_y = param3_y + param_height + spacing
         
         # Alignement horizontal : labels à gauche, inputs à droite alignés
         label_x = Donnees.WIDTH // Donnees.PARAMS_LABEL_X_RATIO
@@ -155,6 +169,15 @@ class Menu:
         checkbox_rect = pg.Rect(input_x + Donnees.PARAMS_CHECKBOX_OFFSET_X, param2_y + Donnees.PARAMS_CHECKBOX_OFFSET_Y, 
                                Donnees.PARAMS_CHECKBOX_SIZE, Donnees.PARAMS_CHECKBOX_SIZE)
         input_mots_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
+        
+        # Zone de scroll pour les bibliothèques (avec offset pour le label)
+        biblio_label_height = 25  # Hauteur réservée pour le label "Bibliothèque"
+        biblio_zone_x = label_x
+        biblio_zone_y = param4_y + biblio_label_height  # Décaler vers le bas pour le label
+        biblio_zone_width = Donnees.WIDTH - 2 * label_x
+        biblio_zone_height = param_height - biblio_label_height  # Réduire la hauteur disponible
+        biblio_item_height = 30
+        max_visible_items = max(1, biblio_zone_height // biblio_item_height)
         
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
@@ -172,8 +195,16 @@ class Menu:
                 if event.type == pg.QUIT:
                     sys.exit()
                 
-                # Clic sur la zone de saisie
+                # Gestion de la molette pour le scroll
                 if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 4:  # Molette vers le haut
+                        scroll_offset = max(0, scroll_offset - 1)
+                    elif event.button == 5:  # Molette vers le bas
+                        max_scroll = max(0, len(bibliotheques) - max_visible_items)
+                        scroll_offset = min(max_scroll, scroll_offset + 1)
+                
+                # Clic sur la zone de saisie
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Clic gauche uniquement
                     if input_box.collidepoint(event.pos):
                         input_active = True
                         input_mots_active = False
@@ -184,7 +215,22 @@ class Menu:
                         total_mots_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
-                    elif bouton_retour.collidepoint(event.pos):
+                    else:
+                        # Vérifier si clic sur une bibliothèque (sélection multiple)
+                        for i, biblio in enumerate(bibliotheques[scroll_offset:scroll_offset + max_visible_items]):
+                            actual_index = i + scroll_offset
+                            item_y = biblio_zone_y + i * biblio_item_height
+                            checkbox_biblio_rect = pg.Rect(biblio_zone_x + 10, item_y + 5, 20, 20)
+                            if checkbox_biblio_rect.collidepoint(event.pos):
+                                biblio_id = bibliotheques[actual_index]['id']
+                                # Toggle: ajouter ou retirer la bibliothèque
+                                if biblio_id in bibliotheques_selectionnees:
+                                    bibliotheques_selectionnees.discard(biblio_id)  # Retirer
+                                else:
+                                    bibliotheques_selectionnees.add(biblio_id)  # Ajouter
+                                break
+                    
+                    if bouton_retour.collidepoint(event.pos):
                         return None
                     elif bouton_valider.collidepoint(event.pos):
                         try:
@@ -210,7 +256,7 @@ class Menu:
                             except Exception:
                                 pass
                         
-                        return (int(val), reset_on_error, int(val_mots))
+                        return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
                 
                 if event.type == pg.KEYDOWN:
                     if input_active:
@@ -237,7 +283,7 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(val_mots))
+                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
@@ -268,7 +314,7 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(val_mots))
+                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
@@ -352,6 +398,43 @@ class Menu:
             screen.blit(texte_mots, (input_mots_box.centerx - texte_mots.get_width() // 2, 
                                      input_mots_box.centery - texte_mots.get_height() // 2))
             
+            # Paramètre 4 : Bibliothèque
+            label_biblio = font_label.render("Bibliothèque", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_biblio, (label_x, param4_y - 5))
+            
+            # Afficher les bibliothèques avec scroll
+            font_biblio = pg.font.Font(None, 28)
+            for i, biblio in enumerate(bibliotheques[scroll_offset:scroll_offset + max_visible_items]):
+                actual_index = i + scroll_offset
+                item_y = biblio_zone_y + i * biblio_item_height
+                
+                # Checkbox (carré à cocher)
+                checkbox_biblio_rect = pg.Rect(biblio_zone_x + 10, item_y + 5, 20, 20)
+                pg.draw.rect(screen, Donnees.COULEUR_BLANC, checkbox_biblio_rect)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, checkbox_biblio_rect, 2)
+                
+                # Si sélectionné, afficher une checkmark
+                if biblio['id'] in bibliotheques_selectionnees:
+                    # Checkmark style V
+                    pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE, 
+                                (checkbox_biblio_rect.left + 4, checkbox_biblio_rect.centery),
+                                (checkbox_biblio_rect.centerx - 2, checkbox_biblio_rect.bottom - 4), 
+                                3)
+                    pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE,
+                                (checkbox_biblio_rect.centerx - 2, checkbox_biblio_rect.bottom - 4),
+                                (checkbox_biblio_rect.right - 4, checkbox_biblio_rect.top + 4), 
+                                3)
+                
+                # Nom de la bibliothèque
+                texte_biblio = font_biblio.render(biblio['nom'], True, Donnees.COULEUR_NOIR)
+                screen.blit(texte_biblio, (biblio_zone_x + 40, item_y + 5))
+            
+            # Indicateur de scroll si nécessaire
+            if len(bibliotheques) > max_visible_items:
+                scroll_info = font_biblio.render(f"({scroll_offset + 1}-{min(scroll_offset + max_visible_items, len(bibliotheques))}/{len(bibliotheques)})", 
+                                                 True, (120, 120, 120))
+                screen.blit(scroll_info, (biblio_zone_x + biblio_zone_width - 80, param4_y - 5))
+            
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
                         (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
@@ -396,10 +479,10 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None, bibliotheque_defaut=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots).
+        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque).
         Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
@@ -409,6 +492,19 @@ class Menu:
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
         total_mots = total_mots_defaut if total_mots_defaut is not None else Donnees.TOTAL_MOTS
+        
+        # Gérer la bibliothèque (convertir en liste si nécessaire)
+        if bibliotheque_defaut is not None:
+            if isinstance(bibliotheque_defaut, str):
+                bibliotheque = [bibliotheque_defaut]
+            else:
+                bibliotheque = list(bibliotheque_defaut)
+        else:
+            biblio_active = BaseDonnees.BIBLIOTHEQUE_ACTIVE
+            if isinstance(biblio_active, str):
+                bibliotheque = [biblio_active]
+            else:
+                bibliotheque = list(biblio_active) if biblio_active else ["dinosaure"]
         
         # Charger le fond du monde sélectionné avec transparence
         fond_surface = None
@@ -486,9 +582,9 @@ class Menu:
                     
                     # Vérifier le clic sur le bouton paramètres
                     if btn_params.collidepoint(position):
-                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, total_mots, joueur)
+                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, total_mots, joueur, bibliotheque)
                         if resultat is not None:
-                            vitesse_pourcentage, reset_on_error, total_mots = resultat
+                            vitesse_pourcentage, reset_on_error, total_mots, bibliotheque = resultat
                     
                     # Event 2 : Clic sur un niveau
                     for i in range(Donnees.NB_NIVEAUX):
@@ -571,7 +667,7 @@ class Menu:
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
-        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots
+        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque
 
     @staticmethod
     def selection_monde(screen):

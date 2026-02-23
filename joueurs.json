@@ -67,7 +67,25 @@
                         "score": 0
                     }
                 ],
-                "niveau_3": [],
+                "niveau_3": [
+                    {
+                        "timestamp": "2026-02-23 11:33:21",
+                        "erreurs": [
+                            {
+                                "mot": "désert",
+                                "lettre_attendue": "d",
+                                "lettre_tapee": "s"
+                            }
+                        ],
+                        "vitesse_frappe": 2.77,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 124,
+                        "caracteres_tapes": 125
+                    }
+                ],
                 "niveau_4": [
                     {
                         "timestamp": "2026-02-18 15:32:08",
@@ -150,6 +168,28 @@
                         "reset_mots_actif": true,
                         "score": 0,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 11:22:17",
+                        "erreurs": [
+                            {
+                                "mot": "pierre",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "pierre",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 2.56,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 128,
+                        "caracteres_tapes": 130
                     }
                 ],
                 "niveau_5": []
@@ -487,6 +527,49 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 19,
                         "caracteres_tapes": 19
+                    },
+                    {
+                        "timestamp": "2026-02-23 11:06:31",
+                        "erreurs": [],
+                        "vitesse_frappe": 3.26,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 8,
+                        "caracteres_tapes": 8
+                    },
+                    {
+                        "timestamp": "2026-02-23 11:07:12",
+                        "erreurs": [
+                            {
+                                "mot": "écailles",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "écailles",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "écailles",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "écailles",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "l"
+                            }
+                        ],
+                        "vitesse_frappe": 2.85,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 7,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 54,
+                        "caracteres_tapes": 58
                     }
                 ],
                 "niveau_4": [
@@ -620,6 +703,43 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 93,
                         "caracteres_tapes": 97
+                    },
+                    {
+                        "timestamp": "2026-02-23 11:25:35",
+                        "erreurs": [
+                            {
+                                "mot": "ecurie",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "é"
+                            },
+                            {
+                                "mot": "seigneur",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "m"
+                            },
+                            {
+                                "mot": "seigneur",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "seigneur",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "seigneur",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "t"
+                            }
+                        ],
+                        "vitesse_frappe": 2.55,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 10,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 70,
+                        "caracteres_tapes": 75
                     }
                 ],
                 "niveau_5": [

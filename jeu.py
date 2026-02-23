@@ -36,6 +36,13 @@ class Jeu:
             self.reset_on_error = True          # Réinitialiser le mot en cas d'erreur
         if not hasattr(self, 'total_mots'):
             self.total_mots = Donnees.TOTAL_MOTS  # Nombre de mots par partie
+        if not hasattr(self, 'bibliotheque'):
+            biblio_active = BaseDonnees.BIBLIOTHEQUE_ACTIVE
+            # Convertir en liste si nécessaire
+            if isinstance(biblio_active, str):
+                self.bibliotheque = [biblio_active]
+            else:
+                self.bibliotheque = list(biblio_active) if biblio_active else ["dinosaure"]
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
@@ -531,14 +538,18 @@ class Jeu:
                         vitesse_par_defaut=self.vitesse_pourcentage,
                         reset_on_error_defaut=self.reset_on_error,
                         total_mots_defaut=self.total_mots,
-                        monde_choisi=self.monde_choisi
+                        monde_choisi=self.monde_choisi,
+                        bibliotheque_defaut=self.bibliotheque
                     )
                     
                     # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du monde
                     if resultat is None:
                         break  # Sortir de la boucle de niveau pour retourner à la sélection du monde
                     
-                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.total_mots = resultat
+                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.total_mots, self.bibliotheque = resultat
+                    
+                    # Appliquer la bibliothèque sélectionnée
+                    BaseDonnees.set_bibliotheque_active(self.bibliotheque)
                     
                     # Appliquer la vitesse configurée
                     self._appliquer_vitesse(self.vitesse_pourcentage)

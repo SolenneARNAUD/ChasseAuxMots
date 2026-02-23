@@ -98,19 +98,105 @@ atexit.register(copier_fichier_vers_projet)
 # Définir le chemin du fichier de mots
 FICHIER_MOTS = os.path.join(SCRIPT_DIR, "mots.json")
 
-def charger_mots_depuis_json():
-    """Charge tous les mots depuis le fichier JSON."""
+# Bibliothèque active par défaut
+BIBLIOTHEQUE_ACTIVE = "dinosaure"
+
+def charger_donnees_mots():
+    """Charge les données complètes depuis le fichier JSON (lettres + bibliothèques)."""
     try:
         if not os.path.exists(FICHIER_MOTS):
             print(f"[WARNING] Fichier {FICHIER_MOTS} introuvable. Utilisation de la liste par défaut.")
-            return []
+            return {"lettres": [], "bibliotheques": {}}
         
         with open(FICHIER_MOTS, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            return data.get("mots", [])
+            return data
     except Exception as e:
         print(f"[ERROR] Erreur lors du chargement des mots: {e}")
-        return []
+        return {"lettres": [], "bibliotheques": {}}
+
+def lister_bibliotheques():
+    """Retourne la liste des bibliothèques disponibles avec leurs informations."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    info = []
+    for cle, biblio in bibliotheques.items():
+        info.append({
+            "id": cle,
+            "nom": biblio.get("nom", cle),
+            "description": biblio.get("description", ""),
+            "nb_mots": len(biblio.get("mots", []))
+        })
+    return info
+
+def charger_bibliotheque(nom_bibliotheque):
+    """Charge les mots d'une bibliothèque spécifique."""
+    donnees = charger_donnees_mots()
+    lettres = donnees.get("lettres", [])
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    if nom_bibliotheque not in bibliotheques:
+        print(f"[WARNING] Bibliothèque '{nom_bibliotheque}' introuvable. Utilisation de 'dinosaure' par défaut.")
+        nom_bibliotheque = "dinosaure"
+    
+    # Combiner les lettres avec les mots de la bibliothèque
+    if nom_bibliotheque in bibliotheques:
+        mots_bibliotheque = bibliotheques[nom_bibliotheque].get("mots", [])
+        tous_les_mots = lettres + mots_bibliotheque
+    else:
+        tous_les_mots = lettres
+    
+    print(f"[INFO] Bibliothèque chargée: {nom_bibliotheque} ({len(tous_les_mots)} mots)")
+    return tous_les_mots
+
+def charger_bibliotheques_multiples(noms_bibliotheques):
+    """Charge les mots de plusieurs bibliothèques et les combine."""
+    donnees = charger_donnees_mots()
+    lettres = donnees.get("lettres", [])
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    tous_les_mots = list(lettres)  # Commencer avec les lettres
+    
+    # Ajouter les mots de chaque bibliothèque sélectionnée
+    for nom_biblio in noms_bibliotheques:
+        if nom_biblio in bibliotheques:
+            mots_bibliotheque = bibliotheques[nom_biblio].get("mots", [])
+            tous_les_mots.extend(mots_bibliotheque)
+        else:
+            print(f"[WARNING] Bibliothèque '{nom_biblio}' introuvable, ignorée.")
+    
+    # Supprimer les doublons en gardant l'ordre
+    mots_uniques = []
+    seen = set()
+    for mot in tous_les_mots:
+        if mot not in seen:
+            mots_uniques.append(mot)
+            seen.add(mot)
+    
+    print(f"[INFO] Bibliothèques chargées: {', '.join(noms_bibliotheques)} ({len(mots_uniques)} mots uniques)")
+    return mots_uniques
+
+def set_bibliotheque_active(bibliotheques_actives):
+    """Change la/les bibliothèque(s) active(s) et recharge les mots."""
+    global BIBLIOTHEQUE_ACTIVE, mots
+    
+    # Gérer le cas où c'est une string (ancienne logique) ou une liste
+    if isinstance(bibliotheques_actives, str):
+        bibliotheques_actives = [bibliotheques_actives]
+    elif not bibliotheques_actives:
+        bibliotheques_actives = ["dinosaure"]
+    
+    BIBLIOTHEQUE_ACTIVE = bibliotheques_actives
+    
+    if len(bibliotheques_actives) == 1:
+        tous_les_mots = charger_bibliotheque(bibliotheques_actives[0])
+    else:
+        tous_les_mots = charger_bibliotheques_multiples(bibliotheques_actives)
+    
+    mots = trier_mots_par_niveau(tous_les_mots)
+    print(f"[INFO] Bibliothèque(s) active(s): {BIBLIOTHEQUE_ACTIVE}")
+    return mots
 
 def a_caracteres_speciaux(mot):
     """Vérifie si un mot contient des caractères spéciaux (accents, etc.)."""
@@ -161,8 +247,11 @@ def trier_mots_par_niveau(liste_mots):
     
     return mots_tries
 
-# Charger et trier les mots au démarrage
-tous_les_mots = charger_mots_depuis_json()
+# Charger et trier les mots au démarrage avec la bibliothèque par défaut
+if isinstance(BIBLIOTHEQUE_ACTIVE, str):
+    tous_les_mots = charger_bibliotheque(BIBLIOTHEQUE_ACTIVE)
+else:
+    tous_les_mots = charger_bibliotheques_multiples(BIBLIOTHEQUE_ACTIVE) if BIBLIOTHEQUE_ACTIVE else charger_bibliotheque("dinosaure")
 mots = trier_mots_par_niveau(tous_les_mots)
 
 # Note: Le dictionnaire 'mots' est directement accessible pour obtenir les mots par niveau
