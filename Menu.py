@@ -2,10 +2,119 @@ import Donnees
 import pygame as pg
 import sys
 import BaseDonnees
+import os
+import tempfile
+import matplotlib
+matplotlib.use('Agg')  # Backend sans interface graphique
+import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
+from datetime import datetime
 
 
 class Menu:
     """Classe regroupant tous les menus du jeu."""
+    
+    @staticmethod
+    def generer_graphique_stats(pseudo, fichier_sortie=None):
+        """Génère un graphique matplotlib avec l'historique de vitesse et précision (10 dernières parties).
+        
+        Args:
+            pseudo: Pseudo du joueur
+            fichier_sortie: Chemin du fichier de sortie (optionnel). Si None, utilise TEMP/stats_{pseudo}.png
+        
+        Returns:
+            str: Chemin du fichier image généré, ou None si erreur
+        """
+        # Récupérer l'historique complet
+        historique = BaseDonnees.get_historique_chronologique(pseudo)
+        
+        if not historique or len(historique) < 2:
+            # Pas assez de données pour un graphique
+            return None
+        
+        # Prendre seulement les 10 dernières parties
+        historique = historique[-10:]
+        
+        # Extraire les données
+        timestamps = []
+        vitesses = []
+        precisions = []
+        
+        for partie in historique:
+            try:
+                # Parser le timestamp
+                dt = datetime.strptime(partie['timestamp'], '%Y-%m-%d %H:%M:%S')
+                timestamps.append(dt)
+                vitesses.append(partie['vitesse_frappe'])
+                precisions.append(partie['precision'])
+            except:
+                continue
+        
+        if len(timestamps) < 2:
+            return None
+        
+        # Créer les numéros de parties (N-9, N-8, ..., N-1, N)
+        nb_parties = len(timestamps)
+        parties_labels = [f"N-{nb_parties - i - 1}" if i < nb_parties - 1 else "N" for i in range(nb_parties)]
+        positions = list(range(nb_parties))
+        
+        # Créer le graphique avec un seul axe
+        fig, ax1 = plt.subplots(figsize=(12, 7))
+        fig.suptitle(f'Historique des 10 dernières parties - {pseudo}', fontsize=16, fontweight='bold')
+        
+        # Axe gauche : Précision
+        color_precision = '#A23B72'
+        ax1.set_xlabel('Partie', fontsize=12, fontweight='bold')
+        ax1.set_ylabel('Précision (%)', fontsize=12, fontweight='bold', color=color_precision)
+        line1 = ax1.plot(positions, precisions, marker='s', linestyle='-', color=color_precision, 
+                        linewidth=2.5, markersize=7, label='Précision')
+        ax1.tick_params(axis='y', labelcolor=color_precision)
+        ax1.set_ylim(0, 105)
+        ax1.grid(True, alpha=0.3, linestyle='--')
+        
+        # Axe droit : Vitesse de frappe
+        ax2 = ax1.twinx()
+        color_vitesse = '#2E86AB'
+        ax2.set_ylabel('Vitesse (caractères/s)', fontsize=12, fontweight='bold', color=color_vitesse)
+        line2 = ax2.plot(positions, vitesses, marker='o', linestyle='-', color=color_vitesse, 
+                        linewidth=2.5, markersize=7, label='Vitesse')
+        ax2.tick_params(axis='y', labelcolor=color_vitesse)
+        ax2.set_ylim(bottom=0)
+        
+        # Légende combinée
+        lines = line1 + line2
+        labels = [l.get_label() for l in lines]
+        ax1.legend(lines, labels, loc='upper left', fontsize=10)
+        
+        # Configurer l'axe X avec les labels de parties
+        ax1.set_xticks(positions)
+        ax1.set_xticklabels(parties_labels)
+        ax1.set_xlim(-0.5, nb_parties - 0.5)
+        
+        # Ajuster l'espacement
+        plt.tight_layout()
+        
+        # Sauvegarder le graphique
+        if fichier_sortie is None:
+            temp_dir = tempfile.gettempdir()
+            fichier_sortie = os.path.join(temp_dir, "ChasseAuxMots", f"stats_{pseudo}.png")
+            os.makedirs(os.path.dirname(fichier_sortie), exist_ok=True)
+        
+        # Supprimer l'ancien fichier s'il existe pour éviter les problèmes de cache
+        if os.path.exists(fichier_sortie):
+            try:
+                os.remove(fichier_sortie)
+            except Exception as e:
+                print(f"[WARNING] Impossible de supprimer l'ancien graphique: {e}")
+        
+        try:
+            plt.savefig(fichier_sortie, dpi=100, bbox_inches='tight')
+            plt.close(fig)
+            return fichier_sortie
+        except Exception as e:
+            print(f"[ERROR] Impossible de sauvegarder le graphique: {e}")
+            plt.close(fig)
+            return None
     
     @staticmethod
     def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None):
@@ -1475,8 +1584,6 @@ class Menu:
         """
         Affiche les statistiques du joueur courant.
         """
-        import BaseDonnees
-        
         joueur = BaseDonnees.get_joueur(pseudo)
         
         if joueur is None:
@@ -1487,6 +1594,21 @@ class Menu:
         
         if stats is None:
             return
+        
+        # Générer le graphique
+        graphique_path = Menu.generer_graphique_stats(pseudo)
+        graphique_surface = None
+        
+        if graphique_path and os.path.exists(graphique_path):
+            try:
+                graphique_surface = pg.image.load(graphique_path)
+                # Redimensionner le graphique pour qu'il s'adapte à l'écran
+                graphique_width = Donnees.WIDTH - 100
+                graphique_height = int(graphique_surface.get_height() * (graphique_width / graphique_surface.get_width()))
+                graphique_surface = pg.transform.smoothscale(graphique_surface, (graphique_width, graphique_height))
+            except Exception as e:
+                print(f"[ERROR] Impossible de charger le graphique: {e}")
+                graphique_surface = None
         
         # Bouton Retour
         bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, Donnees.HEIGHT - 100, 200, 50)
@@ -1544,6 +1666,12 @@ class Menu:
                 texte = font_label.render(stat, True, Donnees.COULEUR_NOIR)
                 screen.blit(texte, (Donnees.WIDTH // 4, y_offset))
                 y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT
+            
+            # Afficher le graphique si disponible
+            if graphique_surface:
+                y_offset += 30  # Espacement avant le graphique
+                graphique_x = (Donnees.WIDTH - graphique_surface.get_width()) // 2
+                screen.blit(graphique_surface, (graphique_x, y_offset))
             
             # Bouton Retour
             font_bouton = pg.font.Font(None, 40)

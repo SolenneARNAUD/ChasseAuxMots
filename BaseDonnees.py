@@ -1042,7 +1042,8 @@ def update_stats_joueur(pseudo, mots_reussis, vitesse_wpm, nb_erreurs):
     return True
 
 def enregistrer_essai(pseudo, monde, niveau, erreurs_detaillees, vitesse_frappe, 
-                     vitesse_defilement, reset_mots_actif, score, delai_niveau4=1500):
+                     vitesse_defilement, reset_mots_actif, score, delai_niveau4=1500, 
+                     caracteres_justes=0, caracteres_tapes=0):
     """Enregistre un essai complet dans l'historique du joueur.
     
     Args:
@@ -1055,6 +1056,8 @@ def enregistrer_essai(pseudo, monde, niveau, erreurs_detaillees, vitesse_frappe,
         reset_mots_actif: Boolean indiquant si le reset est activé
         score: Score final (nombre de mots réussis)
         delai_niveau4: Délai d'affichage des mots au niveau 4 (en ms)
+        caracteres_justes: Nombre de caractères correctement tapés
+        caracteres_tapes: Nombre total de caractères tapés
     
     Returns:
         bool: True si sauvegarde réussie
@@ -1091,7 +1094,9 @@ def enregistrer_essai(pseudo, monde, niveau, erreurs_detaillees, vitesse_frappe,
         'vitesse_defilement': round(vitesse_defilement, 2),
         'reset_mots_actif': reset_mots_actif,
         'score': score,
-        'delai_niveau4': delai_niveau4
+        'delai_niveau4': delai_niveau4,
+        'caracteres_justes': caracteres_justes,
+        'caracteres_tapes': caracteres_tapes
     }
     
     # Ajouter l'essai à l'historique du niveau
@@ -1204,6 +1209,68 @@ def get_statistiques_joueur(pseudo, monde=None, niveau=None):
         stats['vitesse_moyenne_wpm'] = round(stats['vitesse_moyenne_wpm'] / stats['nb_parties'], 2)
     
     return stats
+
+
+def get_historique_chronologique(pseudo):
+    """Récupère l'historique chronologique d'un joueur avec vitesse et précision.
+    
+    Args:
+        pseudo: Pseudo du joueur
+    
+    Returns:
+        list: Liste de dictionnaires avec 'timestamp', 'vitesse_frappe', 'precision', 'score', 'nb_erreurs'
+              triés par timestamp croissant, ou liste vide si pas d'historique
+    """
+    cle = pseudo.lower()
+    
+    if cle not in dict_joueurs:
+        return []
+    
+    joueur = dict_joueurs[cle]
+    
+    if 'historique' not in joueur:
+        return []
+    
+    # Collecter toutes les parties avec leurs données
+    parties = []
+    
+    for monde in joueur['historique'].values():
+        for niveau in monde.values():
+            if isinstance(niveau, list):
+                for essai in niveau:
+                    if 'timestamp' in essai:
+                        nb_erreurs = len(essai.get('erreurs', []))
+                        score = essai.get('score', 0)
+                        
+                        # Calculer la précision (0-100%)
+                        # Priorité aux données caractères_justes/caracteres_tapes si disponibles
+                        caracteres_tapes = essai.get('caracteres_tapes', 0)
+                        caracteres_justes = essai.get('caracteres_justes', 0)
+                        
+                        if caracteres_tapes > 0:
+                            # Utiliser les données précises de caractères
+                            precision = (caracteres_justes / caracteres_tapes) * 100
+                        else:
+                            # Fallback: estimer à partir du score et des erreurs
+                            total_tentatives = score + nb_erreurs
+                            if total_tentatives > 0:
+                                precision = (score / total_tentatives) * 100
+                            else:
+                                precision = 0.0
+                        
+                        parties.append({
+                            'timestamp': essai['timestamp'],
+                            'vitesse_frappe': essai.get('vitesse_frappe', 0),
+                            'precision': round(precision, 2),
+                            'score': score,
+                            'nb_erreurs': nb_erreurs
+                        })
+    
+    # Trier par timestamp
+    parties.sort(key=lambda x: x['timestamp'])
+    
+    return parties
+
 
 def get_derniers_parametres_joueur(pseudo):
     """Récupère les derniers paramètres utilisés par le joueur.

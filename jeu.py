@@ -1,4 +1,5 @@
 import sys
+import os
 import pygame
 import Fenetre_jeu
 import Menu
@@ -95,11 +96,32 @@ class Jeu:
             vitesse_frappe=vitesse_défaite,
             vitesse_defilement=self.vitesse_pourcentage,
             reset_mots_actif=self.reset_on_error,
-            score=self.monde.get_compteur_mot()
+            score=self.monde.get_compteur_mot(),
+            caracteres_justes=self.monde.get_total_caracteres(),
+            caracteres_tapes=self.monde.get_total_caracteres_tapes()
         )
         
         # État de l'écran : 'gameover' ou 'stats'
         ecran_actuel = 'gameover'
+        
+        # Pré-générer le graphique (une seule fois) pour éviter de le régénérer à chaque frame
+        graphique_surface = None
+        if self.pseudo_joueur:
+            graphique_path = Menu.Menu.generer_graphique_stats(self.pseudo_joueur)
+            if graphique_path and os.path.exists(graphique_path):
+                try:
+                    graphique_surface = pygame.image.load(graphique_path)
+                    # Redimensionner pour s'adapter à la zone d'affichage
+                    graph_max_width = 650
+                    graph_max_height = Donnees.HEIGHT - 180
+                    ratio = min(graph_max_width / graphique_surface.get_width(), 
+                               graph_max_height / graphique_surface.get_height())
+                    new_width = int(graphique_surface.get_width() * ratio)
+                    new_height = int(graphique_surface.get_height() * ratio)
+                    graphique_surface = pygame.transform.smoothscale(graphique_surface, (new_width, new_height))
+                except Exception as e:
+                    print(f"[ERROR] Impossible de charger le graphique: {e}")
+                    graphique_surface = None
         
         # Boucle de gestion des écrans
         while True:
@@ -118,7 +140,8 @@ class Jeu:
                     vitesse_défaite,
                     self.monde.get_erreurs_detaillees(),
                     self.monde.get_total_caracteres(),
-                    self.monde.get_total_caracteres_tapes()
+                    self.monde.get_total_caracteres_tapes(),
+                    graphique_surface
                 )
             
             pygame.display.flip()
@@ -138,9 +161,10 @@ class Jeu:
                 if ecran_actuel == 'gameover' and event.type == pygame.MOUSEBUTTONDOWN:
                     if bouton_stats.collidepoint(event.pos):
                         ecran_actuel = 'stats'
+                        break  # Sortir de la boucle d'événements pour afficher le nouvel écran
                 
                 # Gestion du clic sur le bouton Retour (depuis stats)
-                if ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
+                elif ecran_actuel == 'stats' and event.type == pygame.MOUSEBUTTONDOWN:
                     if bouton_retour.collidepoint(event.pos):
                         # Réinitialiser le fond normal après le game over
                         self.fenetre.set_image(Donnees.FOND_SKIN)
@@ -162,11 +186,32 @@ class Jeu:
             vitesse_frappe=self.monde.get_vitesse_finale(),
             vitesse_defilement=self.vitesse_pourcentage,
             reset_mots_actif=self.reset_on_error,
-            score=self.monde.get_compteur_mot()
+            score=self.monde.get_compteur_mot(),
+            caracteres_justes=self.monde.get_total_caracteres(),
+            caracteres_tapes=self.monde.get_total_caracteres_tapes()
         )
         
         # État de l'écran : 'reussite' ou 'stats'
         ecran_actuel = 'reussite'
+        
+        # Pré-générer le graphique (une seule fois) pour éviter de le régénérer à chaque frame
+        graphique_surface = None
+        if self.pseudo_joueur:
+            graphique_path = Menu.Menu.generer_graphique_stats(self.pseudo_joueur)
+            if graphique_path and os.path.exists(graphique_path):
+                try:
+                    graphique_surface = pygame.image.load(graphique_path)
+                    # Redimensionner pour s'adapter à la zone d'affichage
+                    graph_max_width = 650
+                    graph_max_height = Donnees.HEIGHT - 180
+                    ratio = min(graph_max_width / graphique_surface.get_width(), 
+                               graph_max_height / graphique_surface.get_height())
+                    new_width = int(graphique_surface.get_width() * ratio)
+                    new_height = int(graphique_surface.get_height() * ratio)
+                    graphique_surface = pygame.transform.smoothscale(graphique_surface, (new_width, new_height))
+                except Exception as e:
+                    print(f"[ERROR] Impossible de charger le graphique: {e}")
+                    graphique_surface = None
         
         # Boucle de gestion des écrans
         while True:
@@ -185,7 +230,8 @@ class Jeu:
                     self.monde.get_vitesse_finale(),
                     self.monde.get_erreurs_detaillees(),
                     self.monde.get_total_caracteres(),
-                    self.monde.get_total_caracteres_tapes()
+                    self.monde.get_total_caracteres_tapes(),
+                    graphique_surface
                 )
             
             pygame.display.flip()

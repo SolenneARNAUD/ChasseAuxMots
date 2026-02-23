@@ -116,6 +116,40 @@
                         "reset_mots_actif": true,
                         "score": 20,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:38:41",
+                        "erreurs": [
+                            {
+                                "mot": "cristal",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "cristal",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "cristal",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "l"
+                            }
+                        ],
+                        "vitesse_frappe": 2.53,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 11,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:47:16",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.87,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_5": []
@@ -295,6 +329,98 @@
                         "reset_mots_actif": true,
                         "score": 20,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:34:32",
+                        "erreurs": [
+                            {
+                                "mot": "vol",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "vol",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "f"
+                            },
+                            {
+                                "mot": "vol",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "l"
+                            },
+                            {
+                                "mot": "vol",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "h"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "k"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "b"
+                            },
+                            {
+                                "mot": "liane",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "j"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "k"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "d",
+                                "lettre_tapee": "f"
+                            },
+                            {
+                                "mot": "horde",
+                                "lettre_attendue": "h",
+                                "lettre_tapee": "d"
+                            }
+                        ],
+                        "vitesse_frappe": 3.23,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 2,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 20,
+                        "caracteres_tapes": 36
                     }
                 ],
                 "niveau_3": [
@@ -315,6 +441,52 @@
                         "reset_mots_actif": true,
                         "score": 0,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:34:19",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:01:00",
+                        "erreurs": [
+                            {
+                                "mot": "grenouille",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "i"
+                            }
+                        ],
+                        "vitesse_frappe": 2.86,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:32:52",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.41,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 1,
+                        "caracteres_tapes": 1
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:33:55",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.79,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 19,
+                        "caracteres_tapes": 19
                     }
                 ],
                 "niveau_4": [
@@ -335,6 +507,119 @@
                         "reset_mots_actif": true,
                         "score": 0,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:22:36",
+                        "erreurs": [
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "p"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "vélociraptor",
+                                "lettre_attendue": "v",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 2.44,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 17,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:42:28",
+                        "erreurs": [
+                            {
+                                "mot": "sédiment",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "d"
+                            }
+                        ],
+                        "vitesse_frappe": 2.33,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 14,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:29:53",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.4,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 1,
+                        "caracteres_tapes": 1
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:32:07",
+                        "erreurs": [
+                            {
+                                "mot": "volcan",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "toundra",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "toundra",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "toundra",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "a"
+                            }
+                        ],
+                        "vitesse_frappe": 2.56,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 12,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 93,
+                        "caracteres_tapes": 97
                     }
                 ],
                 "niveau_5": [
@@ -342,6 +627,15 @@
                         "timestamp": "2026-02-20 17:50:09",
                         "erreurs": [],
                         "vitesse_frappe": 4.42,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:01:14",
+                        "erreurs": [],
+                        "vitesse_frappe": 6.88,
                         "vitesse_defilement": 500,
                         "reset_mots_actif": true,
                         "score": 0,
@@ -617,6 +911,132 @@
                         "vitesse_defilement": 200,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:29:04",
+                        "erreurs": [
+                            {
+                                "mot": "mammouth",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "mammouth",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "u"
+                            },
+                            {
+                                "mot": "mammouth",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "mammouth",
+                                "lettre_attendue": "m",
+                                "lettre_tapee": "n"
+                            }
+                        ],
+                        "vitesse_frappe": 2.42,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:12:25",
+                        "erreurs": [
+                            {
+                                "mot": "croûte",
+                                "lettre_attendue": "û",
+                                "lettre_tapee": "ù"
+                            }
+                        ],
+                        "vitesse_frappe": 2.27,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 5,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 36,
+                        "caracteres_tapes": 37
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:14:08",
+                        "erreurs": [
+                            {
+                                "mot": "carapace",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "carapace",
+                                "lettre_attendue": "c",
+                                "lettre_tapee": "a"
+                            }
+                        ],
+                        "vitesse_frappe": 2.88,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 134,
+                        "caracteres_tapes": 136
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:28:08",
+                        "erreurs": [
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "plaine",
+                                "lettre_attendue": "p",
+                                "lettre_tapee": "i"
+                            }
+                        ],
+                        "vitesse_frappe": 3.44,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 1,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 12,
+                        "caracteres_tapes": 21
                     }
                 ],
                 "niveau_4": [
@@ -628,6 +1048,58 @@
                         "reset_mots_actif": true,
                         "score": 3,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 09:19:24",
+                        "erreurs": [
+                            {
+                                "mot": "braise",
+                                "lettre_attendue": "a",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "braise",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "braise",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "braise",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "caillou",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            }
+                        ],
+                        "vitesse_frappe": 2.57,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 7,
+                        "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-23 10:27:14",
+                        "erreurs": [
+                            {
+                                "mot": "astéroïde",
+                                "lettre_attendue": "é",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 1.63,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 1,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 9,
+                        "caracteres_tapes": 10
                     }
                 ],
                 "niveau_5": [
@@ -678,7 +1150,7 @@
             "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "timestamp": "2026-02-20 17:50:15"
+            "timestamp": "2026-02-23 09:55:14"
         }
     },
     "la_best": {

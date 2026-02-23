@@ -1,6 +1,8 @@
 import Donnees
 import pygame as pg
 import CoucheParallaxe
+import Menu
+import os
 
 
 class Fenetre(object):
@@ -169,8 +171,12 @@ class Fenetre(object):
         
         return bouton_rect
 
-    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees, caracteres_justes=0, caracteres_tapes=0):
-        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, précision et zone pour historique."""
+    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees, caracteres_justes=0, caracteres_tapes=0, graphique_surface=None):
+        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, précision et historique graphique.
+        
+        Args:
+            graphique_surface: Surface pygame pré-générée du graphique (pour éviter de le regénérer à chaque frame)
+        """
         # Fond semi-transparent
         overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
         overlay.fill(Donnees.COULEUR_NOIR)
@@ -181,28 +187,26 @@ class Fenetre(object):
         font_texte = pg.font.Font(None, Donnees.STATS_DETAILS_POLICE_TEXTE)
         font_erreur = pg.font.Font(None, Donnees.STATS_DETAILS_POLICE_ERREUR)
         
-        # Rectangle pour l'historique (à gauche) - zone réservée pour plus tard
-        rect_graph = pg.Rect(
-            Donnees.STATS_DETAILS_GRAPH_X,
-            Donnees.STATS_DETAILS_GRAPH_Y,
-            Donnees.STATS_DETAILS_GRAPH_WIDTH,
-            Donnees.STATS_DETAILS_GRAPH_HEIGHT
-        )
-        pg.draw.rect(screen, Donnees.COULEUR_GRIS_FONCE, rect_graph)
-        pg.draw.rect(screen, Donnees.COULEUR_BLANC, rect_graph, 2)
+        # Zone pour l'historique (à gauche) - sans rectangle
+        graph_x = 30
+        graph_y = 80
         
-        # Texte "Historique" dans le rectangle
-        texte_graph = font_texte.render("Historique", True, Donnees.COULEUR_GRIS_TEXTE)
-        rect_texte_graph = texte_graph.get_rect(center=(rect_graph.centerx, rect_graph.centery))
-        screen.blit(texte_graph, rect_texte_graph)
+        # Afficher le graphique d'historique s'il est fourni
+        if graphique_surface:
+            screen.blit(graphique_surface, (graph_x, graph_y))
+        else:
+            # Pas de graphique disponible
+            texte_graph = font_texte.render("Historique (min. 2 parties)", True, Donnees.COULEUR_GRIS_TEXTE)
+            screen.blit(texte_graph, (graph_x + 150, graph_y + 200))
         
         # Titre
         titre = font_titre.render("Statistiques détaillées", True, Donnees.COULEUR_BLANC)
         titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.STATS_DETAILS_TITRE_Y))
         screen.blit(titre, titre_rect)
         
-        # Vitesse de frappe
-        x_stats = Donnees.STATS_DETAILS_GRAPH_X + Donnees.STATS_DETAILS_GRAPH_WIDTH + 50
+        # Vitesse de frappe (ajusté pour ne pas dépasser de la fenêtre)
+        graph_max_width = 650
+        x_stats = 620  # Position fixe pour éviter de dépasser WIDTH (1000px)
         y_current = Donnees.STATS_DETAILS_VITESSE_Y
         
         vitesse_texte = font_texte.render(f"Vitesse de frappe : {vitesse_wpm:.1f} caractères/s", True, Donnees.COULEUR_BLANC)
