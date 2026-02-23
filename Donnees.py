@@ -40,7 +40,7 @@ OBSTACLE_HEIGHT = 120
 # - Si les méchants sont TROP BAS : utilisez un offset NÉGATIF (ex: -10)
 # - Si les méchants sont TROP HAUT : utilisez un offset POSITIF (ex: +10)
 # - 0 = pas d'ajustement
-MECHANT_FOOT_OFFSET = 17
+MECHANT_FOOT_OFFSET = 16
 
 # Mots
 TAILLE_POLICE = 36
@@ -49,7 +49,9 @@ MOT_DEPART_X_PREMIER = WIDTH * 2/3  # Position du premier mot (dans la fenêtre)
 MOT_DEPART_Y = HEIGHT - 180  # 140 pixels au-dessus du monstre
 MOT_COULEUR = (255, 255, 255)
 MOT_SYMBOLE = 'début'  # Exemple de mot avec des caractères spéciaux
-TOTAL_MOTS = 3
+TOTAL_MOTS = 20
+TOTAL_MOTS_MIN = 5  # Minimum de mots par partie
+TOTAL_MOTS_MAX = 100  # Maximum de mots par partie
 
 # Sol
 SOL_DEPART_X = WIDTH / 2
@@ -247,3 +249,13 @@ PARAMS_LIGNE_SEPARATION_RATIO = 6  # WIDTH // PARAMS_LIGNE_SEPARATION_RATIO
 
 # Conversion WPM/Pourcentage
 WPM_BASE_CONVERSION = 40.0
+
+# Menu Pause
+PAUSE_OVERLAY_ALPHA = 150  # Transparence du fond (0=transparent, 255=opaque)
+PAUSE_TITRE_POLICE = 80
+PAUSE_BOUTON_WIDTH = 420
+PAUSE_BOUTON_HEIGHT = 70
+PAUSE_BOUTON_SPACING = 40
+PAUSE_BOUTON_COULEUR_CONTINUER = (100, 200, 100)  # Vert
+PAUSE_BOUTON_COULEUR_QUITTER = (220, 100, 100)    # Rouge
+PAUSE_BOUTON_POLICE = 44

@@ -1,9 +1,18 @@
 import json
 import os
+import sys
 import tempfile
 import shutil
 import atexit
 from datetime import datetime
+
+def resource_path(relative_path):
+    """ Calcule le chemin absolu pour les ressources (indispensable pour le .exe) """
+    if hasattr(sys, '_MEIPASS'):
+        # Chemin vers le dossier temporaire du .exe
+        return os.path.join(sys._MEIPASS, relative_path)
+    # Chemin vers le dossier habituel en développement
+    return os.path.join(os.path.abspath("."), relative_path)
 
 # Configuration des répertoires
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -371,13 +380,13 @@ Univers = {
             "Wraith_01": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Idle/Wraith_01_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_01/PNG Sequences/Walking/Wraith_01_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
@@ -385,13 +394,13 @@ Univers = {
             "Wraith_02": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Idle/Wraith_02_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_02/PNG Sequences/Walking/Wraith_02_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
@@ -399,13 +408,13 @@ Univers = {
             "Wraith_03": {
                 "idle": {
                     "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Idle/Wraith_03_Idle_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 },
                 "walking": {
                     "chemin_base": "images/Foret_violette/Wraith_03/PNG Sequences/Walking/Wraith_03_Moving Forward_",
-                    "nb_images": 18,
+                    "nb_images": 12,
                     "animation_delay": 5,
                     "format": "{:03d}.png"
                 }
@@ -620,7 +629,7 @@ def get_animation_frames(personnage_type, animation_name):
     # Si c'est un sprite unique (nb_images = 1)
     if anim_config.get('nb_images', 1) == 1:
         if 'sprite' in anim_config:
-            return [anim_config['sprite']]
+            return [resource_path(anim_config['sprite'])]
         else:
             return None
     
@@ -636,7 +645,7 @@ def get_animation_frames(personnage_type, animation_name):
             frame_path = f"{chemin_base}{format_str.format(i)}"
         else:
             frame_path = f"{chemin_base}{format_str}"
-        frames.append(frame_path)
+        frames.append(resource_path(frame_path))
     
     return frames
 
@@ -652,7 +661,10 @@ def get_personnage_sprite_defaut(personnage_type):
     """
     if personnage_type not in PERSONNAGES_CONFIG:
         return None
-    return PERSONNAGES_CONFIG[personnage_type].get('sprite_defaut')
+    sprite_defaut = PERSONNAGES_CONFIG[personnage_type].get('sprite_defaut')
+    if sprite_defaut:
+        return resource_path(sprite_defaut)
+    return None
 
 def get_personnage_hauteur(personnage_type):
     """
@@ -743,7 +755,7 @@ def get_mechant_animation_frames(univers_cle, mechant_nom, animation_name="idle"
         else:
             # Si pas de format, utiliser le chemin tel quel
             frame_path = chemin_base
-        frames.append(frame_path)
+        frames.append(resource_path(frame_path))
     
     return frames, nb_images, animation_delay
 
@@ -772,50 +784,61 @@ def get_mechant_config(univers_cle, mechant_nom):
 
 # Dictionnaire pour enregistrer les joueurs
 def migrer_ancienne_structure(joueurs):
-    """Migre l'ancienne structure JSON vers la nouvelle structure avec historique."""
+    """Migre l'ancienne structure JSON vers la nouvelle structure avec historique et pseudo."""
     joueurs_migres = {}
     
     for cle, joueur in joueurs.items():
-        # Vérifier si c'est l'ancienne structure (pas d'historique)
-        if 'historique' not in joueur:
-            print(f"[INFO] Migration du joueur {cle} vers la nouvelle structure")
-            joueurs_migres[cle] = {
-                'nom': joueur.get('nom', ''),
-                'prenom': joueur.get('prenom', ''),
-                'date_inscription': joueur.get('date_inscription', datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                'historique': {
-                    'vallee_verte': {
-                        'niveau_1': [],
-                        'niveau_2': [],
-                        'niveau_3': [],
-                        'niveau_4': [],
-                        'niveau_5': []
-                    },
-                    'foret_violette': {
-                        'niveau_1': [],
-                        'niveau_2': [],
-                        'niveau_3': [],
-                        'niveau_4': [],
-                        'niveau_5': []
-                    },
-                    'foret_bleue': {
-                        'niveau_1': [],
-                        'niveau_2': [],
-                        'niveau_3': [],
-                        'niveau_4': [],
-                        'niveau_5': []
-                    },
-                    'foret_aux_champignons': {
-                        'niveau_1': [],
-                        'niveau_2': [],
-                        'niveau_3': [],
-                        'niveau_4': [],
-                        'niveau_5': []
+        # Si l'ancien format avait nom + prenom, créer un pseudo à partir de la clé
+        if 'nom' in joueur and 'prenom' in joueur:
+            # Conversion: nom_prenom -> utiliser la clé comme pseudo
+            print(f"[INFO] Migration du joueur {cle} vers le format pseudo")
+            pseudo = cle  # La clé était déjà nom_prenom en minuscules
+            
+            # Si pas d'historique, créer la structure complète
+            if 'historique' not in joueur:
+                joueurs_migres[pseudo] = {
+                    'pseudo': pseudo,
+                    'date_inscription': joueur.get('date_inscription', datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                    'historique': {
+                        'vallee_verte': {
+                            'niveau_1': [],
+                            'niveau_2': [],
+                            'niveau_3': [],
+                            'niveau_4': [],
+                            'niveau_5': []
+                        },
+                        'foret_violette': {
+                            'niveau_1': [],
+                            'niveau_2': [],
+                            'niveau_3': [],
+                            'niveau_4': [],
+                            'niveau_5': []
+                        },
+                        'foret_bleue': {
+                            'niveau_1': [],
+                            'niveau_2': [],
+                            'niveau_3': [],
+                            'niveau_4': [],
+                            'niveau_5': []
+                        },
+                        'foret_aux_champignons': {
+                            'niveau_1': [],
+                            'niveau_2': [],
+                            'niveau_3': [],
+                            'niveau_4': [],
+                            'niveau_5': []
+                        }
                     }
                 }
-            }
+            else:
+                # A déjà l'historique mais pas le pseudo
+                joueurs_migres[pseudo] = joueur
+                joueurs_migres[pseudo]['pseudo'] = pseudo
+                # Supprimer les anciens champs
+                joueurs_migres[pseudo].pop('nom', None)
+                joueurs_migres[pseudo].pop('prenom', None)
         else:
-            # Déjà la nouvelle structure
+            # Déjà la nouvelle structure avec pseudo
             joueurs_migres[cle] = joueur
     
     return joueurs_migres
@@ -896,7 +919,7 @@ def sauvegarder_joueurs():
             pass
         return False
 
-def ajouter_joueur(nom, prenom):
+def ajouter_joueur(pseudo):
     """Ajoute un nouveau joueur au dictionnaire et sauvegarde"""
     global dict_joueurs
     
@@ -904,7 +927,7 @@ def ajouter_joueur(nom, prenom):
     print(f"[DEBUG] Repertoire de sauvegarde: {REPERTOIRE_DONNEES}")
     
     # Créer la clé unique
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     
     # Vérifier si le joueur existe déjà
     if cle in dict_joueurs:
@@ -912,8 +935,7 @@ def ajouter_joueur(nom, prenom):
     
     # Créer les données du nouveau joueur avec la nouvelle structure
     dict_joueurs[cle] = {
-        'nom': nom.capitalize(),
-        'prenom': prenom.capitalize(),
+        'pseudo': pseudo,
         'date_inscription': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'historique': {
             'vallee_verte': {
@@ -967,24 +989,24 @@ def ajouter_joueur(nom, prenom):
         traceback.print_exc()
         return True, f"Joueur cree en memoire (erreur sauvegarde: {e})"
 
-def joueur_existe(nom, prenom):
+def joueur_existe(pseudo):
     """Verifie si un joueur existe"""
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     return cle in dict_joueurs
 
-def get_joueur(nom, prenom):
+def get_joueur(pseudo):
     """Recupere les donnees d'un joueur"""
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     if cle in dict_joueurs:
         return dict_joueurs[cle]
     return None
 
-def supprimer_joueur(nom, prenom):
+def supprimer_joueur(pseudo):
     """Supprime un joueur du dictionnaire et sauvegarde"""
     global dict_joueurs
     
     # Créer la clé unique
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     
     # Vérifier si le joueur existe
     if cle not in dict_joueurs:
@@ -993,7 +1015,7 @@ def supprimer_joueur(nom, prenom):
     # Supprimer le joueur
     del dict_joueurs[cle]
     
-    print(f"[DEBUG] Joueur supprimé: {nom} {prenom}")
+    print(f"[DEBUG] Joueur supprimé: {pseudo}")
     print(f"[DEBUG] Dictionnaire en mémoire: {len(dict_joueurs)} joueurs")
     
     # Sauvegarder
@@ -1013,19 +1035,19 @@ def supprimer_joueur(nom, prenom):
         traceback.print_exc()
         return True, f"Joueur supprimé en mémoire (erreur sauvegarde: {e})"
 
-def update_stats_joueur(nom, prenom, mots_reussis, vitesse_wpm, nb_erreurs):
+def update_stats_joueur(pseudo, mots_reussis, vitesse_wpm, nb_erreurs):
     """Met a jour les statistiques du joueur apres une partie (fonction maintenue pour compatibilité)"""
     # Cette fonction est maintenant obsolète mais conservée pour compatibilité
     # Les vraies données sont enregistrées via enregistrer_essai()
     return True
 
-def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_frappe, 
-                     vitesse_defilement, reset_mots_actif, score, delai_niveau4=1500):
+def enregistrer_essai(pseudo, monde, niveau, erreurs_detaillees, vitesse_frappe, 
+                     vitesse_defilement, reset_mots_actif, score, delai_niveau4=1500, 
+                     caracteres_justes=0, caracteres_tapes=0):
     """Enregistre un essai complet dans l'historique du joueur.
     
     Args:
-        nom: Nom du joueur
-        prenom: Prénom du joueur
+        pseudo: Pseudo du joueur
         monde: Nom du monde (ex: 'foret_bleue')
         niveau: Numéro du niveau (1-5)
         erreurs_detaillees: Liste de dict {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
@@ -1034,23 +1056,25 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
         reset_mots_actif: Boolean indiquant si le reset est activé
         score: Score final (nombre de mots réussis)
         delai_niveau4: Délai d'affichage des mots au niveau 4 (en ms)
+        caracteres_justes: Nombre de caractères correctement tapés
+        caracteres_tapes: Nombre total de caractères tapés
     
     Returns:
         bool: True si sauvegarde réussie
     """
     global dict_joueurs
     
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     
     if cle not in dict_joueurs:
-        print(f"[WARNING] Joueur {nom} {prenom} non trouvé")
+        print(f"[WARNING] Joueur {pseudo} non trouvé")
         return False
     
     joueur = dict_joueurs[cle]
     
     # Vérifier que le monde existe dans l'historique
     if 'historique' not in joueur:
-        print(f"[WARNING] Pas d'historique pour {nom} {prenom}")
+        print(f"[WARNING] Pas d'historique pour {pseudo}")
         return False
     
     if monde not in joueur['historique']:
@@ -1070,7 +1094,9 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
         'vitesse_defilement': round(vitesse_defilement, 2),
         'reset_mots_actif': reset_mots_actif,
         'score': score,
-        'delai_niveau4': delai_niveau4
+        'delai_niveau4': delai_niveau4,
+        'caracteres_justes': caracteres_justes,
+        'caracteres_tapes': caracteres_tapes
     }
     
     # Ajouter l'essai à l'historique du niveau
@@ -1081,29 +1107,66 @@ def enregistrer_essai(nom, prenom, monde, niveau, erreurs_detaillees, vitesse_fr
     if not succes:
         print("ATTENTION: L'essai n'a pas pu être sauvegardé!")
     else:
-        print(f"[INFO] Essai enregistré pour {nom} {prenom} - {monde} niveau {niveau}")
+        print(f"[INFO] Essai enregistré pour {pseudo} - {monde} niveau {niveau}")
     
     return succes
 
 
-def set_derniere_vitesse(nom, prenom, valeur):
+def set_derniere_vitesse(pseudo, valeur):
     """Enregistre la dernière valeur de vitesse entrée pour le joueur (obsolète mais conservée)."""
     # Cette fonction ne fait plus rien car la structure a changé
     pass
 
-def get_statistiques_joueur(nom, prenom, monde=None, niveau=None):
+def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500):
+    """Sauvegarde les paramètres actuels d'un joueur sans créer un essai complet.
+    
+    Args:
+        pseudo: Pseudo du joueur
+        vitesse_defilement: Vitesse de défilement en pourcentage (25-500)
+        reset_mots_actif: Si True, les mots sont réinitialisés en cas d'erreur
+        delai_niveau4: Délai avant disparition du mot au niveau 4 (500-10000 ms)
+    
+    Returns:
+        bool: True si la sauvegarde a réussi, False sinon
+    """
+    cle = pseudo.lower()
+    
+    if cle not in dict_joueurs:
+        print(f"[WARNING] Impossible de sauvegarder les paramètres pour {pseudo}: joueur inconnu")
+        return False
+    
+    joueur = dict_joueurs[cle]
+    
+    # Créer ou mettre à jour le champ parametres_actuels
+    joueur['parametres_actuels'] = {
+        'vitesse_defilement': vitesse_defilement,
+        'reset_mots_actif': reset_mots_actif,
+        'delai_niveau4': delai_niveau4,
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Sauvegarder dans le fichier
+    succes = sauvegarder_joueurs()
+    
+    if succes:
+        print(f"[INFO] Paramètres sauvegardés pour {pseudo}: vitesse={vitesse_defilement}%, reset={reset_mots_actif}")
+    else:
+        print(f"[WARNING] Erreur lors de la sauvegarde des paramètres pour {pseudo}")
+    
+    return succes
+
+def get_statistiques_joueur(pseudo, monde=None, niveau=None):
     """Récupère les statistiques d'un joueur.
     
     Args:
-        nom: Nom du joueur
-        prenom: Prénom du joueur
+        pseudo: Pseudo du joueur
         monde: Optionnel - filtre par monde
         niveau: Optionnel - filtre par niveau (1-5)
     
     Returns:
         dict: Statistiques calculées depuis l'historique
     """
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     
     if cle not in dict_joueurs:
         return None
@@ -1147,23 +1210,93 @@ def get_statistiques_joueur(nom, prenom, monde=None, niveau=None):
     
     return stats
 
-def get_derniers_parametres_joueur(nom, prenom):
+
+def get_historique_chronologique(pseudo):
+    """Récupère l'historique chronologique d'un joueur avec vitesse et précision.
+    
+    Args:
+        pseudo: Pseudo du joueur
+    
+    Returns:
+        list: Liste de dictionnaires avec 'timestamp', 'vitesse_frappe', 'precision', 'score', 'nb_erreurs'
+              triés par timestamp croissant, ou liste vide si pas d'historique
+    """
+    cle = pseudo.lower()
+    
+    if cle not in dict_joueurs:
+        return []
+    
+    joueur = dict_joueurs[cle]
+    
+    if 'historique' not in joueur:
+        return []
+    
+    # Collecter toutes les parties avec leurs données
+    parties = []
+    
+    for monde in joueur['historique'].values():
+        for niveau in monde.values():
+            if isinstance(niveau, list):
+                for essai in niveau:
+                    if 'timestamp' in essai:
+                        nb_erreurs = len(essai.get('erreurs', []))
+                        score = essai.get('score', 0)
+                        
+                        # Calculer la précision (0-100%)
+                        # Priorité aux données caractères_justes/caracteres_tapes si disponibles
+                        caracteres_tapes = essai.get('caracteres_tapes', 0)
+                        caracteres_justes = essai.get('caracteres_justes', 0)
+                        
+                        if caracteres_tapes > 0:
+                            # Utiliser les données précises de caractères
+                            precision = (caracteres_justes / caracteres_tapes) * 100
+                        else:
+                            # Fallback: estimer à partir du score et des erreurs
+                            total_tentatives = score + nb_erreurs
+                            if total_tentatives > 0:
+                                precision = (score / total_tentatives) * 100
+                            else:
+                                precision = 0.0
+                        
+                        parties.append({
+                            'timestamp': essai['timestamp'],
+                            'vitesse_frappe': essai.get('vitesse_frappe', 0),
+                            'precision': round(precision, 2),
+                            'score': score,
+                            'nb_erreurs': nb_erreurs
+                        })
+    
+    # Trier par timestamp
+    parties.sort(key=lambda x: x['timestamp'])
+    
+    return parties
+
+
+def get_derniers_parametres_joueur(pseudo):
     """Récupère les derniers paramètres utilisés par le joueur.
     
     Args:
-        nom: Nom du joueur
-        prenom: Prénom du joueur
+        pseudo: Pseudo du joueur
     
     Returns:
         dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int} ou None si pas d'historique
     """
-    cle = f"{nom}_{prenom}".lower()
+    cle = pseudo.lower()
     
     if cle not in dict_joueurs:
         return None
     
     joueur = dict_joueurs[cle]
     
+    # D'abord chercher dans parametres_actuels (sauvegarde explicite)
+    if 'parametres_actuels' in joueur:
+        return {
+            'vitesse_defilement': joueur['parametres_actuels'].get('vitesse_defilement', 100),
+            'reset_mots_actif': joueur['parametres_actuels'].get('reset_mots_actif', True),
+            'delai_niveau4': joueur['parametres_actuels'].get('delai_niveau4', 1500)
+        }
+    
+    # Sinon chercher dans l'historique (ancien comportement)
     if 'historique' not in joueur:
         return None
     

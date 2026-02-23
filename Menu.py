@@ -2,25 +2,134 @@ import Donnees
 import pygame as pg
 import sys
 import BaseDonnees
+import os
+import tempfile
+import matplotlib
+matplotlib.use('Agg')  # Backend sans interface graphique
+import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
+from datetime import datetime
 
 
 class Menu:
     """Classe regroupant tous les menus du jeu."""
     
     @staticmethod
-    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, delai_niveau4_actuel=1500, joueur=None):
+    def generer_graphique_stats(pseudo, fichier_sortie=None):
+        """Génère un graphique matplotlib avec l'historique de vitesse et précision (10 dernières parties).
+        
+        Args:
+            pseudo: Pseudo du joueur
+            fichier_sortie: Chemin du fichier de sortie (optionnel). Si None, utilise TEMP/stats_{pseudo}.png
+        
+        Returns:
+            str: Chemin du fichier image généré, ou None si erreur
+        """
+        # Récupérer l'historique complet
+        historique = BaseDonnees.get_historique_chronologique(pseudo)
+        
+        if not historique or len(historique) < 2:
+            # Pas assez de données pour un graphique
+            return None
+        
+        # Prendre seulement les 10 dernières parties
+        historique = historique[-10:]
+        
+        # Extraire les données
+        timestamps = []
+        vitesses = []
+        precisions = []
+        
+        for partie in historique:
+            try:
+                # Parser le timestamp
+                dt = datetime.strptime(partie['timestamp'], '%Y-%m-%d %H:%M:%S')
+                timestamps.append(dt)
+                vitesses.append(partie['vitesse_frappe'])
+                precisions.append(partie['precision'])
+            except:
+                continue
+        
+        if len(timestamps) < 2:
+            return None
+        
+        # Créer les numéros de parties (N-9, N-8, ..., N-1, N)
+        nb_parties = len(timestamps)
+        parties_labels = [f"N-{nb_parties - i - 1}" if i < nb_parties - 1 else "N" for i in range(nb_parties)]
+        positions = list(range(nb_parties))
+        
+        # Créer le graphique avec un seul axe
+        fig, ax1 = plt.subplots(figsize=(12, 7))
+        fig.suptitle(f'Historique des 10 dernières parties - {pseudo}', fontsize=16, fontweight='bold')
+        
+        # Axe gauche : Précision
+        color_precision = '#A23B72'
+        ax1.set_xlabel('Partie', fontsize=12, fontweight='bold')
+        ax1.set_ylabel('Précision (%)', fontsize=12, fontweight='bold', color=color_precision)
+        line1 = ax1.plot(positions, precisions, marker='s', linestyle='-', color=color_precision, 
+                        linewidth=2.5, markersize=7, label='Précision')
+        ax1.tick_params(axis='y', labelcolor=color_precision)
+        ax1.set_ylim(0, 105)
+        ax1.grid(True, alpha=0.3, linestyle='--')
+        
+        # Axe droit : Vitesse de frappe
+        ax2 = ax1.twinx()
+        color_vitesse = '#2E86AB'
+        ax2.set_ylabel('Vitesse (caractères/s)', fontsize=12, fontweight='bold', color=color_vitesse)
+        line2 = ax2.plot(positions, vitesses, marker='o', linestyle='-', color=color_vitesse, 
+                        linewidth=2.5, markersize=7, label='Vitesse')
+        ax2.tick_params(axis='y', labelcolor=color_vitesse)
+        ax2.set_ylim(bottom=0)
+        
+        # Légende combinée
+        lines = line1 + line2
+        labels = [l.get_label() for l in lines]
+        ax1.legend(lines, labels, loc='upper left', fontsize=10)
+        
+        # Configurer l'axe X avec les labels de parties
+        ax1.set_xticks(positions)
+        ax1.set_xticklabels(parties_labels)
+        ax1.set_xlim(-0.5, nb_parties - 0.5)
+        
+        # Ajuster l'espacement
+        plt.tight_layout()
+        
+        # Sauvegarder le graphique
+        if fichier_sortie is None:
+            temp_dir = tempfile.gettempdir()
+            fichier_sortie = os.path.join(temp_dir, "ChasseAuxMots", f"stats_{pseudo}.png")
+            os.makedirs(os.path.dirname(fichier_sortie), exist_ok=True)
+        
+        # Supprimer l'ancien fichier s'il existe pour éviter les problèmes de cache
+        if os.path.exists(fichier_sortie):
+            try:
+                os.remove(fichier_sortie)
+            except Exception as e:
+                print(f"[WARNING] Impossible de supprimer l'ancien graphique: {e}")
+        
+        try:
+            plt.savefig(fichier_sortie, dpi=100, bbox_inches='tight')
+            plt.close(fig)
+            return fichier_sortie
+        except Exception as e:
+            print(f"[ERROR] Impossible de sauvegarder le graphique: {e}")
+            plt.close(fig)
+            return None
+    
+    @staticmethod
+    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None):
         """
         Affiche une fenêtre modale pour configurer les paramètres du jeu.
-        Retourne un tuple (vitesse_pourcentage, reset_on_error, delai_niveau4) ou None si annulé.
+        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots) ou None si annulé.
         """
         vitesse_str = ""
         vitesse_affichee = str(vitesse_actuelle)
+        total_mots_str = ""
+        total_mots_affiche = str(total_mots_actuel)
         reset_on_error = reset_on_error_actuel
-        delai_str = ""
-        delai_affiche = str(delai_niveau4_actuel)
         clock = pg.time.Clock()
         input_active = False
-        input_delai_active = False
+        input_mots_active = False
         
         # Division de l'écran en 3 zones
         zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
@@ -28,7 +137,7 @@ class Menu:
         zone_boutons_y = zone_titre_height + zone_params_height
         
         # Zone du milieu : calcul de l'espacement vertical
-        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
+        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
         param_height = Donnees.PARAMS_PARAM_HEIGHT
         spacing = (zone_params_height - 3 * param_height) // 4  # Espacement X pour 3 paramètres
         
@@ -45,7 +154,7 @@ class Menu:
         input_box = pg.Rect(input_x, param1_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         checkbox_rect = pg.Rect(input_x + Donnees.PARAMS_CHECKBOX_OFFSET_X, param2_y + Donnees.PARAMS_CHECKBOX_OFFSET_Y, 
                                Donnees.PARAMS_CHECKBOX_SIZE, Donnees.PARAMS_CHECKBOX_SIZE)
-        input_delai_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
+        input_mots_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
@@ -67,12 +176,12 @@ class Menu:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
                         input_active = True
-                        input_delai_active = False
+                        input_mots_active = False
                         vitesse_str = ""
-                    elif input_delai_box.collidepoint(event.pos):
-                        input_delai_active = True
+                    elif input_mots_box.collidepoint(event.pos):
+                        input_mots_active = True
                         input_active = False
-                        delai_str = ""
+                        total_mots_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
                     elif bouton_retour.collidepoint(event.pos):
@@ -86,35 +195,25 @@ class Menu:
                         vitesse_affichee = str(val)
                         
                         try:
-                            delai_val = int(delai_str) if delai_str else delai_niveau4_actuel
+                            val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
                         except Exception:
-                            delai_val = delai_niveau4_actuel
-                        delai_val = max(Donnees.DELAI_NIVEAU4_MIN, min(Donnees.DELAI_NIVEAU4_MAX, delai_val))
-                        delai_affiche = str(delai_val)
+                            val_mots = total_mots_actuel
+                        val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                        total_mots_affiche = str(val_mots)
                         
                         # Sauvegarder la dernière valeur pour le joueur
                         if joueur is not None:
                             try:
-                                nom_j, prenom_j = joueur
+                                pseudo_j = joueur
                                 val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
-                                BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val_wpm)
+                                BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
                             except Exception:
                                 pass
                         
-                        return (int(val), reset_on_error, int(delai_val))
+                        return (int(val), reset_on_error, int(val_mots))
                 
                 if event.type == pg.KEYDOWN:
                     if input_active:
-                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER or event.key == pg.K_TAB:
-                            input_active = False
-                            input_delai_active = True
-                        elif event.key == pg.K_ESCAPE:
-                            return None
-                        elif event.key == pg.K_BACKSPACE:
-                            vitesse_str = vitesse_str[:-1]
-                        elif event.unicode.isdigit() and len(vitesse_str) < 3:
-                            vitesse_str += event.unicode
-                    elif input_delai_active:
                         if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
                             try:
                                 val = int(vitesse_str) if vitesse_str else vitesse_actuelle
@@ -124,27 +223,58 @@ class Menu:
                             vitesse_affichee = str(val)
                             
                             try:
-                                delai_val = int(delai_str) if delai_str else delai_niveau4_actuel
+                                val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
                             except Exception:
-                                delai_val = delai_niveau4_actuel
-                            delai_val = max(Donnees.DELAI_NIVEAU4_MIN, min(Donnees.DELAI_NIVEAU4_MAX, delai_val))
-                            delai_affiche = str(delai_val)
+                                val_mots = total_mots_actuel
+                            val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                            total_mots_affiche = str(val_mots)
                             
                             if joueur is not None:
                                 try:
-                                    nom_j, prenom_j = joueur
+                                    pseudo_j = joueur
                                     val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
-                                    BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val_wpm)
+                                    BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(delai_val))
+                            return (int(val), reset_on_error, int(val_mots))
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
-                            delai_str = delai_str[:-1]
-                        elif event.unicode.isdigit() and len(delai_str) < 5:
-                            delai_str += event.unicode
+                            vitesse_str = vitesse_str[:-1]
+                        elif event.unicode.isdigit() and len(vitesse_str) < 3:
+                            vitesse_str += event.unicode
+                    elif input_mots_active:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            try:
+                                val = int(vitesse_str) if vitesse_str else vitesse_actuelle
+                            except Exception:
+                                val = vitesse_actuelle
+                            val = max(Donnees.VITESSE_POURCENTAGE_MIN, min(Donnees.VITESSE_POURCENTAGE_MAX, val))
+                            vitesse_affichee = str(val)
+                            
+                            try:
+                                val_mots = int(total_mots_str) if total_mots_str else total_mots_actuel
+                            except Exception:
+                                val_mots = total_mots_actuel
+                            val_mots = max(Donnees.TOTAL_MOTS_MIN, min(Donnees.TOTAL_MOTS_MAX, val_mots))
+                            total_mots_affiche = str(val_mots)
+                            
+                            if joueur is not None:
+                                try:
+                                    pseudo_j = joueur
+                                    val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
+                                    BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
+                                except Exception:
+                                    pass
+                            
+                            return (int(val), reset_on_error, int(val_mots))
+                        elif event.key == pg.K_ESCAPE:
+                            return None
+                        elif event.key == pg.K_BACKSPACE:
+                            total_mots_str = total_mots_str[:-1]
+                        elif event.unicode.isdigit() and len(total_mots_str) < 3:
+                            total_mots_str += event.unicode
                     else:
                         if event.key == pg.K_ESCAPE:
                             return None
@@ -205,22 +335,22 @@ class Menu:
                             (checkbox_rect.right - Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.top + Donnees.PARAMS_CHECKMARK_MARGIN_TOP), 
                             Donnees.PARAMS_CHECKMARK_EPAISSEUR)
             
-            # Paramètre 3 : Délai d'affichage niveau 4
-            label_delai = font_label.render("Délai affichage Niveau 4", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_delai, (label_x, param3_y + 10))
+            # Paramètre 3 : Nombre de mots par partie
+            label_mots = font_label.render("Nombre de mots par partie", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_mots, (label_x, param3_y + 10))
             
-            # Input box délai
-            pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_delai_box)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR if not input_delai_active else Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE, 
-                        input_delai_box, Donnees.PARAMS_INPUT_BOX_BORDURE)
+            # Input box nombre de mots
+            pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_mots_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR if not input_mots_active else Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE, 
+                        input_mots_box, Donnees.PARAMS_INPUT_BOX_BORDURE)
             
-            if input_delai_active:
-                texte_delai = font_input.render(delai_str + "|", True, Donnees.COULEUR_NOIR)
+            if input_mots_active:
+                texte_mots = font_input.render(total_mots_str + "|", True, Donnees.COULEUR_NOIR)
             else:
-                texte_delai = font_input.render(delai_affiche + " ms", True, (100, 100, 100))
+                texte_mots = font_input.render(total_mots_affiche, True, (100, 100, 100))
             
-            screen.blit(texte_delai, (input_delai_box.centerx - texte_delai.get_width() // 2, 
-                                      input_delai_box.centery - texte_delai.get_height() // 2))
+            screen.blit(texte_mots, (input_mots_box.centerx - texte_mots.get_width() // 2, 
+                                     input_mots_box.centery - texte_mots.get_height() // 2))
             
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
@@ -266,10 +396,10 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, delai_niveau4_defaut=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, delai_niveau4).
+        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots).
         Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
@@ -278,15 +408,44 @@ class Menu:
         niveau_survole = 0  # Index du niveau actuellement sélectionné au clavier (0-4)
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
-        delai_niveau4 = delai_niveau4_defaut if delai_niveau4_defaut is not None else Donnees.DELAI_NIVEAU4_PAR_DEFAUT
+        total_mots = total_mots_defaut if total_mots_defaut is not None else Donnees.TOTAL_MOTS
         
-        # Définir le bouton paramètres (en bas à droite)
+        # Charger le fond du monde sélectionné avec transparence
+        fond_surface = None
+        if monde_choisi is not None:
+            try:
+                from BaseDonnees import Univers
+                chemin_background = Univers[monde_choisi]["background"]["chemin"]
+                # Charger les images de fond (de 7 à 1, du plus éloigné au sol)
+                fond_images = []
+                for i in range(7, 0, -1):
+                    chemin = Donnees.resource_path(chemin_background + f"{i}.png")
+                    img = pg.image.load(chemin).convert_alpha()
+                    # Redimensionner pour couvrir toute la fenêtre
+                    img = pg.transform.scale(img, (Donnees.WIDTH, Donnees.HEIGHT))
+                    fond_images.append(img)
+                
+                # Créer une surface combinée avec toutes les couches
+                fond_surface = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
+                for img in fond_images:
+                    fond_surface.blit(img, (0, 0))
+                
+                # Appliquer la transparence (alpha = 128 pour 50% de transparence)
+                fond_surface.set_alpha(128)
+            except Exception as e:
+                print(f"Erreur lors du chargement du fond: {e}")
+                fond_surface = None
+        
+        # Définir le bouton paramètres (en bas à gauche)
         btn_params = pg.Rect(
-            Donnees.WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_WIDTH - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
-            Donnees.HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT - Donnees.NIVEAU_BOUTON_PARAMS_MARGIN,
+            30,
+            Donnees.HEIGHT - 80,
             Donnees.NIVEAU_BOUTON_PARAMS_WIDTH,
-            Donnees.NIVEAU_BOUTON_PARAMS_HEIGHT
+            50
         )
+        
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
         
         while niveau_selectionne is None:
             events = pg.event.get()
@@ -321,11 +480,15 @@ class Menu:
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     position = event.pos
                     
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(position):
+                        return None
+                    
                     # Vérifier le clic sur le bouton paramètres
                     if btn_params.collidepoint(position):
-                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, delai_niveau4, joueur)
+                        resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, total_mots, joueur)
                         if resultat is not None:
-                            vitesse_pourcentage, reset_on_error, delai_niveau4 = resultat
+                            vitesse_pourcentage, reset_on_error, total_mots = resultat
                     
                     # Event 2 : Clic sur un niveau
                     for i in range(Donnees.NB_NIVEAUX):
@@ -337,6 +500,11 @@ class Menu:
             ## Affichage ##
             # Affichage 1 : Fond
             screen.fill(Donnees.COULEUR_FOND)
+            
+            # Afficher le fond du monde sélectionné avec transparence
+            if fond_surface is not None:
+                screen.blit(fond_surface, (0, 0))
+            
             font = pg.font.Font(None, Donnees.NIVEAU_TITRE_POLICE)
             font_small = pg.font.Font(None, Donnees.NIVEAU_POLICE_INFO)
             
@@ -367,31 +535,43 @@ class Menu:
                 texte_rect = texte.get_rect(center=rect.center)
                 screen.blit(texte, texte_rect)
             
-            # Affichage 3 : Bouton paramètres
+            # Affichage 3 : Bouton paramètres (en bas à gauche)
             pg.draw.rect(screen, Donnees.COULEUR_BLEU_BOUTON, btn_params)
-            pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, Donnees.NIVEAU_BOUTON_PARAMS_BORDURE)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, btn_params, 3)
             texte_params = font_small.render("Paramètres", True, Donnees.COULEUR_BLANC)
             texte_params_rect = texte_params.get_rect(center=btn_params.center)
             screen.blit(texte_params, texte_params_rect)
             
-            # Affichage 4 : Vitesse actuelle
-            info_vitesse = font_small.render(f"Vitesse: {vitesse_pourcentage}%", True, Donnees.COULEUR_GRIS_FONCE)
-            screen.blit(info_vitesse, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_VITESSE_Y))
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
-            # Affichage 5 : Mode reset
+            # Affichage 4 : Vitesse actuelle (au-dessus du bouton paramètres)
+            info_vitesse = font_small.render(f"Vitesse: {vitesse_pourcentage}%", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_vitesse, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 120))
+            
+            # Affichage 5 : Mode reset (au-dessus du bouton paramètres)
             reset_mode = "Reset: OUI" if reset_on_error else "Reset: NON"
             reset_color = Donnees.COULEUR_VERT_FONCE if reset_on_error else Donnees.COULEUR_ROUGE_FONCE
             info_reset = font_small.render(reset_mode, True, reset_color)
-            screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - Donnees.NIVEAU_INFO_RESET_Y))
+            screen.blit(info_reset, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 100))
             
-            # Affichage 6 : Message Échap pour retour
-            info_echap = font_small.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
+            # Affichage 6 : Nombre de mots (au-dessus du bouton paramètres)
+            info_mots = font_small.render(f"Mots: {total_mots}", True, Donnees.COULEUR_GRIS_FONCE)
+            screen.blit(info_mots, (Donnees.NIVEAU_INFO_MARGIN, Donnees.HEIGHT - 80))
+            
+            # Affichage 7 : Message navigation
+            info_echap = font_small.render("Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
             screen.blit(info_echap, (Donnees.WIDTH // 2 - info_echap.get_width() // 2, Donnees.HEIGHT - 30))
             
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
-        return niveau_selectionne, vitesse_pourcentage, reset_on_error, delai_niveau4
+        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots
 
     @staticmethod
     def selection_monde(screen):
@@ -436,6 +616,9 @@ class Menu:
             y = start_y + row * (taille_carre + espacement)
             rectangles_mondes.append(pg.Rect(x, y, taille_carre, taille_carre))
         
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
+        
         while monde_selectionne is None:
             events = pg.event.get()
             
@@ -475,6 +658,10 @@ class Menu:
                 
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     position = event.pos
+                    
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(position):
+                        return None
                     
                     # Vérifier le clic sur un des carrés de monde
                     for i, rect in enumerate(rectangles_mondes):
@@ -523,6 +710,14 @@ class Menu:
             # Message d'information Échap
             info_text = font_info.render("Échap: retour | Flèches: navigation | Entrée: valider", True, Donnees.COULEUR_GRIS_FONCE)
             screen.blit(info_text, (Donnees.WIDTH // 2 - info_text.get_width() // 2, Donnees.HEIGHT - 40))
+            
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()
             clock.tick(Donnees.FPS)
@@ -574,8 +769,8 @@ class Menu:
         derniere = None
         try:
             if joueur is not None:
-                nom_j, prenom_j = joueur
-                j = BaseDonnees.get_joueur(nom_j, prenom_j)
+                pseudo_j = joueur
+                j = BaseDonnees.get_joueur(pseudo_j)
                 if j is not None:
                     try:
                         moyenne = float(j.get('Vitesse_Moyenne_WPM', 0.0))
@@ -588,6 +783,9 @@ class Menu:
         except Exception:
             moyenne = None
             derniere = None
+        
+        # Bouton Retour
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT - 120, 150, 40)
 
         clock = pg.time.Clock()
         while True:
@@ -595,7 +793,10 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        return None
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         try:
@@ -607,10 +808,10 @@ class Menu:
                         if joueur is not None:
                             try:
                                 import BaseDonnees
-                                nom_j, prenom_j = joueur
-                                BaseDonnees.set_derniere_vitesse(nom_j, prenom_j, val)
+                                pseudo_j = joueur
+                                BaseDonnees.set_derniere_vitesse(pseudo_j, val)
                                 derniere = float(val)
-                                print(f"Enregistré dernière vitesse {val} WPM pour {prenom_j} {nom_j}")
+                                print(f"Enregistré dernière vitesse {val} WPM pour {pseudo_j}")
                             except Exception:
                                 pass
                         return int(val)
@@ -663,6 +864,14 @@ class Menu:
                 dx = rx + range_text.get_width() + 20
                 dy = ry
                 screen.blit(d, (dx, dy))
+            
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 32)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 2)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
 
             pg.display.flip()
             clock.tick(30)
@@ -685,7 +894,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_nouveau.collidepoint(event.pos):
@@ -729,8 +938,8 @@ class Menu:
     @staticmethod
     def fenetre_joueur(screen):
         """
-        Affiche le menu d'entrée du nom et prénom du joueur.
-        Retourne un tuple (nom, prenom) lorsque l'utilisateur valide, ou None si Échap est pressé.
+        Affiche le menu d'entrée du pseudo du joueur.
+        Retourne le pseudo lorsque l'utilisateur valide, ou None si Échap est pressé.
         """
         
         class InputBox:
@@ -764,7 +973,7 @@ class Menu:
             
             def update_text(self):
                 font = pg.font.Font(None, 32)
-                self.txt_surface = font.render(self.text if self.text else 'Entrez le texte...', True, (0, 0, 0))
+                self.txt_surface = font.render(self.text if self.text else 'Entrez votre pseudo...', True, (0, 0, 0))
             
             def draw(self, screen):
                 screen.blit(self.txt_surface, (self.rect.x + 10, self.rect.y + 7))
@@ -774,12 +983,14 @@ class Menu:
                 return self.text.strip()
         
         
-        # Initialisation des boîtes de saisie
-        input_nom = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2 - 50, 300, 40)
-        input_prenom = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2 + 50, 300, 40)
+        # Initialisation de la boîte de saisie
+        input_pseudo = InputBox(Donnees.WIDTH // 4, Donnees.HEIGHT // 2, 300, 40)
         
         # Bouton Valider
-        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT // 2 + 130, 150, 40)
+        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - 75, Donnees.HEIGHT // 2 + 100, 150, 40)
+        
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
         
         entree_complete = False
         
@@ -789,21 +1000,22 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
-                input_nom.handle_event(event)
-                input_prenom.handle_event(event)
+                input_pseudo.handle_event(event)
                 
-                # Vérifier si le bouton Valider est cliqué
+                # Vérifier si le bouton Valider ou Retour est cliqué
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_valider.collidepoint(event.pos):
-                        if input_nom.get_text() and input_prenom.get_text():
+                        if input_pseudo.get_text():
                             entree_complete = True
+                    elif bouton_retour.collidepoint(event.pos):
+                        return None
                 
                 # Valider aussi avec la touche Entrée
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
-                        if input_nom.get_text() and input_prenom.get_text():
+                        if input_pseudo.get_text():
                             entree_complete = True
                     elif event.key == pg.K_ESCAPE:
                         # Retourner None pour indiquer l'annulation
@@ -818,16 +1030,13 @@ class Menu:
             titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 80))
             screen.blit(titre, titre_rect)
             
-            # Labels
+            # Label
             font_label = pg.font.Font(None, 36)
-            label_nom = font_label.render("Nom:", True, (0, 0, 0))
-            label_prenom = font_label.render("Prénom:", True, (0, 0, 0))
-            screen.blit(label_nom, (Donnees.WIDTH // 4 - 80, Donnees.HEIGHT // 2 - 50))
-            screen.blit(label_prenom, (Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2 + 50))
+            label_pseudo = font_label.render("Pseudo:", True, (0, 0, 0))
+            screen.blit(label_pseudo, (Donnees.WIDTH // 4 - 100, Donnees.HEIGHT // 2))
             
-            # Boîtes de saisie
-            input_nom.draw(screen)
-            input_prenom.draw(screen)
+            # Boîte de saisie
+            input_pseudo.draw(screen)
             
             # Bouton Valider
             pg.draw.rect(screen, (100, 200, 100), bouton_valider)
@@ -835,10 +1044,18 @@ class Menu:
             bouton_texte_rect = bouton_texte.get_rect(center=bouton_valider.center)
             screen.blit(bouton_texte, bouton_texte_rect)
             
-            # Message d'erreur si champs vides
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
+            
+            # Message d'erreur si champ vide
             if any(event.type == pg.MOUSEBUTTONDOWN and bouton_valider.collidepoint(event.pos) 
-                   for event in events) and not (input_nom.get_text() and input_prenom.get_text()):
-                message_erreur = font_label.render("Veuillez remplir tous les champs!", True, (255, 0, 0))
+                   for event in events) and not input_pseudo.get_text():
+                message_erreur = font_label.render("Veuillez entrer un pseudo!", True, (255, 0, 0))
                 screen.blit(message_erreur, (Donnees.WIDTH // 2 - 150, Donnees.HEIGHT - 70))
             
             # Message pour la touche Échap
@@ -848,11 +1065,11 @@ class Menu:
             
             pg.display.flip()
         
-        # Retourner les données du joueur
-        return input_nom.get_text(), input_prenom.get_text()
+        # Retourner le pseudo du joueur
+        return input_pseudo.get_text()
 
     @staticmethod
-    def fenetre_confirmation_suppression(screen, nom, prenom):
+    def fenetre_confirmation_suppression(screen, pseudo):
         """
         Affiche une fenêtre de confirmation avec double vérification pour supprimer un joueur.
         Retourne True si l'utilisateur confirme, False sinon.
@@ -868,7 +1085,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_oui.collidepoint(event.pos):
@@ -893,9 +1110,9 @@ class Menu:
             titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 100))
             screen.blit(titre, titre_rect)
             
-            # Nom du joueur
+            # Pseudo du joueur
             font_nom = pg.font.Font(None, 40)
-            nom_texte = font_nom.render(f"{prenom} {nom}", True, (0, 0, 0))
+            nom_texte = font_nom.render(f"{pseudo}", True, (0, 0, 0))
             nom_rect = nom_texte.get_rect(center=(Donnees.WIDTH // 2, 180))
             screen.blit(nom_texte, nom_rect)
             
@@ -932,7 +1149,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if bouton_confirmer.collidepoint(event.pos):
@@ -981,18 +1198,133 @@ class Menu:
         return True
 
     @staticmethod
+    def fenetre_confirmation_quitter(screen, pseudo=None, vitesse_defilement=None, reset_mots_actif=None):
+        """
+        Affiche une fenêtre de confirmation avant de quitter le jeu.
+        Propose de sauvegarder les paramètres et avertit que la progression ne sera pas sauvegardée.
+        
+        Args:
+            screen: L'écran pygame
+            pseudo: Pseudo du joueur (optionnel, pour la sauvegarde des paramètres)
+            vitesse_defilement: Vitesse actuelle en pourcentage (optionnel)
+            reset_mots_actif: État du reset des mots (optionnel)
+        
+        Returns:
+            str: 'quitter' pour quitter sans sauvegarder, 'sauvegarder' pour sauvegarder et quitter, 
+                 'annuler' pour annuler et continuer
+        """
+        # Positions des boutons (3 boutons côte à côte)
+        bouton_largeur = 180
+        bouton_hauteur = 50
+        espacement = 20
+        total_largeur = 3 * bouton_largeur + 2 * espacement
+        debut_x = (Donnees.WIDTH - total_largeur) // 2
+        bouton_y = Donnees.HEIGHT // 2 + 100
+        
+        bouton_sauvegarder = pg.Rect(debut_x, bouton_y, bouton_largeur, bouton_hauteur)
+        bouton_quitter = pg.Rect(debut_x + bouton_largeur + espacement, bouton_y, bouton_largeur, bouton_hauteur)
+        bouton_annuler = pg.Rect(debut_x + 2 * (bouton_largeur + espacement), bouton_y, bouton_largeur, bouton_hauteur)
+        
+        # Vérifier si on peut sauvegarder les paramètres
+        peut_sauvegarder = (pseudo is not None and vitesse_defilement is not None and reset_mots_actif is not None)
+        
+        while True:
+            events = pg.event.get()
+            
+            for event in events:
+                if event.type == pg.QUIT:
+                    # Si l'utilisateur clique à nouveau sur la croix rouge, quitter directement
+                    return 'quitter'
+                
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_annuler.collidepoint(event.pos):
+                        return 'annuler'
+                    elif bouton_quitter.collidepoint(event.pos):
+                        return 'quitter'
+                    elif peut_sauvegarder and bouton_sauvegarder.collidepoint(event.pos):
+                        # Sauvegarder les paramètres avant de quitter
+                        import BaseDonnees
+                        BaseDonnees.sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif)
+                        return 'sauvegarder'
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return 'annuler'
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 56)
+            titre = font_titre.render("Voulez-vous quitter ?", True, (200, 0, 0))
+            titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, 80))
+            screen.blit(titre, titre_rect)
+            
+            # Message d'avertissement
+            font_msg = pg.font.Font(None, 32)
+            msg1 = font_msg.render("Votre progression ne sera pas sauvegardée.", True, (100, 0, 0))
+            msg1_rect = msg1.get_rect(center=(Donnees.WIDTH // 2, 150))
+            screen.blit(msg1, msg1_rect)
+            
+            # Afficher ou pas le message sur la sauvegarde des paramètres
+            if peut_sauvegarder:
+                font_note = pg.font.Font(None, 30)
+                msg2 = font_note.render("Sauvegarder vos paramètres avant de quitter ?", True, (0, 0, 0))
+                msg2_rect = msg2.get_rect(center=(Donnees.WIDTH // 2, 210))
+                screen.blit(msg2, msg2_rect)
+            else:
+                font_note = pg.font.Font(None, 28)
+                msg2 = font_note.render("(Connectez-vous pour sauvegarder vos paramètres)", True, (120, 120, 120))
+                msg2_rect = msg2.get_rect(center=(Donnees.WIDTH // 2, 210))
+                screen.blit(msg2, msg2_rect)
+            
+            # Boutons
+            font_bouton = pg.font.Font(None, 48)
+            
+            # Bouton Oui (vert, sauvegarder et quitter - seulement si possible)
+            if peut_sauvegarder:
+                pg.draw.rect(screen, (100, 200, 100), bouton_sauvegarder)
+                pg.draw.rect(screen, (0, 0, 0), bouton_sauvegarder, 3)
+                texte_oui = font_bouton.render("Oui", True, (255, 255, 255))
+                texte_oui_rect = texte_oui.get_rect(center=bouton_sauvegarder.center)
+                screen.blit(texte_oui, texte_oui_rect)
+            else:
+                # Bouton grisé si pas de joueur
+                pg.draw.rect(screen, (150, 150, 150), bouton_sauvegarder)
+                pg.draw.rect(screen, (100, 100, 100), bouton_sauvegarder, 3)
+                texte_oui = font_bouton.render("Oui", True, (200, 200, 200))
+                texte_oui_rect = texte_oui.get_rect(center=bouton_sauvegarder.center)
+                screen.blit(texte_oui, texte_oui_rect)
+            
+            # Bouton Non (rouge, quitter sans sauvegarder)
+            pg.draw.rect(screen, (200, 100, 100), bouton_quitter)
+            pg.draw.rect(screen, (0, 0, 0), bouton_quitter, 3)
+            texte_non = font_bouton.render("Non", True, (255, 255, 255))
+            texte_non_rect = texte_non.get_rect(center=bouton_quitter.center)
+            screen.blit(texte_non, texte_non_rect)
+            
+            # Bouton Annuler (bleu, continuer le jeu)
+            pg.draw.rect(screen, (100, 150, 200), bouton_annuler)
+            pg.draw.rect(screen, (0, 0, 0), bouton_annuler, 3)
+            texte_annuler = font_bouton.render("Annuler", True, (255, 255, 255))
+            texte_annuler_rect = texte_annuler.get_rect(center=bouton_annuler.center)
+            screen.blit(texte_annuler, texte_annuler_rect)
+            
+            pg.display.flip()
+
+    @staticmethod
     def fenetre_charger_joueur(screen):
         """
         Affiche une liste de joueurs existants pour en sélectionner un.
         Supporte le défilement avec la molette si la liste est longue.
         Permet de supprimer un profil avec la touche Suppr ou le clic droit.
-        Retourne un tuple (nom, prenom) du joueur sélectionné.
+        Retourne le pseudo du joueur sélectionné.
         """
         import BaseDonnees
         
         joueurs_list = []
         if BaseDonnees.dict_joueurs:
-            joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+            joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
         
         if not joueurs_list:
             # Aucun joueur enregistré, revenir au menu
@@ -1010,6 +1342,9 @@ class Menu:
         selection_complete = False
         escape_pressed = False
         
+        # Bouton Retour (en bas à droite)
+        bouton_retour = pg.Rect(Donnees.WIDTH - 230, Donnees.HEIGHT - 80, 200, 50)
+        
         # Paramètres d'affichage
         item_height = 60
         zone_liste_y = 150  # Y de début de la liste
@@ -1022,7 +1357,7 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 
                 # Gestion de la molette de la souris
                 if event.type == pg.MOUSEWHEEL:
@@ -1053,12 +1388,12 @@ class Menu:
                     
                     elif event.key == pg.K_DELETE:
                         # Supprimer le joueur sélectionné
-                        nom, prenom = joueurs_list[selected_index]
-                        if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
-                            succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                        pseudo = joueurs_list[selected_index]
+                        if Menu.fenetre_confirmation_suppression(screen, pseudo):
+                            succes, message = BaseDonnees.supprimer_joueur(pseudo)
                             if succes:
                                 # Recharger la liste
-                                joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
                                 if not joueurs_list:
                                     # Plus de joueurs
                                     screen.fill(Donnees.COULEUR_FOND)
@@ -1074,6 +1409,11 @@ class Menu:
                                 scroll_offset = min(scroll_offset, max(0, len(joueurs_list) - max_items_visibles))
                 
                 if event.type == pg.MOUSEBUTTONDOWN:
+                    # Vérifier le clic sur le bouton retour
+                    if bouton_retour.collidepoint(event.pos):
+                        escape_pressed = True
+                        break
+                    
                     # Calculer les rectangles visibles
                     joueur_rects = []
                     for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
@@ -1093,12 +1433,12 @@ class Menu:
                     elif event.button == 3:
                         for i, rect in joueur_rects:
                             if rect.collidepoint(event.pos):
-                                nom, prenom = joueurs_list[i]
-                                if Menu.fenetre_confirmation_suppression(screen, nom, prenom):
-                                    succes, message = BaseDonnees.supprimer_joueur(nom, prenom)
+                                pseudo = joueurs_list[i]
+                                if Menu.fenetre_confirmation_suppression(screen, pseudo):
+                                    succes, message = BaseDonnees.supprimer_joueur(pseudo)
                                     if succes:
                                         # Recharger la liste
-                                        joueurs_list = [[j['nom'], j['prenom']] for j in BaseDonnees.dict_joueurs.values()]
+                                        joueurs_list = [j['pseudo'] for j in BaseDonnees.dict_joueurs.values()]
                                         if not joueurs_list:
                                             # Plus de joueurs
                                             screen.fill(Donnees.COULEUR_FOND)
@@ -1134,7 +1474,7 @@ class Menu:
             
             for i in range(scroll_offset, min(scroll_offset + max_items_visibles, len(joueurs_list))):
                 display_index = i - scroll_offset
-                nom, prenom = joueurs_list[i]
+                pseudo = joueurs_list[i]
                 
                 couleur = (100, 200, 100) if i == selected_index else (200, 200, 200)
                 joueur_rect = pg.Rect(Donnees.WIDTH // 4, zone_liste_y + display_index * item_height, 
@@ -1143,7 +1483,7 @@ class Menu:
                 pg.draw.rect(screen, couleur, joueur_rect)
                 pg.draw.rect(screen, (0, 0, 0), joueur_rect, 2)
                 
-                texte_joueur = font_joueur.render(f"{prenom} {nom}", True, (0, 0, 0))
+                texte_joueur = font_joueur.render(f"{pseudo}", True, (0, 0, 0))
                 texte_rect = texte_joueur.get_rect(center=joueur_rect.center)
                 screen.blit(texte_joueur, texte_rect)
             
@@ -1154,27 +1494,34 @@ class Menu:
             screen.blit(info1, (20, Donnees.HEIGHT - 50))
             screen.blit(info2, (20, Donnees.HEIGHT - 25))
             
+            # Bouton Retour (en bas à droite)
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
+            
             pg.display.flip()
         
         if escape_pressed:
             return None
         
         # Retourner le joueur sélectionné
-        nom, prenom = joueurs_list[selected_index]
-        return nom, prenom
+        pseudo = joueurs_list[selected_index]
+        return pseudo
 
     @staticmethod
     def menu_selection_joueur(screen):
         """
         Gère le menu complet de sélection/création d'un joueur.
-        Retourne un tuple (nom, prenom) une fois qu'un joueur valide est sélectionné.
+        Retourne le pseudo une fois qu'un joueur valide est sélectionné.
         """
         import BaseDonnees
         import sys
         
         joueur_valide = False
-        nom_joueur = None
-        prenom_joueur = None
+        pseudo_joueur = None
         
         while not joueur_valide:
             # Afficher le menu de choix
@@ -1189,14 +1536,13 @@ class Menu:
                     if result is None:
                         break
                     
-                    nom, prenom = result
-                    succes, message = BaseDonnees.ajouter_joueur(nom, prenom)
+                    pseudo = result
+                    succes, message = BaseDonnees.ajouter_joueur(pseudo)
                     
                     if succes:
-                        nom_joueur = nom
-                        prenom_joueur = prenom
+                        pseudo_joueur = pseudo
                         joueur_valide = True
-                        print(f"Bienvenue {prenom} {nom}! (Nouveau joueur créé)")
+                        print(f"Bienvenue {pseudo}! (Nouveau joueur créé)")
                         break
                     else:
                         # Le joueur existe déjà - afficher message et revenir au choix
@@ -1226,30 +1572,46 @@ class Menu:
                 result = Menu.fenetre_charger_joueur(screen)
                 
                 if result is not None:
-                    nom_joueur, prenom_joueur = result
+                    pseudo_joueur = result
                     joueur_valide = True
-                    print(f"Bienvenue {prenom_joueur} {nom_joueur}! (Joueur existant)")
+                    print(f"Bienvenue {pseudo_joueur}! (Joueur existant)")
                 # else: retourner au menu de choix
         
-        return nom_joueur, prenom_joueur
+        return pseudo_joueur
 
     @staticmethod
-    def fenetre_afficher_stats_joueur(screen, nom, prenom):
+    def fenetre_afficher_stats_joueur(screen, pseudo):
         """
         Affiche les statistiques du joueur courant.
         """
-        import BaseDonnees
-        
-        joueur = BaseDonnees.get_joueur(nom, prenom)
+        joueur = BaseDonnees.get_joueur(pseudo)
         
         if joueur is None:
             return
         
         # Récupérer les statistiques calculées depuis l'historique
-        stats = BaseDonnees.get_statistiques_joueur(nom, prenom)
+        stats = BaseDonnees.get_statistiques_joueur(pseudo)
         
         if stats is None:
             return
+        
+        # Générer le graphique
+        graphique_path = Menu.generer_graphique_stats(pseudo)
+        graphique_surface = None
+        
+        if graphique_path and os.path.exists(graphique_path):
+            try:
+                graphique_surface = pg.image.load(graphique_path)
+                # Redimensionner le graphique pour qu'il s'adapte à l'écran
+                graphique_width = Donnees.WIDTH - 100
+                graphique_height = int(graphique_surface.get_height() * (graphique_width / graphique_surface.get_width()))
+                graphique_surface = pg.transform.smoothscale(graphique_surface, (graphique_width, graphique_height))
+            except Exception as e:
+                print(f"[ERROR] Impossible de charger le graphique: {e}")
+                graphique_surface = None
+        
+        # Bouton Retour
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, Donnees.HEIGHT - 100, 200, 50)
         
         attente_stats = True
         while attente_stats:
@@ -1258,9 +1620,13 @@ class Menu:
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pg.KEYDOWN:
-                    attente_stats = False
+                    if event.key == pg.K_ESCAPE:
+                        attente_stats = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if bouton_retour.collidepoint(event.pos):
+                        attente_stats = False
             
             # Affichage
             screen.fill(Donnees.COULEUR_FOND)
@@ -1277,8 +1643,8 @@ class Menu:
             
             y_offset = Donnees.STATS_JOUEUR_STATS_Y
             
-            # Nom et prénom
-            joueur_nom = font_info.render(f"{joueur['prenom']} {joueur['nom']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
+            # Pseudo
+            joueur_nom = font_info.render(f"{joueur['pseudo']}", True, Donnees.STATS_JOUEUR_COULEUR_TITRE)
             screen.blit(joueur_nom, (Donnees.WIDTH // 2 - Donnees.STATS_FIN_STATS_OFFSET_X, y_offset))
             
             y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT + Donnees.STATS_JOUEUR_SECTION_SPACING
@@ -1301,9 +1667,18 @@ class Menu:
                 screen.blit(texte, (Donnees.WIDTH // 4, y_offset))
                 y_offset += Donnees.STATS_JOUEUR_LINE_HEIGHT
             
-            # Message pour revenir
-            info_text = font_label.render("Appuyez sur une touche pour continuer", True, Donnees.COULEUR_GRIS_MOYEN)
-            info_rect = info_text.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - Donnees.STATS_JOUEUR_INFO_MARGIN_BOTTOM))
-            screen.blit(info_text, info_rect)
+            # Afficher le graphique si disponible
+            if graphique_surface:
+                y_offset += 30  # Espacement avant le graphique
+                graphique_x = (Donnees.WIDTH - graphique_surface.get_width()) // 2
+                screen.blit(graphique_surface, (graphique_x, y_offset))
+            
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 40)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+            pg.draw.rect(screen, (0, 0, 0), bouton_retour, 3)
+            texte_retour = font_bouton.render("Retour", True, (255, 255, 255))
+            texte_retour_rect = texte_retour.get_rect(center=bouton_retour.center)
+            screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()

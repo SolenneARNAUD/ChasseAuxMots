@@ -1,1 +1,3 @@
-pygamepandas
+pygame-ce
+pandas
+matplotlib

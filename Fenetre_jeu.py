@@ -1,6 +1,8 @@
 import Donnees
 import pygame as pg
 import CoucheParallaxe
+import Menu
+import os
 
 
 class Fenetre(object):
@@ -54,9 +56,9 @@ class Fenetre(object):
         for i, chemin in enumerate(chemins_images):
             # Calculer le facteur de vitesse : 
             # - Couche 0 (image 7, la plus éloignée) : vitesse_facteur très faible
-            # - Couche n-1 (image 1, la plus proche) : vitesse_facteur proche de 1
-            # Formule : vitesse augmente progressivement de 0.1 à 1.0
-            vitesse_facteur = 0.1 + (i / (nb_couches - 1)) * 0.9 if nb_couches > 1 else 0.5
+            # - Couche n-1 (image 1, la plus proche) : vitesse_facteur < 1 pour rester en dessous du sol
+            # Formule : vitesse augmente progressivement de 0.1 à 0.8 (le sol est à 1.0)
+            vitesse_facteur = 0.1 + (i / (nb_couches - 1)) * 0.7 if nb_couches > 1 else 0.5
             
             couche = CoucheParallaxe.CoucheParallaxe(chemin, vitesse_facteur, 0)
             self._couches_parallaxe.append(couche)
@@ -169,8 +171,12 @@ class Fenetre(object):
         
         return bouton_rect
 
-    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees):
-        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, et zone pour historique."""
+    def afficher_stats_detaillees(self, screen, vitesse_wpm, erreurs_detaillees, caracteres_justes=0, caracteres_tapes=0, graphique_surface=None):
+        """Affiche les statistiques détaillées : vitesse, mots avec erreurs, précision et historique graphique.
+        
+        Args:
+            graphique_surface: Surface pygame pré-générée du graphique (pour éviter de le regénérer à chaque frame)
+        """
         # Fond semi-transparent
         overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
         overlay.fill(Donnees.COULEUR_NOIR)
@@ -181,37 +187,47 @@ class Fenetre(object):
         font_texte = pg.font.Font(None, Donnees.STATS_DETAILS_POLICE_TEXTE)
         font_erreur = pg.font.Font(None, Donnees.STATS_DETAILS_POLICE_ERREUR)
         
-        # Rectangle pour l'historique (à gauche) - zone réservée pour plus tard
-        rect_graph = pg.Rect(
-            Donnees.STATS_DETAILS_GRAPH_X,
-            Donnees.STATS_DETAILS_GRAPH_Y,
-            Donnees.STATS_DETAILS_GRAPH_WIDTH,
-            Donnees.STATS_DETAILS_GRAPH_HEIGHT
-        )
-        pg.draw.rect(screen, Donnees.COULEUR_GRIS_FONCE, rect_graph)
-        pg.draw.rect(screen, Donnees.COULEUR_BLANC, rect_graph, 2)
+        # Zone pour l'historique (à gauche) - sans rectangle
+        graph_x = 30
+        graph_y = 80
         
-        # Texte "Historique" dans le rectangle
-        texte_graph = font_texte.render("Historique", True, Donnees.COULEUR_GRIS_TEXTE)
-        rect_texte_graph = texte_graph.get_rect(center=(rect_graph.centerx, rect_graph.centery))
-        screen.blit(texte_graph, rect_texte_graph)
+        # Afficher le graphique d'historique s'il est fourni
+        if graphique_surface:
+            screen.blit(graphique_surface, (graph_x, graph_y))
+        else:
+            # Pas de graphique disponible
+            texte_graph = font_texte.render("Historique (min. 2 parties)", True, Donnees.COULEUR_GRIS_TEXTE)
+            screen.blit(texte_graph, (graph_x + 150, graph_y + 200))
         
         # Titre
         titre = font_titre.render("Statistiques détaillées", True, Donnees.COULEUR_BLANC)
         titre_rect = titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.STATS_DETAILS_TITRE_Y))
         screen.blit(titre, titre_rect)
         
-        # Vitesse de frappe
-        x_stats = Donnees.STATS_DETAILS_GRAPH_X + Donnees.STATS_DETAILS_GRAPH_WIDTH + 50
+        # Vitesse de frappe (ajusté pour ne pas dépasser de la fenêtre)
+        graph_max_width = 650
+        x_stats = 620  # Position fixe pour éviter de dépasser WIDTH (1000px)
+        y_current = Donnees.STATS_DETAILS_VITESSE_Y
+        
         vitesse_texte = font_texte.render(f"Vitesse de frappe : {vitesse_wpm:.1f} caractères/s", True, Donnees.COULEUR_BLANC)
-        screen.blit(vitesse_texte, (x_stats, Donnees.STATS_DETAILS_VITESSE_Y))
+        screen.blit(vitesse_texte, (x_stats, y_current))
+        y_current += 50  # Espacement après la vitesse
+        
+        # Précision
+        if caracteres_tapes > 0:
+            precision_pourcent = (caracteres_justes / caracteres_tapes) * 100
+            precision_texte = font_texte.render(f"Précision : {caracteres_justes}/{caracteres_tapes} ({precision_pourcent:.1f}%)", True, Donnees.COULEUR_BLANC)
+            screen.blit(precision_texte, (x_stats, y_current))
+            y_current += 60  # Espacement après la précision
+        else:
+            y_current += 10  # Petit espacement si pas de précision
         
         # Affichage des erreurs
         if erreurs_detaillees:
-            y_offset = Donnees.STATS_DETAILS_ERREUR_Y
+            y_offset = y_current
             erreur_titre = font_texte.render("Mots avec erreurs :", True, Donnees.COULEUR_BLANC)
             screen.blit(erreur_titre, (x_stats, y_offset))
-            y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT
+            y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT + 5  # Espacement après le titre des erreurs
             
             # Dictionnaire pour regrouper les erreurs par mot puis par lettre
             erreurs_par_mot = {}
@@ -275,7 +291,7 @@ class Fenetre(object):
                         screen.blit(texte_lettre_tapee, (x_pos, y_offset))
                         x_pos += texte_lettre_tapee.get_width()
                 
-                y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT
+                y_offset += Donnees.STATS_DETAILS_LIGNE_HEIGHT + 10  # Espacement entre chaque mot avec erreur
                 
                 # Limiter l'affichage pour ne pas déborder de l'écran
                 if y_offset > Donnees.HEIGHT - 100:
@@ -284,10 +300,94 @@ class Fenetre(object):
                     break
         else:
             texte_no_erreur = font_texte.render("Aucune erreur - Parfait !", True, Donnees.COULEUR_BLANC)
-            screen.blit(texte_no_erreur, (x_stats, Donnees.STATS_DETAILS_ERREUR_Y))
+            screen.blit(texte_no_erreur, (x_stats, y_current))
         
-        # Message pour retourner
-        info_retour = font_erreur.render("Appuyez sur Échap pour retourner au menu", True, Donnees.COULEUR_GRIS_TEXTE)
-        info_rect = info_retour.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT - 30))
-        screen.blit(info_retour, info_rect)
+        # Bouton Retour
+        bouton_retour = pg.Rect(
+            Donnees.WIDTH // 2 - 100,
+            Donnees.HEIGHT - 80,
+            200,
+            50
+        )
+        
+        # Dessiner le bouton
+        pg.draw.rect(screen, (200, 100, 100), bouton_retour)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_retour, 3)
+        
+        # Texte du bouton
+        font_bouton = pg.font.Font(None, 40)
+        texte_bouton = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+        rect_texte_bouton = texte_bouton.get_rect(center=bouton_retour.center)
+        screen.blit(texte_bouton, rect_texte_bouton)
+        
+        return bouton_retour
+    
+    def afficher_menu_pause(self, screen, capture_ecran):
+        """
+        Affiche le menu pause avec l'écran de jeu en transparence.
+        Retourne les rectangles des boutons (continuer, quitter).
+        
+        Args:
+            screen: Surface pygame principale
+            capture_ecran: Capture d'écran du jeu à afficher en fond
+        
+        Returns:
+            tuple: (bouton_continuer, bouton_quitter)
+        """
+        # Afficher la capture d'écran du jeu
+        screen.blit(capture_ecran, (0, 0))
+        
+        # Overlay semi-transparent
+        overlay = pg.Surface((Donnees.WIDTH, Donnees.HEIGHT))
+        overlay.fill(Donnees.COULEUR_NOIR)
+        overlay.set_alpha(Donnees.PAUSE_OVERLAY_ALPHA)
+        screen.blit(overlay, (0, 0))
+        
+        # Titre "PAUSE"
+        font_titre = pg.font.Font(None, Donnees.PAUSE_TITRE_POLICE)
+        texte_titre = font_titre.render("PAUSE", True, Donnees.COULEUR_BLANC)
+        rect_titre = texte_titre.get_rect(center=(Donnees.WIDTH // 2, Donnees.HEIGHT // 3))
+        screen.blit(texte_titre, rect_titre)
+        
+        # Calcul des positions des boutons (centrés verticalement)
+        bouton_w = Donnees.PAUSE_BOUTON_WIDTH
+        bouton_h = Donnees.PAUSE_BOUTON_HEIGHT
+        bouton_spacing = Donnees.PAUSE_BOUTON_SPACING
+        total_boutons_height = 2 * bouton_h + bouton_spacing
+        bouton_y_start = Donnees.HEIGHT // 2 - total_boutons_height // 2 + 50
+        
+        # Rectangle bouton Continuer
+        bouton_continuer = pg.Rect(
+            Donnees.WIDTH // 2 - bouton_w // 2,
+            bouton_y_start,
+            bouton_w,
+            bouton_h
+        )
+        
+        # Rectangle bouton Quitter
+        bouton_quitter = pg.Rect(
+            Donnees.WIDTH // 2 - bouton_w // 2,
+            bouton_y_start + bouton_h + bouton_spacing,
+            bouton_w,
+            bouton_h
+        )
+        
+        # Dessiner bouton Continuer
+        pg.draw.rect(screen, Donnees.PAUSE_BOUTON_COULEUR_CONTINUER, bouton_continuer)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_continuer, 3)
+        
+        font_bouton = pg.font.Font(None, Donnees.PAUSE_BOUTON_POLICE)
+        texte_continuer = font_bouton.render("Continuer", True, Donnees.COULEUR_BLANC)
+        rect_texte_continuer = texte_continuer.get_rect(center=bouton_continuer.center)
+        screen.blit(texte_continuer, rect_texte_continuer)
+        
+        # Dessiner bouton Quitter
+        pg.draw.rect(screen, Donnees.PAUSE_BOUTON_COULEUR_QUITTER, bouton_quitter)
+        pg.draw.rect(screen, Donnees.COULEUR_BLANC, bouton_quitter, 3)
+        
+        texte_quitter = font_bouton.render("Quitter sans sauvegarder", True, Donnees.COULEUR_BLANC)
+        rect_texte_quitter = texte_quitter.get_rect(center=bouton_quitter.center)
+        screen.blit(texte_quitter, rect_texte_quitter)
+        
+        return bouton_continuer, bouton_quitter
 
