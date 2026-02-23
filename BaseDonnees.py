@@ -116,18 +116,25 @@ def charger_donnees_mots():
         return {"lettres": [], "bibliotheques": {}}
 
 def lister_bibliotheques():
-    """Retourne la liste des bibliothèques disponibles avec leurs informations."""
+    """Retourne la liste des bibliothèques disponibles avec leurs informations (sans doublons, triées)."""
     donnees = charger_donnees_mots()
     bibliotheques = donnees.get("bibliotheques", {})
     
     info = []
-    for cle, biblio in bibliotheques.items():
-        info.append({
-            "id": cle,
-            "nom": biblio.get("nom", cle),
-            "description": biblio.get("description", ""),
-            "nb_mots": len(biblio.get("mots", []))
-        })
+    seen_ids = set()  # Pour éviter les doublons
+    
+    # Trier les clés pour avoir un ordre cohérent
+    for cle in sorted(bibliotheques.keys()):
+        biblio = bibliotheques[cle]
+        if cle not in seen_ids:
+            seen_ids.add(cle)
+            info.append({
+                "id": cle,
+                "nom": biblio.get("nom", cle),
+                "description": biblio.get("description", ""),
+                "nb_mots": len(biblio.get("mots", []))
+            })
+    
     return info
 
 def charger_bibliotheque(nom_bibliotheque):

@@ -570,6 +570,23 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 54,
                         "caracteres_tapes": 58
+                    },
+                    {
+                        "timestamp": "2026-02-23 15:38:35",
+                        "erreurs": [
+                            {
+                                "mot": "betterave",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            }
+                        ],
+                        "vitesse_frappe": 2.87,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 138,
+                        "caracteres_tapes": 139
                     }
                 ],
                 "niveau_4": [

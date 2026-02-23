@@ -145,20 +145,25 @@ class Menu:
         scroll_offset = 0
         
         # Division de l'écran en 3 zones
-        zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO
-        zone_params_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_PARAMS_RATIO
-        zone_boutons_y = zone_titre_height + zone_params_height
+        zone_titre_height = Donnees.HEIGHT // Donnees.PARAMS_ZONE_TITRE_RATIO  # ~62px
+        zone_params_height = Donnees.PARAMS_ZONE_PARAMS_HEIGHT  # 360px
+        zone_boutons_y = zone_titre_height + zone_params_height  # ~422px
         
         # Zone du milieu : calcul de l'espacement vertical
-        # X pixels vides, Y pixels texte, X pixels vides, Y pixels texte, X pixels vides
-        param_height = Donnees.PARAMS_PARAM_HEIGHT
-        spacing = (zone_params_height - 4 * param_height) // 5  # Espacement X pour 4 paramètres
+        # 3 premiers paramètres compacts, 1 paramètre bibliothèque étendu
+        param_height_small = Donnees.PARAMS_PARAM_HEIGHT_SMALL  # 38px pour les 3 premiers
+        param_height_large = Donnees.PARAMS_PARAM_HEIGHT_LARGE  # 200px pour bibliothèque
+        
+        # Calcul des spacings
+        total_params_height = 3 * param_height_small + param_height_large  # 314px
+        total_spacing = zone_params_height - total_params_height  # 46px
+        spacing = total_spacing // 5  # ~9px entre chaque section
         
         # Position verticale des paramètres dans la zone milieu
         param1_y = zone_titre_height + spacing
-        param2_y = param1_y + param_height + spacing
-        param3_y = param2_y + param_height + spacing
-        param4_y = param3_y + param_height + spacing
+        param2_y = param1_y + param_height_small + spacing
+        param3_y = param2_y + param_height_small + spacing
+        param4_y = param3_y + param_height_small + spacing
         
         # Alignement horizontal : labels à gauche, inputs à droite alignés
         label_x = Donnees.WIDTH // Donnees.PARAMS_LABEL_X_RATIO
@@ -171,13 +176,30 @@ class Menu:
         input_mots_box = pg.Rect(input_x, param3_y, Donnees.PARAMS_INPUT_BOX_WIDTH, Donnees.PARAMS_INPUT_BOX_HEIGHT)
         
         # Zone de scroll pour les bibliothèques (avec offset pour le label)
-        biblio_label_height = 25  # Hauteur réservée pour le label "Bibliothèque"
+        # Affichage 2x2 avec boutons flèches
+        biblio_label_height = 20  # Hauteur réservée pour le label "Bibliothèque"
         biblio_zone_x = label_x
         biblio_zone_y = param4_y + biblio_label_height  # Décaler vers le bas pour le label
         biblio_zone_width = Donnees.WIDTH - 2 * label_x
-        biblio_zone_height = param_height - biblio_label_height  # Réduire la hauteur disponible
-        biblio_item_height = 30
-        max_visible_items = max(1, biblio_zone_height // biblio_item_height)
+        biblio_zone_height = param_height_large - biblio_label_height  # 180px disponibles
+        
+        # Configuration grille 2x2
+        biblio_cols = 2  # Nombre de colonnes
+        biblio_rows = 2  # Nombre de lignes
+        max_visible_items = biblio_cols * biblio_rows  # 4 bibliothèques visibles
+        
+        # Espacement entre boutons flèches et grille: 50px de chaque côté
+        fleche_size = 35
+        grid_available_width = biblio_zone_width - 2 * (fleche_size + 10)  # Espace pour la grille
+        biblio_item_width = (grid_available_width - 20) // 2  # Largeur d'un item
+        biblio_item_height = (biblio_zone_height - 20) // 2  # Hauteur d'un item (~80px)
+        
+        # Boutons flèches
+        fleche_gauche_rect = pg.Rect(biblio_zone_x, biblio_zone_y + biblio_zone_height // 2 - fleche_size // 2, 
+                                     fleche_size, fleche_size)
+        fleche_droite_rect = pg.Rect(biblio_zone_x + biblio_zone_width - fleche_size, 
+                                     biblio_zone_y + biblio_zone_height // 2 - fleche_size // 2, 
+                                     fleche_size, fleche_size)
         
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
@@ -195,13 +217,14 @@ class Menu:
                 if event.type == pg.QUIT:
                     sys.exit()
                 
-                # Gestion de la molette pour le scroll
+                # Gestion de la molette pour le scroll (navigation par page de 4)
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if event.button == 4:  # Molette vers le haut
-                        scroll_offset = max(0, scroll_offset - 1)
+                        scroll_offset = max(0, scroll_offset - max_visible_items)
                     elif event.button == 5:  # Molette vers le bas
-                        max_scroll = max(0, len(bibliotheques) - max_visible_items)
-                        scroll_offset = min(max_scroll, scroll_offset + 1)
+                        # Calculer l'offset maximum pour la dernière page
+                        max_scroll = ((len(bibliotheques) - 1) // max_visible_items) * max_visible_items
+                        scroll_offset = min(max_scroll, scroll_offset + max_visible_items)
                 
                 # Clic sur la zone de saisie
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:  # Clic gauche uniquement
@@ -215,14 +238,33 @@ class Menu:
                         total_mots_str = ""
                     elif checkbox_rect.collidepoint(event.pos):
                         reset_on_error = not reset_on_error
+                    # Gestion des boutons flèches
+                    elif fleche_gauche_rect.collidepoint(event.pos):
+                        scroll_offset = max(0, scroll_offset - max_visible_items)
+                    elif fleche_droite_rect.collidepoint(event.pos):
+                        # Calculer l'offset maximum pour la dernière page
+                        max_scroll = ((len(bibliotheques) - 1) // max_visible_items) * max_visible_items
+                        scroll_offset = min(max_scroll, scroll_offset + max_visible_items)
                     else:
-                        # Vérifier si clic sur une bibliothèque (sélection multiple)
-                        for i, biblio in enumerate(bibliotheques[scroll_offset:scroll_offset + max_visible_items]):
-                            actual_index = i + scroll_offset
-                            item_y = biblio_zone_y + i * biblio_item_height
-                            checkbox_biblio_rect = pg.Rect(biblio_zone_x + 10, item_y + 5, 20, 20)
-                            if checkbox_biblio_rect.collidepoint(event.pos):
-                                biblio_id = bibliotheques[actual_index]['id']
+                        # Vérifier si clic sur une bibliothèque (grille 2x2)
+                        grid_start_x = biblio_zone_x + fleche_size + 15
+                        nb_biblios_restantes = len(bibliotheques) - scroll_offset
+                        nb_a_afficher = min(max_visible_items, nb_biblios_restantes)
+                        
+                        for i in range(nb_a_afficher):
+                            biblio = bibliotheques[scroll_offset + i]
+                            row = i // biblio_cols
+                            col = i % biblio_cols
+                            
+                            item_x = grid_start_x + col * (biblio_item_width + 10)
+                            item_y = biblio_zone_y + 10 + row * (biblio_item_height + 10)
+                            
+                            checkbox_biblio_rect = pg.Rect(item_x, item_y, 22, 22)
+                            # Zone cliquable élargie : checkbox + nom
+                            item_clickable_rect = pg.Rect(item_x, item_y, biblio_item_width, 30)
+                            
+                            if checkbox_biblio_rect.collidepoint(event.pos) or item_clickable_rect.collidepoint(event.pos):
+                                biblio_id = biblio['id']
                                 # Toggle: ajouter ou retirer la bibliothèque
                                 if biblio_id in bibliotheques_selectionnees:
                                     bibliotheques_selectionnees.discard(biblio_id)  # Retirer
@@ -347,7 +389,7 @@ class Menu:
             
             # Paramètre 1 : Vitesse de défilement
             label_vitesse = font_label.render("Vitesse de défilement", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_vitesse, (label_x, param1_y + 10))
+            screen.blit(label_vitesse, (label_x, param1_y + 7))
             
             # Input box vitesse
             pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_box)
@@ -364,7 +406,7 @@ class Menu:
             
             # Paramètre 2 : Reset du mot après erreur
             label_reset = font_label.render("Reset du mot après erreur", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_reset, (label_x, param2_y + 10))
+            screen.blit(label_reset, (label_x, param2_y + 7))
             
             # Checkbox
             pg.draw.rect(screen, Donnees.COULEUR_BLANC, checkbox_rect)
@@ -373,17 +415,17 @@ class Menu:
             if reset_on_error:
                 # Checkmark
                 pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE, 
-                            (checkbox_rect.left + Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.centery),
-                            (checkbox_rect.centerx - Donnees.PARAMS_CHECKMARK_MARGIN_RIGHT, checkbox_rect.bottom - Donnees.PARAMS_CHECKMARK_MARGIN_BOTTOM), 
-                            Donnees.PARAMS_CHECKMARK_EPAISSEUR)
+                            (checkbox_rect.left + 6, checkbox_rect.centery),
+                            (checkbox_rect.centerx - 2, checkbox_rect.bottom - 7), 
+                            3)
                 pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE,
-                            (checkbox_rect.centerx - Donnees.PARAMS_CHECKMARK_MARGIN_RIGHT, checkbox_rect.bottom - Donnees.PARAMS_CHECKMARK_MARGIN_BOTTOM),
-                            (checkbox_rect.right - Donnees.PARAMS_CHECKMARK_MARGIN_LEFT, checkbox_rect.top + Donnees.PARAMS_CHECKMARK_MARGIN_TOP), 
-                            Donnees.PARAMS_CHECKMARK_EPAISSEUR)
+                            (checkbox_rect.centerx - 2, checkbox_rect.bottom - 7),
+                            (checkbox_rect.right - 6, checkbox_rect.top + 6), 
+                            3)
             
             # Paramètre 3 : Nombre de mots par partie
             label_mots = font_label.render("Nombre de mots par partie", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_mots, (label_x, param3_y + 10))
+            screen.blit(label_mots, (label_x, param3_y + 7))
             
             # Input box nombre de mots
             pg.draw.rect(screen, Donnees.COULEUR_BLANC, input_mots_box)
@@ -400,16 +442,76 @@ class Menu:
             
             # Paramètre 4 : Bibliothèque
             label_biblio = font_label.render("Bibliothèque", True, Donnees.COULEUR_NOIR)
-            screen.blit(label_biblio, (label_x, param4_y - 5))
+            screen.blit(label_biblio, (label_x, param4_y + 2))
             
-            # Afficher les bibliothèques avec scroll
-            font_biblio = pg.font.Font(None, 28)
-            for i, biblio in enumerate(bibliotheques[scroll_offset:scroll_offset + max_visible_items]):
-                actual_index = i + scroll_offset
-                item_y = biblio_zone_y + i * biblio_item_height
+            # Boutons flèches
+            # Calculer l'offset maximum pour la dernière page
+            max_scroll = ((len(bibliotheques) - 1) // max_visible_items) * max_visible_items
+            
+            # Flèche gauche (pour revenir en arrière)
+            if scroll_offset > 0:
+                pg.draw.rect(screen, (100, 150, 200), fleche_gauche_rect, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, fleche_gauche_rect, 2, border_radius=5)
+                # Dessiner triangle pointant vers la gauche
+                triangle_points = [
+                    (fleche_gauche_rect.centerx + 6, fleche_gauche_rect.centery - 8),
+                    (fleche_gauche_rect.centerx + 6, fleche_gauche_rect.centery + 8),
+                    (fleche_gauche_rect.centerx - 6, fleche_gauche_rect.centery)
+                ]
+                pg.draw.polygon(screen, Donnees.COULEUR_BLANC, triangle_points)
+            else:
+                # Flèche grisée si on ne peut pas aller plus loin
+                pg.draw.rect(screen, (200, 200, 200), fleche_gauche_rect, border_radius=5)
+                pg.draw.rect(screen, (150, 150, 150), fleche_gauche_rect, 2, border_radius=5)
+                triangle_points = [
+                    (fleche_gauche_rect.centerx + 6, fleche_gauche_rect.centery - 8),
+                    (fleche_gauche_rect.centerx + 6, fleche_gauche_rect.centery + 8),
+                    (fleche_gauche_rect.centerx - 6, fleche_gauche_rect.centery)
+                ]
+                pg.draw.polygon(screen, (150, 150, 150), triangle_points)
+            
+            # Flèche droite (pour avancer)
+            if scroll_offset < max_scroll:
+                pg.draw.rect(screen, (100, 150, 200), fleche_droite_rect, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, fleche_droite_rect, 2, border_radius=5)
+                # Dessiner triangle pointant vers la droite
+                triangle_points = [
+                    (fleche_droite_rect.centerx - 6, fleche_droite_rect.centery - 8),
+                    (fleche_droite_rect.centerx - 6, fleche_droite_rect.centery + 8),
+                    (fleche_droite_rect.centerx + 6, fleche_droite_rect.centery)
+                ]
+                pg.draw.polygon(screen, Donnees.COULEUR_BLANC, triangle_points)
+            else:
+                # Flèche grisée si on ne peut pas aller plus loin
+                pg.draw.rect(screen, (200, 200, 200), fleche_droite_rect, border_radius=5)
+                pg.draw.rect(screen, (150, 150, 150), fleche_droite_rect, 2, border_radius=5)
+                triangle_points = [
+                    (fleche_droite_rect.centerx - 6, fleche_droite_rect.centery - 8),
+                    (fleche_droite_rect.centerx - 6, fleche_droite_rect.centery + 8),
+                    (fleche_droite_rect.centerx + 6, fleche_droite_rect.centery)
+                ]
+                pg.draw.polygon(screen, (150, 150, 150), triangle_points)
+            
+            # Afficher les bibliothèques en grille 2x2
+            font_biblio = pg.font.Font(None, 26)
+            
+            # Position de départ de la grille (centrée entre les flèches)
+            grid_start_x = biblio_zone_x + fleche_size + 15
+            
+            # Calculer le nombre exact de bibliothèques à afficher sur cette page
+            nb_biblios_restantes = len(bibliotheques) - scroll_offset
+            nb_a_afficher = min(max_visible_items, nb_biblios_restantes)
+            
+            for i in range(nb_a_afficher):
+                biblio = bibliotheques[scroll_offset + i]
+                row = i // biblio_cols
+                col = i % biblio_cols
+                
+                item_x = grid_start_x + col * (biblio_item_width + 10)
+                item_y = biblio_zone_y + 10 + row * (biblio_item_height + 10)
                 
                 # Checkbox (carré à cocher)
-                checkbox_biblio_rect = pg.Rect(biblio_zone_x + 10, item_y + 5, 20, 20)
+                checkbox_biblio_rect = pg.Rect(item_x, item_y, 22, 22)
                 pg.draw.rect(screen, Donnees.COULEUR_BLANC, checkbox_biblio_rect)
                 pg.draw.rect(screen, Donnees.COULEUR_NOIR, checkbox_biblio_rect, 2)
                 
@@ -418,22 +520,25 @@ class Menu:
                     # Checkmark style V
                     pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE, 
                                 (checkbox_biblio_rect.left + 4, checkbox_biblio_rect.centery),
-                                (checkbox_biblio_rect.centerx - 2, checkbox_biblio_rect.bottom - 4), 
+                                (checkbox_biblio_rect.centerx - 1, checkbox_biblio_rect.bottom - 4), 
                                 3)
                     pg.draw.line(screen, Donnees.COULEUR_VERT_FONCE,
-                                (checkbox_biblio_rect.centerx - 2, checkbox_biblio_rect.bottom - 4),
+                                (checkbox_biblio_rect.centerx - 1, checkbox_biblio_rect.bottom - 4),
                                 (checkbox_biblio_rect.right - 4, checkbox_biblio_rect.top + 4), 
                                 3)
                 
                 # Nom de la bibliothèque
                 texte_biblio = font_biblio.render(biblio['nom'], True, Donnees.COULEUR_NOIR)
-                screen.blit(texte_biblio, (biblio_zone_x + 40, item_y + 5))
+                screen.blit(texte_biblio, (item_x + 30, item_y + 2))
             
-            # Indicateur de scroll si nécessaire
-            if len(bibliotheques) > max_visible_items:
-                scroll_info = font_biblio.render(f"({scroll_offset + 1}-{min(scroll_offset + max_visible_items, len(bibliotheques))}/{len(bibliotheques)})", 
-                                                 True, (120, 120, 120))
-                screen.blit(scroll_info, (biblio_zone_x + biblio_zone_width - 80, param4_y - 5))
+            # Indicateur de page
+            total_pages = (len(bibliotheques) + max_visible_items - 1) // max_visible_items
+            current_page = (scroll_offset // max_visible_items) + 1
+            if total_pages > 1:
+                font_page = pg.font.Font(None, 20)
+                page_info = font_page.render(f"Page {current_page}/{total_pages}", 
+                                               True, (120, 120, 120))
+                screen.blit(page_info, ((Donnees.WIDTH - page_info.get_width()) // 2, param4_y + 2))
             
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
