@@ -231,6 +231,15 @@
                         "vitesse_defilement": 100,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-18 13:37:42",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.57,
+                        "vitesse_defilement": 100,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500
                     }
                 ],
                 "niveau_5": []
