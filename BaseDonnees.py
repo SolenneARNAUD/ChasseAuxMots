@@ -205,6 +205,144 @@ def set_bibliotheque_active(bibliotheques_actives):
     print(f"[INFO] Bibliothèque(s) active(s): {BIBLIOTHEQUE_ACTIVE}")
     return mots
 
+def sauvegarder_donnees_mots(donnees):
+    """Sauvegarde les données dans le fichier mots.json."""
+    try:
+        with open(FICHIER_MOTS, 'w', encoding='utf-8') as f:
+            json.dump(donnees, f, ensure_ascii=False, indent=4)
+        return True
+    except Exception as e:
+        print(f"[ERROR] Erreur lors de la sauvegarde des mots: {e}")
+        return False
+
+def modifier_nom_bibliotheque(biblio_id, nouveau_nom):
+    """Modifie le nom d'une bibliothèque."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    if biblio_id not in bibliotheques:
+        print(f"[ERROR] Bibliothèque '{biblio_id}' introuvable.")
+        return False
+    
+    bibliotheques[biblio_id]["nom"] = nouveau_nom
+    donnees["bibliotheques"] = bibliotheques
+    
+    return sauvegarder_donnees_mots(donnees)
+
+def ajouter_mot_bibliotheque(biblio_id, mot):
+    """Ajoute un mot à une bibliothèque. Retourne True si ajouté, False si déjà présent."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    if biblio_id not in bibliotheques:
+        print(f"[ERROR] Bibliothèque '{biblio_id}' introuvable.")
+        return False
+    
+    mots_actuels = bibliotheques[biblio_id].get("mots", [])
+    
+    # Vérifier si le mot existe déjà
+    if mot in mots_actuels:
+        return False
+    
+    # Ajouter le mot
+    mots_actuels.append(mot)
+    bibliotheques[biblio_id]["mots"] = mots_actuels
+    donnees["bibliotheques"] = bibliotheques
+    
+    if sauvegarder_donnees_mots(donnees):
+        return True
+    return False
+
+def supprimer_mot_bibliotheque(biblio_id, mot):
+    """Supprime un mot d'une bibliothèque."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    if biblio_id not in bibliotheques:
+        print(f"[ERROR] Bibliothèque '{biblio_id}' introuvable.")
+        return False
+    
+    mots_actuels = bibliotheques[biblio_id].get("mots", [])
+    
+    if mot not in mots_actuels:
+        print(f"[WARNING] Mot '{mot}' non trouvé dans la bibliothèque.")
+        return False
+    
+    # Retirer le mot
+    mots_actuels.remove(mot)
+    bibliotheques[biblio_id]["mots"] = mots_actuels
+    donnees["bibliotheques"] = bibliotheques
+    
+    return sauvegarder_donnees_mots(donnees)
+
+def get_bibliotheque_complete(biblio_id):
+    """Retourne les informations complètes d'une bibliothèque incluant tous les mots."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    if biblio_id not in bibliotheques:
+        print(f"[ERROR] Bibliothèque '{biblio_id}' introuvable.")
+        return None
+    
+    biblio = bibliotheques[biblio_id]
+    return {
+        "id": biblio_id,
+        "nom": biblio.get("nom", biblio_id),
+        "description": biblio.get("description", ""),
+        "mots": biblio.get("mots", [])
+    }
+
+def creer_nouvelle_bibliotheque(nom_bibliotheque):
+    """Crée une nouvelle bibliothèque vide. Retourne l'ID créé ou None si erreur."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    # Générer un ID unique à partir du nom (en minuscules, sans espaces)
+    import re
+    biblio_id = re.sub(r'[^a-z0-9_]', '', nom_bibliotheque.lower().replace(' ', '_'))
+    
+    # Si l'ID existe déjà, ajouter un suffixe
+    if biblio_id in bibliotheques:
+        counter = 1
+        while f"{biblio_id}_{counter}" in bibliotheques:
+            counter += 1
+        biblio_id = f"{biblio_id}_{counter}"
+    
+    # Créer la nouvelle bibliothèque
+    bibliotheques[biblio_id] = {
+        "nom": nom_bibliotheque,
+        "description": "",
+        "mots": []
+    }
+    
+    donnees["bibliotheques"] = bibliotheques
+    
+    if sauvegarder_donnees_mots(donnees):
+        print(f"[INFO] Bibliothèque '{nom_bibliotheque}' créée avec l'ID '{biblio_id}'")
+        return biblio_id
+    return None
+
+def supprimer_bibliotheque(biblio_id):
+    """Supprime une bibliothèque. Retourne True si succès, False si erreur."""
+    donnees = charger_donnees_mots()
+    bibliotheques = donnees.get("bibliotheques", {})
+    
+    # Vérifier que la bibliothèque existe
+    if biblio_id not in bibliotheques:
+        print(f"[WARNING] Impossible de supprimer la bibliothèque '{biblio_id}': n'existe pas")
+        return False
+    
+    # Supprimer la bibliothèque
+    nom = bibliotheques[biblio_id].get("nom", biblio_id)
+    del bibliotheques[biblio_id]
+    
+    donnees["bibliotheques"] = bibliotheques
+    
+    if sauvegarder_donnees_mots(donnees):
+        print(f"[INFO] Bibliothèque '{nom}' (ID: {biblio_id}) supprimée")
+        return True
+    return False
+
 def a_caracteres_speciaux(mot):
     """Vérifie si un mot contient des caractères spéciaux (accents, etc.)."""
     import string
@@ -253,6 +391,37 @@ def trier_mots_par_niveau(liste_mots):
             mots_tries["niveau4"].append(mot)
     
     return mots_tries
+
+def verifier_mots_disponibles_par_niveau(bibliotheques_ids):
+    """
+    Vérifie le nombre de mots disponibles par niveau pour une ou plusieurs bibliothèques.
+    
+    Args:
+        bibliotheques_ids: Liste des IDs de bibliothèques ou un seul ID (string)
+    
+    Returns:
+        dict: Dictionnaire avec le nombre de mots par niveau {"niveau1": X, "niveau2": Y, ...}
+    """
+    if isinstance(bibliotheques_ids, str):
+        bibliotheques_ids = [bibliotheques_ids]
+    
+    # Charger les mots de toutes les bibliothèques sélectionnées
+    if len(bibliotheques_ids) == 1:
+        tous_les_mots = charger_bibliotheque(bibliotheques_ids[0])
+    else:
+        tous_les_mots = charger_bibliotheques_multiples(bibliotheques_ids)
+    
+    # Trier par niveau
+    mots_par_niveau = trier_mots_par_niveau(tous_les_mots)
+    
+    # Compter les mots par niveau
+    return {
+        "niveau1": len(mots_par_niveau["niveau1"]),
+        "niveau2": len(mots_par_niveau["niveau2"]),
+        "niveau3": len(mots_par_niveau["niveau3"]),
+        "niveau4": len(mots_par_niveau["niveau4"]),
+        "niveau5": len(mots_par_niveau["niveau5"])
+    }
 
 # Charger et trier les mots au démarrage avec la bibliothèque par défaut
 if isinstance(BIBLIOTHEQUE_ACTIVE, str):
@@ -1728,7 +1897,7 @@ def set_derniere_vitesse(pseudo, valeur):
     # Cette fonction ne fait plus rien car la structure a changé
     pass
 
-def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500, personnage_id=None):
+def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500, bibliotheque=None, personnage_id=None):
     """Sauvegarde les paramètres actuels d'un joueur sans créer un essai complet.
     
     Args:
@@ -1737,6 +1906,7 @@ def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, 
         reset_mots_actif: Si True, les mots sont réinitialisés en cas d'erreur
         delai_niveau4: Délai avant disparition du mot au niveau 4 (500-10000 ms)
         personnage_id: ID du personnage jouable sélectionné (ex: 'fallen_angels_1')
+        bibliotheque: Liste des IDs de bibliothèques sélectionnées (optionnel)
     
     Returns:
         bool: True si la sauvegarde a réussi, False sinon
@@ -1750,13 +1920,19 @@ def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, 
     joueur = dict_joueurs[cle]
     
     # Créer ou mettre à jour le champ parametres_actuels
-    joueur['parametres_actuels'] = {
+    parametres = {
         'vitesse_defilement': vitesse_defilement,
         'reset_mots_actif': reset_mots_actif,
         'delai_niveau4': delai_niveau4,
         'personnage_id': personnage_id if personnage_id else 'fallen_angels_1',
         'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
+    
+    # Ajouter la bibliothèque si fournie
+    if bibliotheque is not None:
+        parametres['bibliotheque'] = list(bibliotheque) if isinstance(bibliotheque, set) else bibliotheque
+    
+    joueur['parametres_actuels'] = parametres
     
     # Sauvegarder dans le fichier
     succes = sauvegarder_joueurs()
@@ -1892,7 +2068,7 @@ def get_derniers_parametres_joueur(pseudo):
         pseudo: Pseudo du joueur
     
     Returns:
-        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int, 'personnage_id': str} ou None si pas d'historique
+        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int, 'bibliotheque': list, 'personnage_id': str} ou None si pas d'historique
     """
     cle = pseudo.lower()
     
@@ -1903,12 +2079,16 @@ def get_derniers_parametres_joueur(pseudo):
     
     # D'abord chercher dans parametres_actuels (sauvegarde explicite)
     if 'parametres_actuels' in joueur:
-        return {
+        parametres = {
             'vitesse_defilement': joueur['parametres_actuels'].get('vitesse_defilement', 100),
             'reset_mots_actif': joueur['parametres_actuels'].get('reset_mots_actif', True),
             'delai_niveau4': joueur['parametres_actuels'].get('delai_niveau4', 1500),
             'personnage_id': joueur['parametres_actuels'].get('personnage_id', 'fallen_angels_1')
         }
+        # Ajouter la bibliothèque si elle est sauvegardée
+        if 'bibliotheque' in joueur['parametres_actuels']:
+            parametres['bibliotheque'] = joueur['parametres_actuels']['bibliotheque']
+        return parametres
     
     # Sinon chercher dans l'historique (ancien comportement)
     if 'historique' not in joueur:

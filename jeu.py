@@ -59,8 +59,9 @@ class Jeu:
                 pseudo = getattr(self, 'pseudo_joueur', None)
                 vitesse = getattr(self, 'vitesse_pourcentage', None)
                 reset = getattr(self, 'reset_on_error', None)
+                biblio = getattr(self, 'bibliotheque', None)
                 
-                resultat = Menu.Menu.fenetre_confirmation_quitter(self.screen, pseudo, vitesse, reset)
+                resultat = Menu.Menu.fenetre_confirmation_quitter(self.screen, pseudo, vitesse, reset, biblio)
                 
                 if resultat in ['quitter', 'sauvegarder']:
                     sys.exit()
@@ -612,6 +613,9 @@ class Jeu:
                             
                             # Démarrer le tracking de frappe pour le nouveau mot
                             self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
+                        else:
+                            # Fin de partie : tous les mots ont été complétés
+                            print(f"[INFO] Partie terminée : {self.monde.get_compteur_mot()} mots complétés")
                         
                         self.monde.set_delai_nouveau_mot(0)
                         self.monde.set_mot_visible(True)
@@ -740,8 +744,11 @@ class Jeu:
                 # Initialiser avec les derniers paramètres du joueur
                 self.vitesse_pourcentage = derniers_params['vitesse_defilement']
                 self.reset_on_error = derniers_params['reset_mots_actif']
+                # Charger la bibliothèque si elle est sauvegardée
+                if 'bibliotheque' in derniers_params:
+                    self.bibliotheque = derniers_params['bibliotheque']
                 self.personnage_joueur = derniers_params.get('personnage_id', 'fallen_angels_1')
-                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}, personnage={self.personnage_joueur}")
+                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
             else:
                 # Valeurs par défaut pour un nouveau joueur
                 self.vitesse_pourcentage = 100

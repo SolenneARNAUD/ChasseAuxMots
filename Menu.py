@@ -370,6 +370,13 @@ class Menu:
                                      biblio_zone_y + biblio_zone_height // 2 - fleche_size // 2, 
                                      fleche_size, fleche_size)
         
+        # Bouton "+" pour gérer les bibliothèques (à côté du label "Bibliothèque")
+        font_label = pg.font.Font(None, 36)
+        label_biblio = font_label.render("Bibliothèque", True, Donnees.COULEUR_NOIR)
+        bouton_plus_size = 30
+        bouton_plus_x = label_x + label_biblio.get_width() + 10
+        bouton_plus_rect = pg.Rect(bouton_plus_x, param4_y, bouton_plus_size, bouton_plus_size)
+        
         # Boutons en bas
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
         bouton_h = Donnees.PARAMS_BOUTON_HEIGHT
@@ -415,6 +422,11 @@ class Menu:
                         # Calculer l'offset maximum pour la dernière page
                         max_scroll = ((len(bibliotheques) - 1) // max_visible_items) * max_visible_items
                         scroll_offset = min(max_scroll, scroll_offset + max_visible_items)
+                    elif bouton_plus_rect.collidepoint(event.pos):
+                        # Ouvrir le menu de gestion des bibliothèques
+                        Menu.afficher_menu_gestion_bibliotheques(screen)
+                        # Recharger la liste des bibliothèques au cas où elle aurait été modifiée
+                        bibliotheques = BaseDonnees.lister_bibliotheques()
                     else:
                         # Vérifier si clic sur une bibliothèque (grille 2x2)
                         grid_start_x = biblio_zone_x + fleche_size + 15
@@ -450,6 +462,22 @@ class Menu:
                     elif bouton_retour.collidepoint(event.pos):
                         return None
                     elif bouton_valider.collidepoint(event.pos):
+                        # Vérifier qu'aucun niveau n'a 0 mots avant de valider
+                        if bibliotheques_selectionnees:
+                            mots_check = BaseDonnees.verifier_mots_disponibles_par_niveau(list(bibliotheques_selectionnees))
+                            niveaux_vides = []
+                            if mots_check["niveau2"] == 0:
+                                niveaux_vides.append("2")
+                            if mots_check["niveau3"] == 0:
+                                niveaux_vides.append("3")
+                            if mots_check["niveau5"] == 0:
+                                niveaux_vides.append("5")
+                            
+                            # Empêcher la validation si des niveaux sont vides
+                            if niveaux_vides:
+                                # Ne rien faire, la validation est bloquée
+                                continue
+                        
                         try:
                             val = int(vitesse_str) if vitesse_str else vitesse_actuelle
                         except Exception:
@@ -470,6 +498,8 @@ class Menu:
                                 pseudo_j = joueur
                                 val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
                                 BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
+                                # Sauvegarder tous les paramètres incluant la bibliothèque
+                                BaseDonnees.sauvegarder_parametres_joueur(pseudo_j, int(val), reset_on_error, bibliotheque=list(bibliotheques_selectionnees))
                             except Exception:
                                 pass
                         
@@ -478,6 +508,21 @@ class Menu:
                 if event.type == pg.KEYDOWN:
                     if input_active:
                         if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            # Vérifier qu'aucun niveau n'a 0 mots avant de valider
+                            if bibliotheques_selectionnees:
+                                mots_check = BaseDonnees.verifier_mots_disponibles_par_niveau(list(bibliotheques_selectionnees))
+                                niveaux_vides = []
+                                if mots_check["niveau2"] == 0:
+                                    niveaux_vides.append("2")
+                                if mots_check["niveau3"] == 0:
+                                    niveaux_vides.append("3")
+                                if mots_check["niveau5"] == 0:
+                                    niveaux_vides.append("5")
+                                
+                                # Empêcher la validation si des niveaux sont vides
+                                if niveaux_vides:
+                                    continue
+                            
                             try:
                                 val = int(vitesse_str) if vitesse_str else vitesse_actuelle
                             except Exception:
@@ -497,6 +542,8 @@ class Menu:
                                     pseudo_j = joueur
                                     val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
                                     BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
+                                    # Sauvegarder tous les paramètres incluant la bibliothèque
+                                    BaseDonnees.sauvegarder_parametres_joueur(pseudo_j, int(val), reset_on_error, bibliotheque=list(bibliotheques_selectionnees))
                                 except Exception:
                                     pass
                             
@@ -509,6 +556,21 @@ class Menu:
                             vitesse_str += event.unicode
                     elif input_mots_active:
                         if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            # Vérifier qu'aucun niveau n'a 0 mots avant de valider
+                            if bibliotheques_selectionnees:
+                                mots_check = BaseDonnees.verifier_mots_disponibles_par_niveau(list(bibliotheques_selectionnees))
+                                niveaux_vides = []
+                                if mots_check["niveau2"] == 0:
+                                    niveaux_vides.append("2")
+                                if mots_check["niveau3"] == 0:
+                                    niveaux_vides.append("3")
+                                if mots_check["niveau5"] == 0:
+                                    niveaux_vides.append("5")
+                                
+                                # Empêcher la validation si des niveaux sont vides
+                                if niveaux_vides:
+                                    continue
+                            
                             try:
                                 val = int(vitesse_str) if vitesse_str else vitesse_actuelle
                             except Exception:
@@ -528,6 +590,8 @@ class Menu:
                                     pseudo_j = joueur
                                     val_wpm = (val / 100.0) * Donnees.WPM_BASE_CONVERSION
                                     BaseDonnees.set_derniere_vitesse(pseudo_j, val_wpm)
+                                    # Sauvegarder tous les paramètres incluant la bibliothèque
+                                    BaseDonnees.sauvegarder_parametres_joueur(pseudo_j, int(val), reset_on_error, bibliotheque=list(bibliotheques_selectionnees))
                                 except Exception:
                                     pass
                             
@@ -615,9 +679,17 @@ class Menu:
             screen.blit(texte_mots, (input_mots_box.centerx - texte_mots.get_width() // 2, 
                                      input_mots_box.centery - texte_mots.get_height() // 2))
             
-            # Paramètre 4 : Bibliothèque
+            # Paramètre 4 : Bibliothèque avec bouton "+"
             label_biblio = font_label.render("Bibliothèque", True, Donnees.COULEUR_NOIR)
             screen.blit(label_biblio, (label_x, param4_y + 2))
+            
+            # Bouton "+" pour gérer les bibliothèques
+            pg.draw.rect(screen, (100, 200, 100), bouton_plus_rect, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_plus_rect, 2, border_radius=5)
+            font_plus = pg.font.Font(None, 40)
+            texte_plus = font_plus.render("+", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_plus, (bouton_plus_rect.centerx - texte_plus.get_width() // 2,
+                                     bouton_plus_rect.centery - texte_plus.get_height() // 2))
             
             # Boutons flèches
             # Calculer l'offset maximum pour la dernière page
@@ -715,6 +787,68 @@ class Menu:
                                                True, (120, 120, 120))
                 screen.blit(page_info, ((Donnees.WIDTH - page_info.get_width()) // 2, param4_y + 2))
             
+            # Vérification et affichage d'avertissement pour les niveaux sans mots
+            validation_bloquee = False  # Variable pour savoir si la validation est bloquée
+            
+            if bibliotheques_selectionnees:
+                mots_par_niveau = BaseDonnees.verifier_mots_disponibles_par_niveau(list(bibliotheques_selectionnees))
+                
+                # Déterminer le nombre de mots demandé (utiliser l'input si actif, sinon la valeur affichée)
+                try:
+                    nb_mots_demande = int(total_mots_str) if total_mots_str else int(total_mots_affiche)
+                except:
+                    nb_mots_demande = total_mots_actuel
+                
+                niveaux_insuffisants = []
+                details_insuffisants = []
+                
+                # Vérifier chaque niveau (on ignore le niveau 1 et 4 généralement)
+                if mots_par_niveau["niveau2"] == 0:
+                    niveaux_insuffisants.append("2")
+                    details_insuffisants.append(f"Niv.2: {mots_par_niveau['niveau2']} mots")
+                    validation_bloquee = True
+                elif mots_par_niveau["niveau2"] < nb_mots_demande:
+                    details_insuffisants.append(f"Niv.2: {mots_par_niveau['niveau2']}/{nb_mots_demande}")
+                
+                if mots_par_niveau["niveau3"] == 0:
+                    niveaux_insuffisants.append("3")
+                    details_insuffisants.append(f"Niv.3: {mots_par_niveau['niveau3']} mots")
+                    validation_bloquee = True
+                elif mots_par_niveau["niveau3"] < nb_mots_demande:
+                    details_insuffisants.append(f"Niv.3: {mots_par_niveau['niveau3']}/{nb_mots_demande}")
+                
+                if mots_par_niveau["niveau5"] == 0:
+                    niveaux_insuffisants.append("5")
+                    details_insuffisants.append(f"Niv.5: {mots_par_niveau['niveau5']} mots")
+                    validation_bloquee = True
+                elif mots_par_niveau["niveau5"] < nb_mots_demande:
+                    details_insuffisants.append(f"Niv.5: {mots_par_niveau['niveau5']}/{nb_mots_demande}")
+                
+                # Afficher l'avertissement (les deux messages peuvent s'afficher en même temps)
+                y_offset_warning = param4_y + param_height_large - 30
+                
+                if niveaux_insuffisants:
+                    font_warning = pg.font.Font(None, 22)
+                    niveaux_str = ", ".join(niveaux_insuffisants)
+                    texte_warning = font_warning.render(
+                        f"Niveau(x) sans mots : {niveaux_str}", 
+                        True, (200, 0, 0))
+                    screen.blit(texte_warning, 
+                               ((Donnees.WIDTH - texte_warning.get_width()) // 2, 
+                                y_offset_warning))
+                    y_offset_warning += 20  # Décaler pour le prochain message
+                
+                if details_insuffisants:
+                    # Afficher un avertissement si certains niveaux ont peu de mots
+                    font_warning = pg.font.Font(None, 20)
+                    details_str = " | ".join(details_insuffisants)
+                    texte_warning = font_warning.render(
+                        details_str, 
+                        True, (200, 100, 0))
+                    screen.blit(texte_warning, 
+                               ((Donnees.WIDTH - texte_warning.get_width()) // 2, 
+                                y_offset_warning))
+            
             # Ligne de séparation avant les boutons
             pg.draw.line(screen, Donnees.PARAMS_LIGNE_SEPARATION_COULEUR, 
                         (Donnees.WIDTH // Donnees.PARAMS_LIGNE_SEPARATION_RATIO, zone_boutons_y + Donnees.PARAMS_LIGNE_SEPARATION_OFFSET), 
@@ -723,17 +857,25 @@ class Menu:
             
             # === ZONE BOUTONS ===
             
+
             # Bouton Personnage
             pg.draw.rect(screen, (150, 150, 200), bouton_personnage)
             pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_personnage, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
             texte_personnage = font_bouton.render("Personnage", True, Donnees.COULEUR_BLANC)
             screen.blit(texte_personnage, (bouton_personnage.centerx - texte_personnage.get_width() // 2,
                                            bouton_personnage.centery - texte_personnage.get_height() // 2))
+        
+            # Bouton Valider (grisé si validation bloquée)
+            if validation_bloquee:
+                couleur_bouton_valider = (150, 150, 150)  # Gris
+                couleur_texte_valider = (100, 100, 100)   # Gris foncé
+            else:
+                couleur_bouton_valider = Donnees.PARAMS_BOUTON_COULEUR_VALIDER
+                couleur_texte_valider = Donnees.COULEUR_BLANC
             
-            # Bouton Valider
-            pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_VALIDER, bouton_valider)
+            pg.draw.rect(screen, couleur_bouton_valider, bouton_valider)
             pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_valider, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
-            texte_valider = font_bouton.render("Valider", True, Donnees.COULEUR_BLANC)
+            texte_valider = font_bouton.render("Valider", True, couleur_texte_valider)
             screen.blit(texte_valider, (bouton_valider.centerx - texte_valider.get_width() // 2,
                                        bouton_valider.centery - texte_valider.get_height() // 2))
             
@@ -1582,7 +1724,7 @@ class Menu:
         return True
 
     @staticmethod
-    def fenetre_confirmation_quitter(screen, pseudo=None, vitesse_defilement=None, reset_mots_actif=None):
+    def fenetre_confirmation_quitter(screen, pseudo=None, vitesse_defilement=None, reset_mots_actif=None, bibliotheque=None):
         """
         Affiche une fenêtre de confirmation avant de quitter le jeu.
         Propose de sauvegarder les paramètres et avertit que la progression ne sera pas sauvegardée.
@@ -1592,6 +1734,7 @@ class Menu:
             pseudo: Pseudo du joueur (optionnel, pour la sauvegarde des paramètres)
             vitesse_defilement: Vitesse actuelle en pourcentage (optionnel)
             reset_mots_actif: État du reset des mots (optionnel)
+            bibliotheque: Bibliothèque(s) sélectionnée(s) (optionnel)
         
         Returns:
             str: 'quitter' pour quitter sans sauvegarder, 'sauvegarder' pour sauvegarder et quitter, 
@@ -1628,7 +1771,7 @@ class Menu:
                     elif peut_sauvegarder and bouton_sauvegarder.collidepoint(event.pos):
                         # Sauvegarder les paramètres avant de quitter
                         import BaseDonnees
-                        BaseDonnees.sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif)
+                        BaseDonnees.sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, bibliotheque=bibliotheque)
                         return 'sauvegarder'
                 
                 if event.type == pg.KEYDOWN:
@@ -2066,3 +2209,836 @@ class Menu:
             screen.blit(texte_retour, texte_retour_rect)
             
             pg.display.flip()
+
+    @staticmethod
+    def afficher_menu_gestion_bibliotheques(screen):
+        """
+        Affiche le menu de gestion des bibliothèques (créer, modifier, supprimer).
+        """
+        clock = pg.time.Clock()
+        scroll_offset = 0
+        
+        # Charger la liste des bibliothèques
+        bibliotheques = BaseDonnees.lister_bibliotheques()
+        
+        # Layout - Zone 1: Titre et bouton créer (180px)
+        zone_titre_height = 80
+        zone_header_height = 90  # Espace pour le bouton créer + ligne
+        
+        # Zone 2: Boutons du bas (réservée, 80px)
+        zone_boutons_height = 80
+        zone_boutons_y = Donnees.HEIGHT - zone_boutons_height
+        
+        # Zone 3: Liste scrollable (entre header et boutons)
+        zone_liste_start_y = zone_titre_height + zone_header_height
+        zone_liste_height = zone_boutons_y - zone_liste_start_y - 10  # -10 pour marge
+        
+        # Configuration de la liste scrollable
+        item_height = 60
+        items_par_page = max(1, zone_liste_height // item_height)  # Au moins 1 item visible
+        
+        # Bouton "Créer nouvelle bibliothèque" en haut
+        bouton_creer = pg.Rect(Donnees.WIDTH // 2 - 200, zone_titre_height + 20, 400, 50)
+        
+        # Bouton Retour en bas
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, zone_boutons_y + 15, 200, 50)
+        
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    sys.exit()
+                
+                # Gestion de la molette pour le scroll
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 4:  # Molette vers le haut
+                        scroll_offset = max(0, scroll_offset - 1)
+                    elif event.button == 5:  # Molette vers le bas
+                        max_scroll = max(0, len(bibliotheques) - items_par_page)
+                        scroll_offset = min(max_scroll, scroll_offset + 1)
+                
+                # Gestion des clics
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    if bouton_retour.collidepoint(event.pos):
+                        return  # Fermer le menu
+                    
+                    if bouton_creer.collidepoint(event.pos):
+                        # Ouvrir le menu de création de bibliothèque
+                        Menu.afficher_menu_creation_bibliotheque(screen)
+                        # Recharger la liste au retour
+                        bibliotheques = BaseDonnees.lister_bibliotheques()
+                    
+                    # Vérifier si clic sur un bouton "Modifier" ou "Supprimer"
+                    for i in range(min(items_par_page, len(bibliotheques) - scroll_offset)):
+                        biblio_index = scroll_offset + i
+                        biblio = bibliotheques[biblio_index]
+                        
+                        item_y = zone_liste_start_y + i * item_height
+                        bouton_modifier = pg.Rect(Donnees.WIDTH - 360, item_y + 10, 120, 40)
+                        bouton_supprimer = pg.Rect(Donnees.WIDTH - 230, item_y + 10, 120, 40)
+                        
+                        if bouton_modifier.collidepoint(event.pos):
+                            # Ouvrir le menu de modification
+                            Menu.afficher_menu_modification_bibliotheque(screen, biblio)
+                            # Recharger la liste au retour
+                            bibliotheques = BaseDonnees.lister_bibliotheques()
+                            break
+                        
+                        if bouton_supprimer.collidepoint(event.pos):
+                            # Afficher confirmation
+                            if Menu._confirmer_suppression_bibliotheque(screen, biblio['nom']):
+                                BaseDonnees.supprimer_bibliotheque(biblio['id'])
+                                # Recharger la liste
+                                bibliotheques = BaseDonnees.lister_bibliotheques()
+                            break
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return  # Fermer le menu
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 56)
+            titre = font_titre.render("Gestion des bibliothèques", True, Donnees.COULEUR_NOIR)
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, 20))
+            
+            # Bouton "Créer nouvelle bibliothèque"
+            pg.draw.rect(screen, (100, 200, 100), bouton_creer, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_creer, 2, border_radius=5)
+            font_bouton = pg.font.Font(None, 32)
+            texte_creer = font_bouton.render("+ Créer nouvelle bibliothèque", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_creer, (bouton_creer.centerx - texte_creer.get_width() // 2,
+                                     bouton_creer.centery - texte_creer.get_height() // 2))
+            
+            # Ligne de séparation
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_titre_height + 80), 
+                        (Donnees.WIDTH - 50, zone_titre_height + 80), 2)
+            
+            # Liste des bibliothèques
+            font_nom = pg.font.Font(None, 32)
+            font_info = pg.font.Font(None, 24)
+            
+            for i in range(min(items_par_page, len(bibliotheques) - scroll_offset)):
+                biblio_index = scroll_offset + i
+                biblio = bibliotheques[biblio_index]
+                
+                item_y = zone_liste_start_y + i * item_height
+                
+                # Fond de l'item (alternance de couleurs)
+                if i % 2 == 0:
+                    pg.draw.rect(screen, (240, 240, 240), 
+                                pg.Rect(50, item_y, Donnees.WIDTH - 100, item_height))
+                
+                # Nom de la bibliothèque
+                texte_nom = font_nom.render(biblio['nom'], True, Donnees.COULEUR_NOIR)
+                screen.blit(texte_nom, (70, item_y + 5))
+                
+                # Nombre de mots
+                nb_mots = biblio.get('nb_mots', 0)
+                texte_info = font_info.render(f"{nb_mots} mots", True, (100, 100, 100))
+                screen.blit(texte_info, (70, item_y + 35))
+                
+                # Bouton "Modifier"
+                bouton_modifier = pg.Rect(Donnees.WIDTH - 360, item_y + 10, 120, 40)
+                pg.draw.rect(screen, (100, 150, 200), bouton_modifier, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_modifier, 2, border_radius=5)
+                texte_modifier = font_bouton.render("Modifier", True, Donnees.COULEUR_BLANC)
+                screen.blit(texte_modifier, (bouton_modifier.centerx - texte_modifier.get_width() // 2,
+                                            bouton_modifier.centery - texte_modifier.get_height() // 2))
+                
+                # Bouton "Supprimer"
+                bouton_supprimer = pg.Rect(Donnees.WIDTH - 230, item_y + 10, 120, 40)
+                pg.draw.rect(screen, (200, 50, 50), bouton_supprimer, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_supprimer, 2, border_radius=5)
+                texte_supprimer = font_bouton.render("Supprimer", True, Donnees.COULEUR_BLANC)
+                screen.blit(texte_supprimer, (bouton_supprimer.centerx - texte_supprimer.get_width() // 2,
+                                             bouton_supprimer.centery - texte_supprimer.get_height() // 2))
+            
+            # Indicateur de scroll si nécessaire
+            if len(bibliotheques) > items_par_page:
+                font_scroll = pg.font.Font(None, 20)
+                texte_scroll = font_scroll.render(
+                    f"Bibliothèques {scroll_offset + 1}-{min(scroll_offset + items_par_page, len(bibliotheques))} / {len(bibliotheques)}", 
+                    True, (120, 120, 120))
+                screen.blit(texte_scroll, (Donnees.WIDTH // 2 - texte_scroll.get_width() // 2, zone_boutons_y - 20))
+            
+            # Ligne de séparation avant les boutons
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_boutons_y), 
+                        (Donnees.WIDTH - 50, zone_boutons_y), 2)
+            
+            # Bouton Retour
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, 2, border_radius=5)
+            texte_retour = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_retour, (bouton_retour.centerx - texte_retour.get_width() // 2,
+                                      bouton_retour.centery - texte_retour.get_height() // 2))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
+
+    @staticmethod
+    def _confirmer_suppression_bibliotheque(screen, nom_bibliotheque):
+        """
+        Affiche une fenêtre de confirmation pour la suppression d'une bibliothèque.
+        Retourne True si l'utilisateur confirme, False sinon.
+        """
+        # Positions des boutons
+        bouton_largeur = 150
+        bouton_hauteur = 50
+        espacement = 30
+        total_largeur = 2 * bouton_largeur + espacement
+        debut_x = (Donnees.WIDTH - total_largeur) // 2
+        bouton_y = Donnees.HEIGHT // 2 + 80
+        
+        bouton_confirmer = pg.Rect(debut_x, bouton_y, bouton_largeur, bouton_hauteur)
+        bouton_annuler = pg.Rect(debut_x + bouton_largeur + espacement, bouton_y, bouton_largeur, bouton_hauteur)
+        
+        clock = pg.time.Clock()
+        
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    return False
+                
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    if bouton_confirmer.collidepoint(event.pos):
+                        return True
+                    elif bouton_annuler.collidepoint(event.pos):
+                        return False
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        return False
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            font_titre = pg.font.Font(None, 48)
+            titre = font_titre.render("Confirmer la suppression", True, (200, 0, 0))
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, Donnees.HEIGHT // 2 - 100))
+            
+            # Message
+            font_msg = pg.font.Font(None, 32)
+            msg1 = font_msg.render(f"Voulez-vous vraiment supprimer", True, Donnees.COULEUR_NOIR)
+            msg2 = font_msg.render(f"la bibliothèque '{nom_bibliotheque}' ?", True, Donnees.COULEUR_NOIR)
+            msg3 = font_msg.render("Cette action est irréversible.", True, (150, 0, 0))
+            
+            screen.blit(msg1, (Donnees.WIDTH // 2 - msg1.get_width() // 2, Donnees.HEIGHT // 2 - 40))
+            screen.blit(msg2, (Donnees.WIDTH // 2 - msg2.get_width() // 2, Donnees.HEIGHT // 2 - 5))
+            screen.blit(msg3, (Donnees.WIDTH // 2 - msg3.get_width() // 2, Donnees.HEIGHT // 2 + 30))
+            
+            # Boutons
+            font_bouton = pg.font.Font(None, 32)
+            
+            # Bouton Confirmer
+            pg.draw.rect(screen, (200, 50, 50), bouton_confirmer, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_confirmer, 2, border_radius=5)
+            texte_confirmer = font_bouton.render("Supprimer", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_confirmer, (bouton_confirmer.centerx - texte_confirmer.get_width() // 2,
+                                         bouton_confirmer.centery - texte_confirmer.get_height() // 2))
+            
+            # Bouton Annuler
+            pg.draw.rect(screen, (100, 100, 100), bouton_annuler, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_annuler, 2, border_radius=5)
+            texte_annuler = font_bouton.render("Annuler", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_annuler, (bouton_annuler.centerx - texte_annuler.get_width() // 2,
+                                       bouton_annuler.centery - texte_annuler.get_height() // 2))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
+
+    @staticmethod
+    def afficher_menu_creation_bibliotheque(screen):
+        """
+        Affiche le menu de création d'une nouvelle bibliothèque.
+        Force l'utilisateur à entrer un nom avant de pouvoir ajouter des mots.
+        """
+        clock = pg.time.Clock()
+        
+        # Variables d'état
+        nom_biblio = ""
+        biblio_id = None  # ID de la bibliothèque une fois créée
+        mots = []
+        nom_valide = False  # True une fois le nom validé
+        
+        # Input pour le nom
+        input_nom_active = True  # Activé par défaut
+        nom_str = ""
+        
+        # Input pour ajouter un mot
+        input_mot_active = False
+        mot_str = ""
+        message_erreur = ""
+        message_info = "Veuillez entrer un nom pour la bibliothèque et appuyer sur Entrée"
+        
+        # Scroll pour la liste des mots
+        scroll_offset = 0
+        
+        # Layout
+        zone_header_height = 150
+        zone_ajout_height = 60
+        zone_boutons_height = 80
+        zone_boutons_y = Donnees.HEIGHT - zone_boutons_height
+        
+        # Zone pour la grille de mots
+        zone_mots_start_y = zone_header_height + zone_ajout_height
+        zone_mots_height = zone_boutons_y - zone_mots_start_y - 20
+        
+        # Configuration grille 4 colonnes
+        nb_cols = 4
+        item_width = (Donnees.WIDTH - 100) // nb_cols
+        item_height = 50
+        items_par_page = max(1, (zone_mots_height // item_height) * nb_cols)
+        
+        # Zones interactives
+        input_nom_box = pg.Rect(200, 70, 400, 40)
+        input_mot_box = pg.Rect(200, zone_header_height + 10, 350, 40)
+        bouton_ajouter = pg.Rect(560, zone_header_height + 10, 40, 40)
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, zone_boutons_y + 15, 200, 50)
+        
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    sys.exit()
+                
+                # Gestion de la molette pour le scroll
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 4:  # Molette vers le haut
+                        scroll_offset = max(0, scroll_offset - nb_cols)
+                    elif event.button == 5:  # Molette vers le bas
+                        max_scroll = max(0, len(mots) - items_par_page)
+                        scroll_offset = min(max_scroll, scroll_offset + nb_cols)
+                
+                # Gestion des clics
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    # Réinitialiser le message d'erreur au clic
+                    message_erreur = ""
+                    
+                    if bouton_retour.collidepoint(event.pos):
+                        return  # Retour au menu de gestion
+                    
+                    # Clic sur input nom (seulement si pas encore validé)
+                    if input_nom_box.collidepoint(event.pos) and not nom_valide:
+                        input_nom_active = True
+                        input_mot_active = False
+                        nom_str = nom_biblio
+                    # Clic sur input mot (seulement si nom validé)
+                    elif input_mot_box.collidepoint(event.pos) and nom_valide:
+                        input_mot_active = True
+                        input_nom_active = False
+                        mot_str = ""
+                    # Clic sur bouton ajouter (seulement si nom validé)
+                    elif bouton_ajouter.collidepoint(event.pos) and nom_valide and mot_str.strip():
+                        mot_a_ajouter = mot_str.strip()
+                        if mot_a_ajouter in mots:
+                            message_erreur = f'"{mot_a_ajouter}" est déjà dans la bibliothèque'
+                        else:
+                            if BaseDonnees.ajouter_mot_bibliotheque(biblio_id, mot_a_ajouter):
+                                mots.append(mot_a_ajouter)
+                                mot_str = ""
+                                message_erreur = ""
+                    else:
+                        input_nom_active = False
+                        input_mot_active = False
+                        
+                        # Vérifier clic sur bouton supprimer mot (seulement si nom validé)
+                        if nom_valide:
+                            nb_mots_visibles = min(items_par_page, len(mots) - scroll_offset)
+                            for i in range(nb_mots_visibles):
+                                mot_index = scroll_offset + i
+                                if mot_index >= len(mots):
+                                    break
+                                
+                                row = i // nb_cols
+                                col = i % nb_cols
+                                item_x = 50 + col * item_width
+                                item_y = zone_mots_start_y + row * item_height
+                                
+                                bouton_suppr = pg.Rect(item_x + item_width - 35, item_y + 10, 30, 30)
+                                
+                                if bouton_suppr.collidepoint(event.pos):
+                                    mot_a_supprimer = mots[mot_index]
+                                    if BaseDonnees.supprimer_mot_bibliotheque(biblio_id, mot_a_supprimer):
+                                        mots.remove(mot_a_supprimer)
+                                        if scroll_offset > 0 and scroll_offset >= len(mots):
+                                            scroll_offset = max(0, len(mots) - items_par_page)
+                                    break
+                
+                # Gestion clavier
+                if event.type == pg.KEYDOWN:
+                    # Réinitialiser le message d'erreur à la frappe
+                    if event.unicode or event.key == pg.K_BACKSPACE:
+                        message_erreur = ""
+                    
+                    if event.key == pg.K_ESCAPE:
+                        if input_nom_active or input_mot_active:
+                            input_nom_active = False
+                            input_mot_active = False
+                            nom_str = ""
+                            mot_str = ""
+                        else:
+                            return
+                    
+                    # Saisie du nom (seulement si pas encore validé)
+                    if input_nom_active and not nom_valide:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            if nom_str.strip():
+                                nom_biblio = nom_str.strip()
+                                # Créer la bibliothèque
+                                biblio_id = BaseDonnees.creer_nouvelle_bibliotheque(nom_biblio)
+                                if biblio_id:
+                                    nom_valide = True
+                                    input_nom_active = False
+                                    nom_str = ""
+                                    message_info = "Bibliothèque créée ! Vous pouvez maintenant ajouter des mots."
+                                else:
+                                    message_erreur = "Erreur lors de la création de la bibliothèque"
+                        elif event.key == pg.K_BACKSPACE:
+                            nom_str = nom_str[:-1]
+                        elif len(nom_str) < 50 and event.unicode.isprintable():
+                            nom_str += event.unicode
+                    
+                    # Saisie d'un mot (seulement si nom validé)
+                    elif input_mot_active and nom_valide:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            if mot_str.strip():
+                                mot_a_ajouter = mot_str.strip()
+                                if mot_a_ajouter in mots:
+                                    message_erreur = f'"{mot_a_ajouter}" est déjà dans la bibliothèque'
+                                else:
+                                    if BaseDonnees.ajouter_mot_bibliotheque(biblio_id, mot_a_ajouter):
+                                        mots.append(mot_a_ajouter)
+                                        mot_str = ""
+                                        message_erreur = ""
+                        elif event.key == pg.K_BACKSPACE:
+                            mot_str = mot_str[:-1]
+                        elif len(mot_str) < 100 and event.unicode.isprintable():
+                            mot_str += event.unicode
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # === ZONE HEADER ===
+            font_titre = pg.font.Font(None, 48)
+            titre = font_titre.render("Créer une nouvelle bibliothèque", True, Donnees.COULEUR_NOIR)
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, 20))
+            
+            # Zone de saisie du nom
+            font_label = pg.font.Font(None, 32)
+            label_nom = font_label.render("Nom:", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_nom, (50, 75))
+            
+            # Input box nom (désactivé si déjà validé)
+            if nom_valide:
+                couleur_input_nom = (200, 255, 200)  # Vert clair pour indiquer validé
+            else:
+                couleur_input_nom = Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE if input_nom_active else Donnees.COULEUR_BLANC
+            
+            pg.draw.rect(screen, couleur_input_nom, input_nom_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, input_nom_box, 2)
+            
+            texte_nom_affiche = nom_str if (input_nom_active and not nom_valide) else nom_biblio
+            font_input = pg.font.Font(None, 32)
+            texte_nom = font_input.render(texte_nom_affiche[:35], True, Donnees.COULEUR_NOIR)
+            screen.blit(texte_nom, (input_nom_box.x + 5, input_nom_box.y + 8))
+            
+            # Message d'info ou validé
+            if nom_valide:
+                font_info = pg.font.Font(None, 24)
+                texte_info = font_info.render("Nom valide", True, (0, 150, 0))
+                screen.blit(texte_info, (610, 78))
+            
+            # Ligne de séparation
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_header_height - 10), 
+                        (Donnees.WIDTH - 50, zone_header_height - 10), 2)
+            
+            # === ZONE AJOUT MOT ===
+            label_mots = font_label.render("Mots:", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_mots, (50, zone_header_height + 15))
+            
+            # Input box ajouter mot (grisé si nom pas validé)
+            if nom_valide:
+                couleur_input_mot = Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE if input_mot_active else Donnees.COULEUR_BLANC
+            else:
+                couleur_input_mot = (220, 220, 220)  # Grisé
+            
+            pg.draw.rect(screen, couleur_input_mot, input_mot_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR if nom_valide else (150, 150, 150), input_mot_box, 2)
+            
+            if nom_valide:
+                texte_mot = font_input.render(mot_str[:30], True, Donnees.COULEUR_NOIR)
+                screen.blit(texte_mot, (input_mot_box.x + 5, input_mot_box.y + 8))
+            else:
+                texte_placeholder = font_input.render("(Validez d'abord le nom)", True, (150, 150, 150))
+                screen.blit(texte_placeholder, (input_mot_box.x + 5, input_mot_box.y + 8))
+            
+            # Bouton "+" (grisé si nom pas validé)
+            if nom_valide:
+                pg.draw.rect(screen, (100, 200, 100), bouton_ajouter, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_ajouter, 2, border_radius=5)
+                couleur_plus = Donnees.COULEUR_BLANC
+            else:
+                pg.draw.rect(screen, (200, 200, 200), bouton_ajouter, border_radius=5)
+                pg.draw.rect(screen, (150, 150, 150), bouton_ajouter, 2, border_radius=5)
+                couleur_plus = (150, 150, 150)
+            
+            font_plus = pg.font.Font(None, 40)
+            texte_plus = font_plus.render("+", True, couleur_plus)
+            screen.blit(texte_plus, (bouton_ajouter.centerx - texte_plus.get_width() // 2,
+                                     bouton_ajouter.centery - texte_plus.get_height() // 2))
+            
+            # Message d'erreur ou d'info
+            if message_erreur:
+                font_erreur = pg.font.Font(None, 24)
+                texte_erreur = font_erreur.render(message_erreur, True, (200, 0, 0))
+                screen.blit(texte_erreur, (610, zone_header_height + 20))
+            elif not nom_valide:
+                font_info = pg.font.Font(None, 22)
+                texte_info = font_info.render(message_info, True, (100, 100, 200))
+                screen.blit(texte_info, (Donnees.WIDTH // 2 - texte_info.get_width() // 2, 125))
+            
+            # === ZONE GRILLE MOTS ===
+            if nom_valide:
+                font_mot = pg.font.Font(None, 24)
+                
+                nb_mots_visibles = min(items_par_page, len(mots) - scroll_offset)
+                for i in range(nb_mots_visibles):
+                    mot_index = scroll_offset + i
+                    if mot_index >= len(mots):
+                        break
+                    
+                    mot = mots[mot_index]
+                    row = i // nb_cols
+                    col = i % nb_cols
+                    
+                    item_x = 50 + col * item_width
+                    item_y = zone_mots_start_y + row * item_height
+                    
+                    # Fond alternant
+                    if (row + col) % 2 == 0:
+                        pg.draw.rect(screen, (240, 240, 240), 
+                                    pg.Rect(item_x, item_y, item_width - 5, item_height - 5))
+                    
+                    # Texte du mot
+                    mot_affiche = mot if len(mot) <= 20 else mot[:18] + "..."
+                    texte_mot_item = font_mot.render(mot_affiche, True, Donnees.COULEUR_NOIR)
+                    screen.blit(texte_mot_item, (item_x + 5, item_y + 15))
+                    
+                    # Bouton "-" rouge
+                    bouton_suppr = pg.Rect(item_x + item_width - 35, item_y + 10, 30, 30)
+                    pg.draw.rect(screen, (200, 50, 50), bouton_suppr, border_radius=5)
+                    pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_suppr, 2, border_radius=5)
+                    font_moins = pg.font.Font(None, 36)
+                    texte_moins = font_moins.render("-", True, Donnees.COULEUR_BLANC)
+                    screen.blit(texte_moins, (bouton_suppr.centerx - texte_moins.get_width() // 2,
+                                             bouton_suppr.centery - texte_moins.get_height() // 2 - 2))
+                
+                # Indicateur de scroll
+                if len(mots) > items_par_page:
+                    font_scroll = pg.font.Font(None, 20)
+                    texte_scroll = font_scroll.render(
+                        f"Mots {scroll_offset + 1}-{min(scroll_offset + items_par_page, len(mots))} / {len(mots)}", 
+                        True, (120, 120, 120))
+                    screen.blit(texte_scroll, (Donnees.WIDTH // 2 - texte_scroll.get_width() // 2, zone_boutons_y - 20))
+            
+            # Ligne de séparation avant les boutons
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_boutons_y), 
+                        (Donnees.WIDTH - 50, zone_boutons_y), 2)
+            
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 36)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, 2, border_radius=5)
+            texte_retour = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_retour, (bouton_retour.centerx - texte_retour.get_width() // 2,
+                                      bouton_retour.centery - texte_retour.get_height() // 2))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
+
+    @staticmethod
+    def afficher_menu_modification_bibliotheque(screen, bibliotheque_info):
+        """
+        Affiche le menu de modification d'une bibliothèque.
+        
+        Args:
+            bibliotheque_info: Dictionnaire contenant id et nom de la bibliothèque
+        """
+        clock = pg.time.Clock()
+        
+        # Charger les informations complètes de la bibliothèque
+        biblio_id = bibliotheque_info['id']
+        bibliotheque = BaseDonnees.get_bibliotheque_complete(biblio_id)
+        
+        if not bibliotheque:
+            return  # Erreur de chargement
+        
+        # Variables d'état
+        nom_biblio = bibliotheque['nom']
+        mots = bibliotheque['mots'].copy()  # Copie pour éviter les modifications directes
+        
+        # Input pour le nom
+        input_nom_active = False
+        nom_str = ""
+        
+        # Input pour ajouter un mot
+        input_mot_active = False
+        mot_str = ""
+        message_erreur = ""  # Message d'erreur temporaire
+        
+        # Scroll pour la liste des mots
+        scroll_offset = 0
+        
+        # Layout
+        zone_header_height = 150  # Titre + nom
+        zone_ajout_height = 60    # Zone pour ajouter mot
+        zone_boutons_height = 80  # Bouton retour
+        zone_boutons_y = Donnees.HEIGHT - zone_boutons_height
+        
+        # Zone pour la grille de mots
+        zone_mots_start_y = zone_header_height + zone_ajout_height
+        zone_mots_height = zone_boutons_y - zone_mots_start_y - 20
+        
+        # Configuration grille 4 colonnes
+        nb_cols = 4
+        item_width = (Donnees.WIDTH - 100) // nb_cols
+        item_height = 50
+        items_par_page = max(1, (zone_mots_height // item_height) * nb_cols)
+        
+        # Zones interactives
+        input_nom_box = pg.Rect(200, 70, 400, 40)
+        input_mot_box = pg.Rect(200, zone_header_height + 10, 350, 40)
+        bouton_ajouter = pg.Rect(560, zone_header_height + 10, 40, 40)
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - 100, zone_boutons_y + 15, 200, 50)
+        
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    sys.exit()
+                
+                # Gestion de la molette pour le scroll
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 4:  # Molette vers le haut
+                        scroll_offset = max(0, scroll_offset - nb_cols)
+                    elif event.button == 5:  # Molette vers le bas
+                        max_scroll = max(0, len(mots) - items_par_page)
+                        scroll_offset = min(max_scroll, scroll_offset + nb_cols)
+                
+                # Gestion des clics
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    # Réinitialiser le message d'erreur au clic
+                    message_erreur = ""
+                    
+                    if bouton_retour.collidepoint(event.pos):
+                        return  # Retour au menu de gestion
+                    
+                    # Clic sur input nom
+                    if input_nom_box.collidepoint(event.pos):
+                        input_nom_active = True
+                        input_mot_active = False
+                        nom_str = nom_biblio
+                    # Clic sur input mot
+                    elif input_mot_box.collidepoint(event.pos):
+                        input_mot_active = True
+                        input_nom_active = False
+                        mot_str = ""
+                    # Clic sur bouton ajouter
+                    elif bouton_ajouter.collidepoint(event.pos) and mot_str.strip():
+                        mot_a_ajouter = mot_str.strip()
+                        if mot_a_ajouter in mots:
+                            message_erreur = f'"{mot_a_ajouter}" est déjà dans la bibliothèque'
+                        else:
+                            if BaseDonnees.ajouter_mot_bibliotheque(biblio_id, mot_a_ajouter):
+                                mots.append(mot_a_ajouter)
+                                mot_str = ""
+                                message_erreur = ""
+                    else:
+                        input_nom_active = False
+                        input_mot_active = False
+                        
+                        # Vérifier clic sur bouton supprimer mot
+                        nb_mots_visibles = min(items_par_page, len(mots) - scroll_offset)
+                        for i in range(nb_mots_visibles):
+                            mot_index = scroll_offset + i
+                            if mot_index >= len(mots):
+                                break
+                            
+                            row = i // nb_cols
+                            col = i % nb_cols
+                            item_x = 50 + col * item_width
+                            item_y = zone_mots_start_y + row * item_height
+                            
+                            bouton_suppr = pg.Rect(item_x + item_width - 35, item_y + 10, 30, 30)
+                            
+                            if bouton_suppr.collidepoint(event.pos):
+                                mot_a_supprimer = mots[mot_index]
+                                if BaseDonnees.supprimer_mot_bibliotheque(biblio_id, mot_a_supprimer):
+                                    mots.remove(mot_a_supprimer)
+                                    # Ajuster le scroll si nécessaire
+                                    if scroll_offset > 0 and scroll_offset >= len(mots):
+                                        scroll_offset = max(0, len(mots) - items_par_page)
+                                break
+                
+                # Gestion clavier
+                if event.type == pg.KEYDOWN:
+                    # Réinitialiser le message d'erreur à la frappe
+                    if event.unicode or event.key == pg.K_BACKSPACE:
+                        message_erreur = ""
+                    
+                    if event.key == pg.K_ESCAPE:
+                        if input_nom_active or input_mot_active:
+                            input_nom_active = False
+                            input_mot_active = False
+                            nom_str = ""
+                            mot_str = ""
+                        else:
+                            return  # Retour au menu de gestion
+                    
+                    # Saisie du nom
+                    if input_nom_active:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            if nom_str.strip():
+                                nom_biblio = nom_str.strip()
+                                BaseDonnees.modifier_nom_bibliotheque(biblio_id, nom_biblio)
+                                input_nom_active = False
+                                nom_str = ""
+                        elif event.key == pg.K_BACKSPACE:
+                            nom_str = nom_str[:-1]
+                        elif len(nom_str) < 50 and event.unicode.isprintable():
+                            nom_str += event.unicode
+                    
+                    # Saisie d'un mot
+                    elif input_mot_active:
+                        if event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                            if mot_str.strip():
+                                mot_a_ajouter = mot_str.strip()
+                                if mot_a_ajouter in mots:
+                                    message_erreur = f'"{mot_a_ajouter}" est déjà dans la bibliothèque'
+                                else:
+                                    if BaseDonnees.ajouter_mot_bibliotheque(biblio_id, mot_a_ajouter):
+                                        mots.append(mot_a_ajouter)
+                                        mot_str = ""
+                                        message_erreur = ""
+                        elif event.key == pg.K_BACKSPACE:
+                            mot_str = mot_str[:-1]
+                        elif len(mot_str) < 100 and event.unicode.isprintable():
+                            mot_str += event.unicode
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # === ZONE HEADER ===
+            font_titre = pg.font.Font(None, 48)
+            titre = font_titre.render("Modifier la bibliothèque", True, Donnees.COULEUR_NOIR)
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, 20))
+            
+            # Zone de saisie du nom
+            font_label = pg.font.Font(None, 32)
+            label_nom = font_label.render("Nom:", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_nom, (50, 75))
+            
+            # Input box nom
+            couleur_input_nom = Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE if input_nom_active else Donnees.COULEUR_BLANC
+            pg.draw.rect(screen, couleur_input_nom, input_nom_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, input_nom_box, 2)
+            
+            texte_nom_affiche = nom_str if input_nom_active else nom_biblio
+            font_input = pg.font.Font(None, 32)
+            texte_nom = font_input.render(texte_nom_affiche[:35], True, Donnees.COULEUR_NOIR)
+            screen.blit(texte_nom, (input_nom_box.x + 5, input_nom_box.y + 8))
+            
+            # Ligne de séparation
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_header_height - 10), 
+                        (Donnees.WIDTH - 50, zone_header_height - 10), 2)
+            
+            # === ZONE AJOUT MOT ===
+            label_mots = font_label.render("Mots:", True, Donnees.COULEUR_NOIR)
+            screen.blit(label_mots, (50, zone_header_height + 15))
+            
+            # Input box ajouter mot
+            couleur_input_mot = Donnees.PARAMS_INPUT_BOX_COULEUR_ACTIVE if input_mot_active else Donnees.COULEUR_BLANC
+            pg.draw.rect(screen, couleur_input_mot, input_mot_box)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, input_mot_box, 2)
+            
+            texte_mot = font_input.render(mot_str[:30], True, Donnees.COULEUR_NOIR)
+            screen.blit(texte_mot, (input_mot_box.x + 5, input_mot_box.y + 8))
+            
+            # Bouton "+"
+            pg.draw.rect(screen, (100, 200, 100), bouton_ajouter, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_ajouter, 2, border_radius=5)
+            font_plus = pg.font.Font(None, 40)
+            texte_plus = font_plus.render("+", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_plus, (bouton_ajouter.centerx - texte_plus.get_width() // 2,
+                                     bouton_ajouter.centery - texte_plus.get_height() // 2))
+            
+            # Message d'erreur
+            if message_erreur:
+                font_erreur = pg.font.Font(None, 24)
+                texte_erreur = font_erreur.render(message_erreur, True, (200, 0, 0))
+                screen.blit(texte_erreur, (610, zone_header_height + 20))
+            
+            # === ZONE GRILLE MOTS ===
+            font_mot = pg.font.Font(None, 24)
+            
+            nb_mots_visibles = min(items_par_page, len(mots) - scroll_offset)
+            for i in range(nb_mots_visibles):
+                mot_index = scroll_offset + i
+                if mot_index >= len(mots):
+                    break
+                
+                mot = mots[mot_index]
+                row = i // nb_cols
+                col = i % nb_cols
+                
+                item_x = 50 + col * item_width
+                item_y = zone_mots_start_y + row * item_height
+                
+                # Fond alternant
+                if (row + col) % 2 == 0:
+                    pg.draw.rect(screen, (240, 240, 240), 
+                                pg.Rect(item_x, item_y, item_width - 5, item_height - 5))
+                
+                # Texte du mot (tronqué si trop long)
+                mot_affiche = mot if len(mot) <= 20 else mot[:18] + "..."
+                texte_mot_item = font_mot.render(mot_affiche, True, Donnees.COULEUR_NOIR)
+                screen.blit(texte_mot_item, (item_x + 5, item_y + 15))
+                
+                # Bouton "-" rouge
+                bouton_suppr = pg.Rect(item_x + item_width - 35, item_y + 10, 30, 30)
+                pg.draw.rect(screen, (200, 50, 50), bouton_suppr, border_radius=5)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_suppr, 2, border_radius=5)
+                font_moins = pg.font.Font(None, 36)
+                texte_moins = font_moins.render("-", True, Donnees.COULEUR_BLANC)
+                screen.blit(texte_moins, (bouton_suppr.centerx - texte_moins.get_width() // 2,
+                                         bouton_suppr.centery - texte_moins.get_height() // 2 - 2))
+            
+            # Indicateur de scroll
+            if len(mots) > items_par_page:
+                font_scroll = pg.font.Font(None, 20)
+                texte_scroll = font_scroll.render(
+                    f"Mots {scroll_offset + 1}-{min(scroll_offset + items_par_page, len(mots))} / {len(mots)}", 
+                    True, (120, 120, 120))
+                screen.blit(texte_scroll, (Donnees.WIDTH // 2 - texte_scroll.get_width() // 2, zone_boutons_y - 20))
+            
+            # Ligne de séparation avant les boutons
+            pg.draw.line(screen, (100, 100, 100), 
+                        (50, zone_boutons_y), 
+                        (Donnees.WIDTH - 50, zone_boutons_y), 2)
+            
+            # Bouton Retour
+            font_bouton = pg.font.Font(None, 36)
+            pg.draw.rect(screen, (200, 100, 100), bouton_retour, border_radius=5)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, 2, border_radius=5)
+            texte_retour = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_retour, (bouton_retour.centerx - texte_retour.get_width() // 2,
+                                      bouton_retour.centery - texte_retour.get_height() // 2))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
