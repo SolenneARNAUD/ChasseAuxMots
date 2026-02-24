@@ -29,6 +29,8 @@ class Jeu:
         self.jeu_demarre = False    # Indique si le jeu a commencé (pour démarrer le défilement)
         self.niveau = None          # Niveau sélectionné par le joueur
         self.monde = None           # Monde actuel du jeu
+        self.mechant_position_saved = None  # Position du méchant sauvegardée au début du combat
+        self.monde = None           # Monde actuel du jeu
         # Ne pas réinitialiser vitesse_pourcentage et reset_on_error ici pour conserver les valeurs entre les niveaux
         if not hasattr(self, 'vitesse_pourcentage'):
             self.vitesse_pourcentage = 100     # Vitesse par défaut (en %) choisie par le joueur
@@ -43,6 +45,8 @@ class Jeu:
                 self.bibliotheque = [biblio_active]
             else:
                 self.bibliotheque = list(biblio_active) if biblio_active else ["dinosaure"]
+        if not hasattr(self, 'personnage_joueur'):
+            self.personnage_joueur = "fallen_angels_1"  # Personnage par défaut
         self.multiplier = 1.0       # Multiplicateur de vitesse basé sur le choix du joueur
         self.mechant_step = 3       # Vitesse de base du méchant, ajustée par le multiplicateur
     
@@ -78,8 +82,8 @@ class Jeu:
     
     def _initialiser_monde(self):
         """Initialise le monde et tous ses éléments pour le niveau sélectionné."""
-        self.monde = Monde.Monde()
-        self.monde.initialiser_niveau(self.niveau, self.monde_choisi, self.total_mots)
+        self.monde = Monde.Monde(personnage_id=self.personnage_joueur)
+        self.monde.initialiser_niveau(self.niveau, self.monde_choisi, self.total_mots, personnage_id=self.personnage_joueur)
         
         self.sol_gauche = self.monde.get_sol_gauche()
         self.sol_droite = self.monde.get_sol_droite()
@@ -88,6 +92,9 @@ class Jeu:
         self.mot = self.monde.get_mot()
         self.liste_mots = self.monde.get_liste_mots()
         self.jeu_demarre = False # Le jeu commence après la première touche du joueur
+        
+        # Sauvegarder la position de départ du personnage pour le recul après slashing
+        self.monde.set_player_depart_x(Donnees.PERSONNAGE_DEPART_X)
     
     def _gerer_game_over(self):
         """Gère l'affichage et la logique du game over."""
@@ -106,6 +113,15 @@ class Jeu:
             score=self.monde.get_compteur_mot(),
             caracteres_justes=self.monde.get_total_caracteres(),
             caracteres_tapes=self.monde.get_total_caracteres_tapes()
+        )
+        
+        # Sauvegarder les paramètres actuels (vitesse, reset, personnage)
+        BaseDonnees.sauvegarder_parametres_joueur(
+            pseudo=self.pseudo_joueur,
+            vitesse_defilement=self.vitesse_pourcentage,
+            reset_mots_actif=self.reset_on_error,
+            delai_niveau4=Donnees.DELAI_NIVEAU4_PAR_DEFAUT,
+            personnage_id=self.personnage_joueur
         )
         
         # État de l'écran : 'gameover' ou 'stats'
@@ -196,6 +212,15 @@ class Jeu:
             score=self.monde.get_compteur_mot(),
             caracteres_justes=self.monde.get_total_caracteres(),
             caracteres_tapes=self.monde.get_total_caracteres_tapes()
+        )
+        
+        # Sauvegarder les paramètres actuels (vitesse, reset, personnage)
+        BaseDonnees.sauvegarder_parametres_joueur(
+            pseudo=self.pseudo_joueur,
+            vitesse_defilement=self.vitesse_pourcentage,
+            reset_mots_actif=self.reset_on_error,
+            delai_niveau4=Donnees.DELAI_NIVEAU4_PAR_DEFAUT,
+            personnage_id=self.personnage_joueur
         )
         
         # État de l'écran : 'reussite' ou 'stats'
@@ -321,9 +346,31 @@ class Jeu:
                             self.monde.set_temps_debut(temps_actuel)
                             # Démarrer le tracking pour le premier mot
                             self.monde.demarrer_nouveau_mot(temps_actuel)
+                        
+                        # Démarrer l'animation walk du personnage
+                        self.monde.set_player_walking(True)
+                        personnage_type = self.monde.get_personnage_type()
+                        personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                        
+                        if personnage_type in personnages_jouables:
+                            animation_frames = BaseDonnees.get_animation_frames_jouable(
+                                personnage_type,
+                                "walking"
+                            )
+                            animation_delay = BaseDonnees.get_animation_delay_jouable(
+                                personnage_type,
+                                "walking"
+                            )
+                        else:
+                            animation_frames = None
+                            animation_delay = 5
+                        
+                        if animation_frames:
+                            self.man.start_animation(animation_frames, animation_delay=animation_delay, loop=True)
             
-            # GAME OVER : Si collision détectée
-            if self.man.check_collision(self.mechant):
+            # GAME OVER : Si collision détectée (mais pas pendant le combat du personnage)
+            # Ignorer la collision si le personnage est en train de combattre le méchant
+            if self.man.check_collision(self.mechant) and not self.monde.get_player_move_to_enemy() and not self.monde.get_animation_in_progress():
                 self.game_over = True
                 # Finaliser le tracking du mot actuel en cas de collision
                 self.monde.finaliser_mot_actuel(pygame.time.get_ticks())
@@ -367,15 +414,117 @@ class Jeu:
                 self.monde.finaliser_mot_actuel(pygame.time.get_ticks())
                 
                 self.monde.set_compteur_mot(self.monde.get_compteur_mot() + 1)
-                self.monde.set_mechant_move_to_man(True)
+                # Nouvelles interactions : le personnage court vers le méchant au lieu que le méchant vienne
+                self.monde.set_player_move_to_enemy(True)
+                self.monde.set_player_running(True)
+                self.monde.set_background_paused(True)
                 self.monde.set_animation_in_progress(False)
                 self.monde.set_delai_nouveau_mot(0)
                 self.monde.set_mot_visible(False)
+                
+                # Sauvegarder la position du méchant pour éviter qu'il ne bouge
+                self.mechant_position_saved = (self.mechant.position_x, self.mechant.position_y)
+                
+                # Démarrer l'animation "running" du personnage
+                personnage_type = self.monde.get_personnage_type()
+                personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                
+                if personnage_type in personnages_jouables:
+                    animation_frames = BaseDonnees.get_animation_frames_jouable(
+                        personnage_type,
+                        "running"
+                    )
+                    animation_delay = BaseDonnees.get_animation_delay_jouable(
+                        personnage_type,
+                        "running"
+                    )
+                else:
+                    animation_frames = None
+                    animation_delay = 5
+                
+                if animation_frames:
+                    self.man.start_animation(animation_frames, animation_delay=animation_delay)
             
             # Mettre à jour l'état précédent
             self.monde.set_mot_state_precedent(self.mot._state)
             
-            # Gestion du déplacement du méchant vers le personnage
+            # Gestion du mouvement du personnage vers le méchant
+            if self.monde.get_player_move_to_enemy():
+                # Geler la position du méchant pendant le running et le slashing
+                if self.mechant_position_saved:
+                    self.mechant.position_x = self.mechant_position_saved[0]
+                    self.mechant.position_y = self.mechant_position_saved[1]
+                
+                distance_x = self.mechant.position_x - self.man.position_x
+                distance = abs(distance_x)
+                
+                # Continuer le running jusqu'à atteindre 200px du méchant
+                if distance > 200:
+                    # Toujours en train de courir - s'il n'animation n'est pas active, la relancer
+                    if not self.man.is_animating():
+                        personnage_type = self.monde.get_personnage_type()
+                        personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                        
+                        if personnage_type in personnages_jouables:
+                            animation_frames = BaseDonnees.get_animation_frames_jouable(
+                                personnage_type,
+                                "running"
+                            )
+                            animation_delay = BaseDonnees.get_animation_delay_jouable(
+                                personnage_type,
+                                "running"
+                            )
+                        else:
+                            animation_frames = None
+                            animation_delay = 5
+                        
+                        if animation_frames:
+                            self.man.start_animation(animation_frames, animation_delay=animation_delay)
+                    
+                    # Avancer vers le méchant
+                    if distance_x > 0:
+                        # Méchant à droite, se déplacer à droite
+                        self.man.position_x += 6 * self.multiplier
+                    else:
+                        # Méchant à gauche, se déplacer à gauche
+                        self.man.position_x -= 6 * self.multiplier
+                    
+                    # Recalculer la distance après le mouvement
+                    distance_x = self.mechant.position_x - self.man.position_x
+                    distance = abs(distance_x)
+                
+                # Vérifier après le mouvement si on doit passer au slashing
+                if distance <= 200 and self.monde.get_player_move_to_enemy():
+                    # Distance <= 200px - le personnage doit attaquer
+                    self.monde.set_player_move_to_enemy(False)
+                    self.monde.set_player_running(False)
+                    self.monde.set_animation_in_progress(True)
+                    
+                    # Le personnage reste à sa position (200px du méchant) - pas de repositionner
+                    
+                    # Lancer l'animation du personnage en slashing
+                    personnage_type = self.monde.get_personnage_type()
+                    personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                    
+                    if personnage_type in personnages_jouables:
+                        # Utiliser les fonctions pour personnages jouables
+                        animation_frames = BaseDonnees.get_animation_frames_jouable(
+                            personnage_type,
+                            "slashing"
+                        )
+                        animation_delay = BaseDonnees.get_animation_delay_jouable(
+                            personnage_type,
+                            "slashing"
+                        )
+                    else:
+                        # Fallback
+                        animation_frames = None
+                        animation_delay = 5
+                    
+                    if animation_frames:
+                        self.man.start_animation(animation_frames, animation_delay=animation_delay)
+            
+            # Gestion du déplacement du méchant vers le personnage (ancien comportement - DESACTIVÉ)
             if self.monde.get_mechant_move_to_man():
                 distance_x = -self.man.position_x + self.mechant.position_x
                 
@@ -386,14 +535,32 @@ class Jeu:
                     self.monde.set_animation_in_progress(True)
                     
                     # Lancer l'animation du personnage
-                    animation_frames = BaseDonnees.get_animation_frames(
-                        self.monde.get_personnage_type(), 
-                        self.monde.get_personnage_animation()
-                    )
-                    animation_delay = BaseDonnees.get_animation_delay(
-                        self.monde.get_personnage_type(), 
-                        self.monde.get_personnage_animation()
-                    )
+                    personnage_type = self.monde.get_personnage_type()
+                    animation_name = self.monde.get_personnage_animation()
+                    
+                    # Déterminer si c'est un personnage jouable
+                    personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                    
+                    if personnage_type in personnages_jouables:
+                        # Utiliser les fonctions pour personnages jouables
+                        animation_frames = BaseDonnees.get_animation_frames_jouable(
+                            personnage_type,
+                            animation_name
+                        )
+                        animation_delay = BaseDonnees.get_animation_delay_jouable(
+                            personnage_type,
+                            animation_name
+                        )
+                    else:
+                        # Utiliser les anciennes fonctions pour personnages standards
+                        animation_frames = BaseDonnees.get_animation_frames(
+                            personnage_type, 
+                            animation_name
+                        )
+                        animation_delay = BaseDonnees.get_animation_delay(
+                            personnage_type,
+                            animation_name
+                        )
                     
                     if animation_frames:
                         self.man.start_animation(animation_frames, animation_delay=animation_delay)
@@ -405,17 +572,31 @@ class Jeu:
                     # Mettre à jour l'animation du méchant même pendant le déplacement manuel
                     self.mechant.update_animation()
             
-            # Bloquer le méchant à la bonne position pendant l'animation
-            if self.monde.get_animation_in_progress() and not self.monde.get_mechant_move_to_man():
-                self.mechant.position_x = self.man.position_x + self.monde.get_distance_mechant_man()
-                self.mechant.position_y = self.man.position_y  # Aligner les pieds
+            # Geler la position du méchant pendant le slashing (animation)
+            if self.monde.get_animation_in_progress() and not self.monde.get_mechant_move_to_man() and not self.monde.get_player_backing_away():
+                if self.mechant_position_saved:
+                    self.mechant.position_x = self.mechant_position_saved[0]
+                    self.mechant.position_y = self.mechant_position_saved[1]
             
-            # Gestion du délai et du respawn après animation
-            if self.monde.get_animation_in_progress():
-                if not self.man.is_animating():
-                    self.monde.set_delai_nouveau_mot(self.monde.get_delai_nouveau_mot() + 1)
-                    
-                    if self.monde.get_delai_nouveau_mot() >= 30:
+            # Gestion du recul du personnage après le slashing
+            if self.monde.get_player_backing_away():
+                depart_x = self.monde.get_player_depart_x()
+                if depart_x is not None:
+                    # Reculer progressivement vers la position de départ
+                    distance_to_travel = self.man.position_x - depart_x
+                    if abs(distance_to_travel) > 2:  # 2px de tolérance
+                        if self.man.position_x > depart_x:
+                            # Reculer à gauche
+                            self.man.position_x -= 3
+                        else:
+                            # Reculer à droite
+                            self.man.position_x += 3
+                    else:
+                        # Position de départ atteinte - créer le nouvel obstacle et mot
+                        self.man.position_x = depart_x
+                        self.monde.set_player_backing_away(False)
+                        self.monde.set_animation_in_progress(False)
+                        
                         if self.monde.get_compteur_mot() < self.monde.get_total_mots():
                             self.monde.set_num_img(1)
                             self.monde.set_frame_counter(0)
@@ -432,12 +613,64 @@ class Jeu:
                             # Démarrer le tracking de frappe pour le nouveau mot
                             self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
                         
-                        self.monde.set_animation_in_progress(False)
                         self.monde.set_delai_nouveau_mot(0)
                         self.monde.set_mot_visible(True)
+                        
+                        # Reprendre le défilement du fond et recommencer l'animation walk
+                        self.monde.set_background_paused(False)
+                        self.monde.set_player_move_to_enemy(False)
+                        self.monde.set_player_running(False)
+                        self.monde.set_player_walking(True)
+                        
+                        # Redémarrer l'animation walking du personnage
+                        personnage_type = self.monde.get_personnage_type()
+                        personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                        
+                        if personnage_type in personnages_jouables:
+                            animation_frames = BaseDonnees.get_animation_frames_jouable(
+                                personnage_type,
+                                "walking"
+                            )
+                            animation_delay = BaseDonnees.get_animation_delay_jouable(
+                                personnage_type,
+                                "walking"
+                            )
+                        else:
+                            animation_frames = None
+                            animation_delay = 5
+                        
+                        if animation_frames:
+                            self.man.start_animation(animation_frames, animation_delay=animation_delay, loop=True)
+            if self.monde.get_animation_in_progress() and not self.monde.get_player_backing_away():
+                if not self.man.is_animating():
+                    # L'animation de slashing vient de finir - faire disparaître le méchant et déclencher le recul
+                    self.mechant.position_x = -500  # Placer le méchant hors de l'écran
+                    
+                    # Lancer l'animation running inversée pour le backing away
+                    personnage_type = self.monde.get_personnage_type()
+                    personnages_jouables = BaseDonnees.lister_personnages_jouable()
+                    
+                    if personnage_type in personnages_jouables:
+                        animation_frames = BaseDonnees.get_animation_frames_jouable(
+                            personnage_type,
+                            "running"
+                        )
+                        animation_delay = BaseDonnees.get_animation_delay_jouable(
+                            personnage_type,
+                            "running"
+                        )
+                    else:
+                        animation_frames = None
+                        animation_delay = 5
+                    
+                    if animation_frames:
+                        # Lancer l'animation running inversée (flip=True)
+                        self.man.start_animation(animation_frames, animation_delay=animation_delay, loop=True, flip=True)
+                    
+                    self.monde.set_player_backing_away(True)
             
             # Mise à jour des positions (déplacement avec le sol)
-            if self.jeu_demarre:
+            if self.jeu_demarre and not self.monde.get_background_paused():
                 # Calculer la vitesse de défilement en fonction de l'état du méchant
                 # Si le méchant accélère vers le personnage, tout accélère avec lui
                 if self.monde.get_mechant_move_to_man():
@@ -455,23 +688,27 @@ class Jeu:
                 # La mise à jour du mechant gère aussi son animation interne
                 # Pendant l'accélération vers le joueur, on ne fait PAS de update_position
                 # car le déplacement manuel suffit (et le sol accélère pour correspondre)
-                if not self.monde.get_mechant_move_to_man():
+                # Aussi, le méchant ne doit pas bouger pendant le combat du personnage (running + slashing + backing away)
+                if not self.monde.get_mechant_move_to_man() and not self.monde.get_player_move_to_enemy() and not self.monde.get_animation_in_progress() and not self.monde.get_player_backing_away():
                     self.mechant.update_position(vitesse_defilement)
-                
-                # Mise à jour de l'animation du personnage
-                self.man.update_animation()
                 
                 # Faire disparaître le mot immédiatement après la première frappe (niveau 4)
                 if self.niveau == 4 and self.monde.temps_entree_complete is not None and not self.monde.print_disparition_affiche:
                     self.monde.faire_disparaitre_mot()
                     self.monde.print_disparition_affiche = True
             
+            # Mise à jour de l'animation du personnage (même pendant la pause du fond)
+            if self.jeu_demarre:
+                self.man.update_animation()
+            
             # Affichage des éléments
             self.fenetre.afficher_fond(self.screen)
             self.sol_gauche.afficher(self.screen)
             self.sol_droite.afficher(self.screen)
             self.man.afficher(self.screen)
-            self.mechant.afficher(self.screen)
+            # Ne pas afficher le méchant pendant le backing away (après le slashing)
+            if not self.monde.get_player_backing_away():
+                self.mechant.afficher(self.screen)
             if self.monde.get_mot_visible():
                 # Au niveau 4, après disparition, afficher seulement les lettres tapées
                 if self.niveau == 4 and self.monde.afficher_seulement_lettres_tapees:
@@ -503,11 +740,13 @@ class Jeu:
                 # Initialiser avec les derniers paramètres du joueur
                 self.vitesse_pourcentage = derniers_params['vitesse_defilement']
                 self.reset_on_error = derniers_params['reset_mots_actif']
-                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
+                self.personnage_joueur = derniers_params.get('personnage_id', 'fallen_angels_1')
+                print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}, personnage={self.personnage_joueur}")
             else:
                 # Valeurs par défaut pour un nouveau joueur
                 self.vitesse_pourcentage = 100
                 self.reset_on_error = True
+                self.personnage_joueur = 'fallen_angels_1'
             
             # Boucle de sélection du monde
             while True:
@@ -539,14 +778,15 @@ class Jeu:
                         reset_on_error_defaut=self.reset_on_error,
                         total_mots_defaut=self.total_mots,
                         monde_choisi=self.monde_choisi,
-                        bibliotheque_defaut=self.bibliotheque
+                        bibliotheque_defaut=self.bibliotheque,
+                        personnage_par_defaut=self.personnage_joueur
                     )
                     
                     # Si l'utilisateur a appuyé sur Échap, retourner à la sélection du monde
                     if resultat is None:
                         break  # Sortir de la boucle de niveau pour retourner à la sélection du monde
                     
-                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.total_mots, self.bibliotheque = resultat
+                    self.niveau, self.vitesse_pourcentage, self.reset_on_error, self.total_mots, self.bibliotheque, self.personnage_joueur = resultat
                     
                     # Appliquer la bibliothèque sélectionnée
                     BaseDonnees.set_bibliotheque_active(self.bibliotheque)

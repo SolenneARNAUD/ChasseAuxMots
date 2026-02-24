@@ -340,6 +340,515 @@ PERSONNAGES_CONFIG = {
     }
 }
 
+
+
+PERSONNAGES_JOUABLE = {
+    "fallen_angels_1": {
+        "nom_affiche": "Fallen Angels 1",
+        "chemin_base": "images/Personnages/Fallen_Angels_1/PNG",
+        "sprite_defaut": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Walking/0_Fallen_Angels_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Running/0_Fallen_Angels_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Jump Loop/0_Fallen_Angels_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Jump Start/0_Fallen_Angels_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Fallen_Angels_1/PNG/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "fallen_angels_2": {
+        "nom_affiche": "Fallen Angels 2",
+        "chemin_base": "images/Personnages/Fallen_Angels_2/PNG",
+        "sprite_defaut": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Walking/0_Fallen_Angels_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Running/0_Fallen_Angels_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Jump Loop/0_Fallen_Angels_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Jump Start/0_Fallen_Angels_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Fallen_Angels_2/PNG/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "fallen_angels_3": {
+        "nom_affiche": "Fallen Angels 3",
+        "chemin_base": "images/Personnages/Fallen_Angels_3/PNG",
+        "sprite_defaut": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Idle/0_Fallen_Angels_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Walking/0_Fallen_Angels_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Running/0_Fallen_Angels_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Jump Loop/0_Fallen_Angels_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Jump Start/0_Fallen_Angels_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Fallen_Angels_3/PNG/PNG Sequences/Hurt/0_Fallen_Angels_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "goblin": {
+        "nom_affiche": "Goblin",
+        "chemin_base": "images/Personnages/Goblin/PNG",
+        "sprite_defaut": "images/Personnages/Goblin/PNG/PNG Sequences/Idle/0_Goblin_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Idle/0_Goblin_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Walking/0_Goblin_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Running/0_Goblin_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Slashing/0_Goblin_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Dying/0_Goblin_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Jump Loop/0_Goblin_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Jump Start/0_Goblin_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Goblin/PNG/PNG Sequences/Hurt/0_Goblin_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "ogre": {
+        "nom_affiche": "Ogre",
+        "chemin_base": "images/Personnages/Ogre/PNG",
+        "sprite_defaut": "images/Personnages/Ogre/PNG/PNG Sequences/Idle/0_Ogre_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Idle/0_Ogre_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Walking/0_Ogre_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Running/0_Ogre_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Slashing/0_Ogre_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Dying/0_Ogre_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Jump Loop/0_Ogre_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Jump Start/0_Ogre_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Ogre/PNG/PNG Sequences/Hurt/0_Ogre_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "orc": {
+        "nom_affiche": "Orc",
+        "chemin_base": "images/Personnages/Orc/PNG",
+        "sprite_defaut": "images/Personnages/Orc/PNG/PNG Sequences/Idle/0_Orc_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Idle/0_Orc_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Walking/0_Orc_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Running/0_Orc_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Slashing/0_Orc_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Dying/0_Orc_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Jump Loop/0_Orc_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Jump Start/0_Orc_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Orc/PNG/PNG Sequences/Hurt/0_Orc_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "valkyrie_1": {
+        "nom_affiche": "Valkyrie 1",
+        "chemin_base": "images/Personnages/Valkyrie_1/PNG",
+        "sprite_defaut": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Walking/0_Valkyrie_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Running/0_Valkyrie_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Slashing/0_Valkyrie_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Dying/0_Valkyrie_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Jump Loop/0_Valkyrie_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Jump Start/0_Valkyrie_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Valkyrie_1/PNG/PNG Sequences/Hurt/0_Valkyrie_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "valkyrie_2": {
+        "nom_affiche": "Valkyrie 2",
+        "chemin_base": "images/Personnages/Valkyrie_2/PNG",
+        "sprite_defaut": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Walking/0_Valkyrie_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Running/0_Valkyrie_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Slashing/0_Valkyrie_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Dying/0_Valkyrie_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Jump Loop/0_Valkyrie_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Jump Start/0_Valkyrie_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Valkyrie_2/PNG/PNG Sequences/Hurt/0_Valkyrie_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    },
+    "valkyrie_3": {
+        "nom_affiche": "Valkyrie 3",
+        "chemin_base": "images/Personnages/Valkyrie_3/PNG",
+        "sprite_defaut": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_000.png",
+        "hauteur": 125,
+        "animations": {
+            "idle": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Idle/0_Valkyrie_Idle_",
+                "nb_images": 18,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "walking": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Walking/0_Valkyrie_Walking_",
+                "nb_images": 24,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "running": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Running/0_Valkyrie_Running_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "slashing": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Slashing/0_Valkyrie_Slashing_",
+                "nb_images": 12,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "dying": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Dying/0_Valkyrie_Dying_",
+                "nb_images": 15,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_loop": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Jump Loop/0_Valkyrie_Jump Loop_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "jump_start": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Jump Start/0_Valkyrie_Jump Start_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            },
+            "hurt": {
+                "chemin_base": "images/Personnages/Valkyrie_3/PNG/PNG Sequences/Hurt/0_Valkyrie_Hurt_",
+                "nb_images": 6,
+                "animation_delay": 5,
+                "format": "{:03d}.png"
+            }
+        }
+    }
+}
+
 Univers = {
     "foret_bleue":{
         "background": { 
@@ -1219,7 +1728,7 @@ def set_derniere_vitesse(pseudo, valeur):
     # Cette fonction ne fait plus rien car la structure a changé
     pass
 
-def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500):
+def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, delai_niveau4=1500, personnage_id=None):
     """Sauvegarde les paramètres actuels d'un joueur sans créer un essai complet.
     
     Args:
@@ -1227,6 +1736,7 @@ def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, 
         vitesse_defilement: Vitesse de défilement en pourcentage (25-500)
         reset_mots_actif: Si True, les mots sont réinitialisés en cas d'erreur
         delai_niveau4: Délai avant disparition du mot au niveau 4 (500-10000 ms)
+        personnage_id: ID du personnage jouable sélectionné (ex: 'fallen_angels_1')
     
     Returns:
         bool: True si la sauvegarde a réussi, False sinon
@@ -1244,6 +1754,7 @@ def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, 
         'vitesse_defilement': vitesse_defilement,
         'reset_mots_actif': reset_mots_actif,
         'delai_niveau4': delai_niveau4,
+        'personnage_id': personnage_id if personnage_id else 'fallen_angels_1',
         'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     
@@ -1251,7 +1762,7 @@ def sauvegarder_parametres_joueur(pseudo, vitesse_defilement, reset_mots_actif, 
     succes = sauvegarder_joueurs()
     
     if succes:
-        print(f"[INFO] Paramètres sauvegardés pour {pseudo}: vitesse={vitesse_defilement}%, reset={reset_mots_actif}")
+        print(f"[INFO] Paramètres sauvegardés pour {pseudo}: vitesse={vitesse_defilement}%, reset={reset_mots_actif}, personnage={personnage_id}")
     else:
         print(f"[WARNING] Erreur lors de la sauvegarde des paramètres pour {pseudo}")
     
@@ -1381,7 +1892,7 @@ def get_derniers_parametres_joueur(pseudo):
         pseudo: Pseudo du joueur
     
     Returns:
-        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int} ou None si pas d'historique
+        dict: {'vitesse_defilement': int, 'reset_mots_actif': bool, 'delai_niveau4': int, 'personnage_id': str} ou None si pas d'historique
     """
     cle = pseudo.lower()
     
@@ -1395,7 +1906,8 @@ def get_derniers_parametres_joueur(pseudo):
         return {
             'vitesse_defilement': joueur['parametres_actuels'].get('vitesse_defilement', 100),
             'reset_mots_actif': joueur['parametres_actuels'].get('reset_mots_actif', True),
-            'delai_niveau4': joueur['parametres_actuels'].get('delai_niveau4', 1500)
+            'delai_niveau4': joueur['parametres_actuels'].get('delai_niveau4', 1500),
+            'personnage_id': joueur['parametres_actuels'].get('personnage_id', 'fallen_angels_1')
         }
     
     # Sinon chercher dans l'historique (ancien comportement)
@@ -1420,9 +1932,212 @@ def get_derniers_parametres_joueur(pseudo):
         return {
             'vitesse_defilement': dernier_essai.get('vitesse_defilement', 100),
             'reset_mots_actif': dernier_essai.get('reset_mots_actif', True),
-            'delai_niveau4': dernier_essai.get('delai_niveau4', 1500)
+            'delai_niveau4': dernier_essai.get('delai_niveau4', 1500),
+            'personnage_id': dernier_essai.get('personnage_id', 'fallen_angels_1')
         }
     
     return None
 
+
+# ============================================================================
+# FONCTIONS D'ACCÈS À LA BASE DE DONNEES DES PERSONNAGES JOUABLES
+# ============================================================================
+
+def lister_personnages_jouable():
+    """Retourne la liste de tous les personnages jouables disponibles.
+    
+    Returns:
+        list: Liste des IDs des personnages triés alphabétiquement
+    """
+    return sorted(PERSONNAGES_JOUABLE.keys())
+
+def get_personnage_jouable(personnage_id):
+    """Récupère la configuration complète d'un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage (clé dans PERSONNAGES_JOUABLE)
+    
+    Returns:
+        dict: Configuration du personnage ou None si non trouvé
+    """
+    if personnage_id not in PERSONNAGES_JOUABLE:
+        return None
+    return PERSONNAGES_JOUABLE[personnage_id]
+
+def get_personnage_nom_affiche(personnage_id):
+    """Récupère le nom à afficher d'un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+    
+    Returns:
+        str: Nom du personnage ou l'ID en majuscule si non trouvé
+    """
+    config = get_personnage_jouable(personnage_id)
+    if config:
+        return config.get('nom_affiche', personnage_id.replace('_', ' ').title())
+    return personnage_id.replace('_', ' ').title()
+
+def get_personnage_sprite_defaut_jouable(personnage_id):
+    """Récupère le sprite par défaut d'un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+    
+    Returns:
+        str: Chemin du sprite par défaut ou None si non trouvé
+    """
+    config = get_personnage_jouable(personnage_id)
+    if config:
+        sprite = config.get('sprite_defaut')
+        if sprite:
+            return resource_path(sprite)
+    return None
+
+def get_personnage_hauteur_jouable(personnage_id):
+    """Récupère la hauteur d'un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+    
+    Returns:
+        int: Hauteur en pixels ou 120 par défaut
+    """
+    config = get_personnage_jouable(personnage_id)
+    if config:
+        return config.get('hauteur', 120)
+    return 120
+
+def get_animations_personnage_jouable(personnage_id):
+    """Récupère la liste des animations disponibles pour un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+    
+    Returns:
+        list: Liste des noms des animations ou liste vide si non trouvé
+    """
+    config = get_personnage_jouable(personnage_id)
+    if config and 'animations' in config:
+        return sorted(config['animations'].keys())
+    return []
+
+def get_animation_frames_jouable(personnage_id, animation_name):
+    """Génère la liste des chemins des frames d'animation pour un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+        animation_name: Nom de l'animation
+    
+    Returns:
+        list: Liste des chemins des frames ou None si non trouvé
+    """
+    config = get_personnage_jouable(personnage_id)
+    
+    if not config or 'animations' not in config:
+        return None
+    
+    if animation_name not in config['animations']:
+        return None
+    
+    anim_config = config['animations'][animation_name]
+    
+    chemin_base = anim_config.get('chemin_base', '')
+    nb_images = anim_config.get('nb_images', 1)
+    format_str = anim_config.get('format', '{:03d}.png')
+    
+    # Générer les chemins des frames
+    frames = []
+    for i in range(nb_images):
+        # Format utilise des indices
+        if '{}' in format_str or '{:03d}' in format_str or '{:02d}' in format_str:
+            frame_path = f"{chemin_base}{format_str.format(i)}"
+        else:
+            # Si pas de format, utiliser le chemin tel quel
+            frame_path = chemin_base
+        frames.append(resource_path(frame_path))
+    
+    return frames
+
+def get_animation_info_jouable(personnage_id, animation_name):
+    """Récupère les informations complètes d'une animation pour un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+        animation_name: Nom de l'animation
+    
+    Returns:
+        dict: {'frames': list, 'nb_images': int, 'animation_delay': int} ou None si non trouvé
+    """
+    config = get_personnage_jouable(personnage_id)
+    
+    if not config or 'animations' not in config:
+        return None
+    
+    if animation_name not in config['animations']:
+        return None
+    
+    anim_config = config['animations'][animation_name]
+    frames = get_animation_frames_jouable(personnage_id, animation_name)
+    
+    if frames is None:
+        return None
+    
+    return {
+        'frames': frames,
+        'nb_images': len(frames),
+        'animation_delay': anim_config.get('animation_delay', 5),
+        'chemin_base': anim_config.get('chemin_base', ''),
+        'format': anim_config.get('format', '{:03d}.png')
+    }
+
+def get_animation_delay_jouable(personnage_id, animation_name):
+    """Récupère le délai d'animation pour un personnage jouable.
+    
+    Args:
+        personnage_id: ID du personnage
+        animation_name: Nom de l'animation
+    
+    Returns:
+        int: Délai d'animation en millisecondes (par défaut 5)
+    """
+    config = get_personnage_jouable(personnage_id)
+    
+    if not config or 'animations' not in config:
+        return 5
+    
+    if animation_name not in config['animations']:
+        return 5
+    
+    anim_config = config['animations'][animation_name]
+    return anim_config.get('animation_delay', 5)
+
+def get_personnages_jouables_par_categorie():
+    """Regroupe les personnages jouables par catégorie (basé sur leur nom).
+    
+    Returns:
+        dict: {'fallen_angels': [...], 'valkyrie': [...], etc.}
+    """
+    categories = {}
+    
+    for personnage_id in lister_personnages_jouable():
+        # Extraire la catégorie du nom
+        if 'fallen_angels' in personnage_id:
+            categorie = 'fallen_angels'
+        elif 'valkyrie' in personnage_id:
+            categorie = 'valkyrie'
+        else:
+            # Utiliser le nom sans numéro
+            categorie = personnage_id.replace('_1', '').replace('_2', '').replace('_3', '')
+        
+        if categorie not in categories:
+            categories[categorie] = []
+        
+        categories[categorie].append(personnage_id)
+    
+    # Trier les listes
+    for categorie in categories:
+        categories[categorie].sort()
+    
+    return categories
 

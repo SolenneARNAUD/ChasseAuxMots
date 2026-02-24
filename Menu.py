@@ -117,16 +117,185 @@ class Menu:
             return None
     
     @staticmethod
-    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None, bibliotheques_actuelles=None):
+    def fenetre_selection_personnages(screen, personnage_actuel=None):
+        """
+        Affiche une fenêtre de sélection des personnages jouables.
+        Affiche tous les 9 personnages en grille 3x3.
+        Retourne l'ID du personnage sélectionné ou None si annulé.
+        """
+        clock = pg.time.Clock()
+        font_titre = pg.font.Font(None, 48)
+        font_nom = pg.font.Font(None, 28)
+        font_bouton = pg.font.Font(None, 32)
+        
+        # Récupérer TOUS les personnages (pas de catégories, voir tous)
+        personnages = BaseDonnees.lister_personnages_jouable()
+        
+        # Variables de sélection
+        personnage_selectionne_idx = 0
+        
+        # Dimensioning
+        zone_titre_height = Donnees.HEIGHT // 8
+        zone_contenu_y = zone_titre_height
+        zone_contenu_height = Donnees.HEIGHT - zone_titre_height - 100  # Laisser place pour les boutons
+        
+        # Grid display - grille 3x3 pour les 9 personnages
+        cols = 3
+        rows = 3
+        padding = 20
+        
+        grid_width = Donnees.WIDTH - 2 * padding
+        grid_height = zone_contenu_height - padding
+        
+        item_width = (grid_width - (cols - 1) * padding) // cols
+        item_height = (grid_height - (rows - 1) * padding) // rows
+        
+        # Boutons
+        bouton_w = Donnees.PARAMS_BOUTON_WIDTH
+        bouton_h = Donnees.PARAMS_BOUTON_HEIGHT
+        bouton_spacing = Donnees.PARAMS_BOUTON_SPACING
+        total_boutons_width = 2 * bouton_w + bouton_spacing
+        bouton_y = Donnees.HEIGHT - 80
+        
+        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2, bouton_y, bouton_w, bouton_h)
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2 + bouton_w + bouton_spacing, bouton_y, bouton_w, bouton_h)
+        
+        while True:
+            events = pg.event.get()
+            for event in events:
+                if event.type == pg.QUIT:
+                    sys.exit()
+                
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    # Clic sur les personnages
+                    grid_start_x = padding
+                    grid_start_y = zone_contenu_y + padding
+                    
+                    for i, pers_id in enumerate(personnages):
+                        row = i // cols
+                        col = i % cols
+                        
+                        rect_x = grid_start_x + col * (item_width + padding)
+                        rect_y = grid_start_y + row * (item_height + padding)
+                        pers_rect = pg.Rect(rect_x, rect_y, item_width, item_height)
+                        
+                        if pers_rect.collidepoint(event.pos):
+                            personnage_selectionne_idx = i
+                            break
+                    
+                    # Clic sur boutons
+                    if bouton_retour.collidepoint(event.pos):
+                        return None
+                    elif bouton_valider.collidepoint(event.pos):
+                        if personnage_selectionne_idx < len(personnages):
+                            return personnages[personnage_selectionne_idx]
+                
+                if event.type == pg.KEYDOWN:
+                    row = personnage_selectionne_idx // cols
+                    col = personnage_selectionne_idx % cols
+                    
+                    if event.key == pg.K_LEFT:
+                        if col > 0:
+                            personnage_selectionne_idx -= 1
+                    elif event.key == pg.K_RIGHT:
+                        if col < cols - 1:
+                            personnage_selectionne_idx += 1
+                    elif event.key == pg.K_UP:
+                        if row > 0:
+                            personnage_selectionne_idx -= cols
+                    elif event.key == pg.K_DOWN:
+                        if row < rows - 1 and personnage_selectionne_idx + cols < len(personnages):
+                            personnage_selectionne_idx += cols
+                    elif event.key == pg.K_ESCAPE:
+                        return None
+                    elif event.key == pg.K_RETURN or event.key == pg.K_KP_ENTER:
+                        if personnage_selectionne_idx < len(personnages):
+                            return personnages[personnage_selectionne_idx]
+            
+            # Affichage
+            screen.fill(Donnees.COULEUR_FOND)
+            
+            # Titre
+            titre = font_titre.render("Selection du Personnage", True, Donnees.COULEUR_NOIR)
+            screen.blit(titre, (Donnees.WIDTH // 2 - titre.get_width() // 2, zone_titre_height // 2 - titre.get_height() // 2))
+            
+            # Afficher les personnages en grille 3x3 (tous les 9)
+            grid_start_x = padding
+            grid_start_y = zone_contenu_y + padding
+            
+            for i, pers_id in enumerate(personnages):
+                row = i // cols
+                col = i % cols
+                
+                rect_x = grid_start_x + col * (item_width + padding)
+                rect_y = grid_start_y + row * (item_height + padding)
+                pers_rect = pg.Rect(rect_x, rect_y, item_width, item_height)
+                
+                # Couleur de fond selon sélection
+                if i == personnage_selectionne_idx:
+                    couleur_fond = Donnees.COULEUR_BLEU_BOUTON  # Blue/highlighted color
+                else:
+                    couleur_fond = Donnees.COULEUR_BLANC
+                
+                pg.draw.rect(screen, couleur_fond, pers_rect)
+                pg.draw.rect(screen, Donnees.COULEUR_NOIR, pers_rect, 2)
+                
+                # Charger et afficher le sprite
+                try:
+                    sprite_path = BaseDonnees.get_personnage_sprite_defaut_jouable(pers_id)
+                    if sprite_path:
+                        sprite_img = pg.image.load(sprite_path)
+                        # Redimensionner pour tenir dans la box
+                        sprite_h = int(item_height * 0.65)
+                        ratio = sprite_img.get_height() / sprite_img.get_width() if sprite_img.get_width() > 0 else 1
+                        sprite_w = int(sprite_h / ratio)
+                        
+                        # Limiter la largeur
+                        if sprite_w > item_width - 10:
+                            sprite_w = item_width - 10
+                            sprite_h = int(sprite_w * ratio)
+                        
+                        sprite_img = pg.transform.scale(sprite_img, (sprite_w, sprite_h))
+                        sprite_x = pers_rect.centerx - sprite_w // 2
+                        sprite_y = pers_rect.top + (item_height - sprite_h) // 3
+                        screen.blit(sprite_img, (sprite_x, sprite_y))
+                except Exception as e:
+                    print(f"[ERROR] Impossible de charger le sprite {pers_id}: {e}")
+                
+                # Afficher le nom (sans catégorie)
+                nom_affiche = BaseDonnees.get_personnage_nom_affiche(pers_id)
+                texte_nom = font_nom.render(nom_affiche, True, Donnees.COULEUR_NOIR)
+                screen.blit(texte_nom, (pers_rect.centerx - texte_nom.get_width() // 2, 
+                                       pers_rect.bottom - 30))
+            
+            # Boutons
+            pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_VALIDER, bouton_valider)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_valider, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            texte_valider = font_bouton.render("Valider", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_valider, (bouton_valider.centerx - texte_valider.get_width() // 2,
+                                       bouton_valider.centery - texte_valider.get_height() // 2))
+            
+            pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_RETOUR, bouton_retour)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_retour, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            texte_retour = font_bouton.render("Retour", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_retour, (bouton_retour.centerx - texte_retour.get_width() // 2,
+                                      bouton_retour.centery - texte_retour.get_height() // 2))
+            
+            pg.display.flip()
+            clock.tick(Donnees.FPS)
+    
+    @staticmethod
+    def fenetre_parametres(screen, vitesse_actuelle, reset_on_error_actuel=True, total_mots_actuel=20, joueur=None, bibliotheques_actuelles=None, personnage_actuel=None):
         """
         Affiche une fenêtre modale pour configurer les paramètres du jeu.
-        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots, bibliotheques) ou None si annulé.
+        Retourne un tuple (vitesse_pourcentage, reset_on_error, total_mots, bibliotheques, personnage_id) ou None si annulé.
         """
         vitesse_str = ""
         vitesse_affichee = str(vitesse_actuelle)
         total_mots_str = ""
         total_mots_affiche = str(total_mots_actuel)
         reset_on_error = reset_on_error_actuel
+        personnage_selectionne = personnage_actuel if personnage_actuel else "fallen_angels_1"  # Défaut
         
         # Gérer la sélection multiple de bibliothèques
         if bibliotheques_actuelles is None:
@@ -205,11 +374,12 @@ class Menu:
         bouton_w = Donnees.PARAMS_BOUTON_WIDTH
         bouton_h = Donnees.PARAMS_BOUTON_HEIGHT
         bouton_spacing = Donnees.PARAMS_BOUTON_SPACING
-        total_boutons_width = 2 * bouton_w + bouton_spacing
+        total_boutons_width = 3 * bouton_w + 2 * bouton_spacing  # 3 boutons
         bouton_y = zone_boutons_y + (Donnees.HEIGHT - zone_boutons_y) // 2 - bouton_h // 2
         
-        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2, bouton_y, bouton_w, bouton_h)
-        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2 + bouton_w + bouton_spacing, bouton_y, bouton_w, bouton_h)
+        bouton_personnage = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2, bouton_y, bouton_w, bouton_h)
+        bouton_valider = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2 + bouton_w + bouton_spacing, bouton_y, bouton_w, bouton_h)
+        bouton_retour = pg.Rect(Donnees.WIDTH // 2 - total_boutons_width // 2 + 2 * (bouton_w + bouton_spacing), bouton_y, bouton_w, bouton_h)
         
         while True:
             events = pg.event.get()
@@ -272,7 +442,12 @@ class Menu:
                                     bibliotheques_selectionnees.add(biblio_id)  # Ajouter
                                 break
                     
-                    if bouton_retour.collidepoint(event.pos):
+                    if bouton_personnage.collidepoint(event.pos):
+                        # Ouvrir la fenêtre de sélection des personnages
+                        personnage_choisi = Menu.fenetre_selection_personnages(screen, personnage_selectionne)
+                        if personnage_choisi:
+                            personnage_selectionne = personnage_choisi
+                    elif bouton_retour.collidepoint(event.pos):
                         return None
                     elif bouton_valider.collidepoint(event.pos):
                         try:
@@ -298,7 +473,7 @@ class Menu:
                             except Exception:
                                 pass
                         
-                        return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
+                        return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees), personnage_selectionne)
                 
                 if event.type == pg.KEYDOWN:
                     if input_active:
@@ -325,7 +500,7 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
+                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees), personnage_selectionne)
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
@@ -356,7 +531,7 @@ class Menu:
                                 except Exception:
                                     pass
                             
-                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees))
+                            return (int(val), reset_on_error, int(val_mots), list(bibliotheques_selectionnees), personnage_selectionne)
                         elif event.key == pg.K_ESCAPE:
                             return None
                         elif event.key == pg.K_BACKSPACE:
@@ -548,6 +723,13 @@ class Menu:
             
             # === ZONE BOUTONS ===
             
+            # Bouton Personnage
+            pg.draw.rect(screen, (150, 150, 200), bouton_personnage)
+            pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_personnage, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
+            texte_personnage = font_bouton.render("Personnage", True, Donnees.COULEUR_BLANC)
+            screen.blit(texte_personnage, (bouton_personnage.centerx - texte_personnage.get_width() // 2,
+                                           bouton_personnage.centery - texte_personnage.get_height() // 2))
+            
             # Bouton Valider
             pg.draw.rect(screen, Donnees.PARAMS_BOUTON_COULEUR_VALIDER, bouton_valider)
             pg.draw.rect(screen, Donnees.COULEUR_NOIR, bouton_valider, Donnees.PARAMS_LIGNE_SEPARATION_EPAISSEUR)
@@ -584,10 +766,10 @@ class Menu:
         )
 
     @staticmethod
-    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None, bibliotheque_defaut=None):
+    def fenetre_niveau(screen, joueur=None, vitesse_par_defaut=None, reset_on_error_defaut=None, total_mots_defaut=None, monde_choisi=None, bibliotheque_defaut=None, personnage_par_defaut=None):
         """
         Affiche la fenêtre de sélection des niveaux avec un bouton paramètres.
-        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque).
+        Retourne un tuple (niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque, personnage_id).
         Retourne None si l'utilisateur appuie sur Échap (retour en arrière).
         Gère sa propre boucle jusqu'à ce qu'un niveau soit sélectionné.
         """
@@ -597,6 +779,7 @@ class Menu:
         vitesse_pourcentage = vitesse_par_defaut if vitesse_par_defaut is not None else Donnees.VITESSE_POURCENTAGE_PAR_DEFAUT
         reset_on_error = reset_on_error_defaut if reset_on_error_defaut is not None else Donnees.RESET_ON_ERROR_PAR_DEFAUT
         total_mots = total_mots_defaut if total_mots_defaut is not None else Donnees.TOTAL_MOTS
+        personnage_actuel = personnage_par_defaut if personnage_par_defaut else "fallen_angels_1"
         
         # Gérer la bibliothèque (convertir en liste si nécessaire)
         if bibliotheque_defaut is not None:
@@ -689,7 +872,7 @@ class Menu:
                     if btn_params.collidepoint(position):
                         resultat = Menu.fenetre_parametres(screen, vitesse_pourcentage, reset_on_error, total_mots, joueur, bibliotheque)
                         if resultat is not None:
-                            vitesse_pourcentage, reset_on_error, total_mots, bibliotheque = resultat
+                            vitesse_pourcentage, reset_on_error, total_mots, bibliotheque, personnage_actuel = resultat
                     
                     # Event 2 : Clic sur un niveau
                     for i in range(Donnees.NB_NIVEAUX):
@@ -772,7 +955,7 @@ class Menu:
             pg.display.flip()
             clock.tick(Donnees.FPS)
         
-        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque
+        return niveau_selectionne, vitesse_pourcentage, reset_on_error, total_mots, bibliotheque, personnage_actuel
 
     @staticmethod
     def selection_monde(screen):

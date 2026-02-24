@@ -10,16 +10,20 @@ import random
 class Monde(object):
     "Classe liant les différents éléments du décor au monde."
 
-    def __init__(self):
-        "Constructeur de la classe Monde."
+    def __init__(self, personnage_id="fallen_angels_1"):
+        """Constructeur de la classe Monde.
+        
+        Args:
+            personnage_id: ID du personnage jouable à utiliser (ex: 'fallen_angels_1')
+        """
         self.fond = None
         self.sol_gauche = None
         self.sol_droite = None
         self.personnage = None
         self.obstacle_actuel_type = None
         self.obstacle_actuel_config = None
-        self.personnage_type = "viking"  # Type de personnage par défaut
-        self.personnage_animation = "attaque"  # Animation par défaut
+        self.personnage_type = personnage_id  # Utiliser le personnage sélectionné
+        self.personnage_animation = "slashing"  # Animation par défaut (attaque)
         self.univers = "foret_bleue"  # Univers par défaut
 
     
@@ -40,6 +44,15 @@ class Monde(object):
         self.delai_nouveau_mot = 0
         self.distance_mechant_man = 150
         
+        # Variables pour l'animation du personnage jouable
+        self.player_walking = False  # Le personnage fait l'animation walk
+        self.player_running = False  # Le personnage fait l'animation run
+        self.player_move_to_enemy = False  # Le personnage se déplace vers le méchant
+        self.background_paused = False  # Le fond/sol est en pause
+        self.player_slashing_distance = 100  # Distance à laquelle commencer le slashing
+        self.player_backing_away = False  # Le personnage recule après le slashing
+        self.player_depart_x = None  # Position de départ du personnage (pour le recul)
+        
         self.nb_erreurs = 0
         self.erreurs_detaillees = []  # Liste des erreurs avec détails: {'mot': str, 'lettre_attendue': str, 'lettre_tapee': str}
         self.temps_debut = None
@@ -58,10 +71,21 @@ class Monde(object):
         self.temps_entree_complete = None  # Temps où le mot est devenu entièrement visible
         self.afficher_seulement_lettres_tapees = False  # Pour n'afficher que les lettres tapées
     
-    def initialiser_niveau(self, niveau, univers="foret_bleue", total_mots=None):
-        """Initialise tous les éléments du monde pour le niveau sélectionné."""
+    def initialiser_niveau(self, niveau, univers="foret_bleue", total_mots=None, personnage_id=None):
+        """Initialise tous les éléments du monde pour le niveau sélectionné.
+        
+        Args:
+            niveau: Numéro du niveau (1-5)
+            univers: ID de l'univers (ex: 'foret_bleue')
+            total_mots: Nombre total de mots pour ce niveau
+            personnage_id: ID du personnage jouable à utiliser
+        """
         self.niveau = niveau  # Stocker le niveau actuel
         self.univers = univers  # Stocker l'univers choisi
+        
+        # Mettre à jour le personnage si fourni
+        if personnage_id:
+            self.personnage_type = personnage_id
         
         # Utiliser le total_mots passé en paramètre ou la valeur par défaut
         if total_mots is None:
@@ -76,8 +100,8 @@ class Monde(object):
                                   Donnees.SOL_DEPART_X + Donnees.WIDTH,
                                   Donnees.SOL_DEPART_Y)
         
-        # Initialisation du personnage
-        sprite_defaut = BaseDonnees.get_personnage_sprite_defaut(self.personnage_type)
+        # Initialisation du personnage avec le sprite du personnage sélectionné
+        sprite_defaut = BaseDonnees.get_personnage_sprite_defaut_jouable(self.personnage_type)
         if not sprite_defaut:
             sprite_defaut = Donnees.PERSONNAGE_SKIN  # Fallback
         
@@ -371,6 +395,49 @@ class Monde(object):
     def get_obstacle_actuel_config(self):
         return self.obstacle_actuel_config
     
+    # Getters et Setters pour l'animation du personnage jouable
+    def get_player_walking(self):
+        return self.player_walking
+    
+    def set_player_walking(self, value):
+        self.player_walking = value
+    
+    def get_player_running(self):
+        return self.player_running
+    
+    def set_player_running(self, value):
+        self.player_running = value
+    
+    def get_player_move_to_enemy(self):
+        return self.player_move_to_enemy
+    
+    def set_player_move_to_enemy(self, value):
+        self.player_move_to_enemy = value
+    
+    def get_background_paused(self):
+        return self.background_paused
+    
+    def set_background_paused(self, value):
+        self.background_paused = value
+    
+    def get_player_slashing_distance(self):
+        return self.player_slashing_distance
+    
+    def set_player_slashing_distance(self, value):
+        self.player_slashing_distance = value
+    
+    def get_player_backing_away(self):
+        return self.player_backing_away
+    
+    def set_player_backing_away(self, value):
+        self.player_backing_away = value
+    
+    def get_player_depart_x(self):
+        return self.player_depart_x
+    
+    def set_player_depart_x(self, value):
+        self.player_depart_x = value
+
     def get_obstacle_actuel_type(self):
         return self.obstacle_actuel_type
     
