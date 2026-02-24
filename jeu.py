@@ -55,8 +55,9 @@ class Jeu:
                 pseudo = getattr(self, 'pseudo_joueur', None)
                 vitesse = getattr(self, 'vitesse_pourcentage', None)
                 reset = getattr(self, 'reset_on_error', None)
+                biblio = getattr(self, 'bibliotheque', None)
                 
-                resultat = Menu.Menu.fenetre_confirmation_quitter(self.screen, pseudo, vitesse, reset)
+                resultat = Menu.Menu.fenetre_confirmation_quitter(self.screen, pseudo, vitesse, reset, biblio)
                 
                 if resultat in ['quitter', 'sauvegarder']:
                     sys.exit()
@@ -416,7 +417,9 @@ class Jeu:
                     self.monde.set_delai_nouveau_mot(self.monde.get_delai_nouveau_mot() + 1)
                     
                     if self.monde.get_delai_nouveau_mot() >= 30:
-                        if self.monde.get_compteur_mot() < self.monde.get_total_mots():
+                        # Vérifier qu'il reste des mots à afficher
+                        if (self.monde.get_compteur_mot() < self.monde.get_total_mots() and 
+                            self.monde.get_compteur_mot() < len(self.liste_mots)):
                             self.monde.set_num_img(1)
                             self.monde.set_frame_counter(0)
                             self.mechant = self.monde.creer_obstacle(self.monde.get_compteur_mot())
@@ -431,6 +434,9 @@ class Jeu:
                             
                             # Démarrer le tracking de frappe pour le nouveau mot
                             self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
+                        else:
+                            # Fin de partie : tous les mots ont été complétés
+                            print(f"[INFO] Partie terminée : {self.monde.get_compteur_mot()} mots complétés")
                         
                         self.monde.set_animation_in_progress(False)
                         self.monde.set_delai_nouveau_mot(0)
@@ -503,6 +509,9 @@ class Jeu:
                 # Initialiser avec les derniers paramètres du joueur
                 self.vitesse_pourcentage = derniers_params['vitesse_defilement']
                 self.reset_on_error = derniers_params['reset_mots_actif']
+                # Charger la bibliothèque si elle est sauvegardée
+                if 'bibliotheque' in derniers_params:
+                    self.bibliotheque = derniers_params['bibliotheque']
                 print(f"[INFO] Paramètres du dernier essai chargés: vitesse={self.vitesse_pourcentage}%, reset={self.reset_on_error}")
             else:
                 # Valeurs par défaut pour un nouveau joueur

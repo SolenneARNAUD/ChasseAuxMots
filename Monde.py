@@ -87,9 +87,19 @@ class Monde(object):
             sprite_defaut)
         
         # Initialisation de la liste des mots (AVANT initialiser_liste_obstacles)
-        self.total_mots = total_mots
         all_words = BaseDonnees.mots["niveau" + str(niveau)]
-        self.liste_mots = random.sample(all_words, min(total_mots, len(all_words)))
+        nb_mots_disponibles = len(all_words)
+        
+        # Vérifier qu'il y a au moins 1 mot disponible
+        if nb_mots_disponibles < 1:
+            raise ValueError(f"La bibliothèque sélectionnée ne contient aucun mot pour le niveau {niveau}. Veuillez sélectionner une autre bibliothèque ou ajouter des mots.")
+        
+        # Ajuster le nombre de mots demandés si nécessaire
+        self.total_mots = min(total_mots, nb_mots_disponibles)
+        if self.total_mots < total_mots:
+            print(f"[WARNING] Bibliothèque insuffisante : {nb_mots_disponibles} mots disponibles, {total_mots} demandés. Ajusté à {self.total_mots} mots.")
+        
+        self.liste_mots = random.sample(all_words, self.total_mots)
         
         # Initialiser la liste d'obstacles aléatoires
         self.liste_obstacles = self.initialiser_liste_obstacles()

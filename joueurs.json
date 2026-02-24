@@ -65,6 +65,28 @@
                         "vitesse_defilement": 500,
                         "reset_mots_actif": true,
                         "score": 0
+                    },
+                    {
+                        "timestamp": "2026-02-24 10:18:51",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.14,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 18,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 65,
+                        "caracteres_tapes": 65
+                    },
+                    {
+                        "timestamp": "2026-02-24 10:29:40",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.06,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 16,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 58,
+                        "caracteres_tapes": 58
                     }
                 ],
                 "niveau_3": [
@@ -84,6 +106,28 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 124,
                         "caracteres_tapes": 125
+                    },
+                    {
+                        "timestamp": "2026-02-24 10:33:25",
+                        "erreurs": [
+                            {
+                                "mot": "bonhomme",
+                                "lettre_attendue": "b",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "guirlande",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "l"
+                            }
+                        ],
+                        "vitesse_frappe": 2.72,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 130,
+                        "caracteres_tapes": 132
                     }
                 ],
                 "niveau_4": [
@@ -1007,6 +1051,17 @@
                         "reset_mots_actif": true,
                         "score": 10,
                         "delai_niveau4": 1500
+                    },
+                    {
+                        "timestamp": "2026-02-24 10:03:55",
+                        "erreurs": [],
+                        "vitesse_frappe": 3.42,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 2,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 7,
+                        "caracteres_tapes": 7
                     }
                 ],
                 "niveau_3": [
@@ -1174,6 +1229,45 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 12,
                         "caracteres_tapes": 21
+                    },
+                    {
+                        "timestamp": "2026-02-23 16:29:33",
+                        "erreurs": [],
+                        "vitesse_frappe": 3.1,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 9,
+                        "caracteres_tapes": 9
+                    },
+                    {
+                        "timestamp": "2026-02-23 16:29:59",
+                        "erreurs": [
+                            {
+                                "mot": "Noël",
+                                "lettre_attendue": "l",
+                                "lettre_tapee": "m"
+                            }
+                        ],
+                        "vitesse_frappe": 1.39,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 3,
+                        "caracteres_tapes": 4
+                    },
+                    {
+                        "timestamp": "2026-02-23 16:31:11",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.4,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 15,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 99,
+                        "caracteres_tapes": 99
                     }
                 ],
                 "niveau_4": [
@@ -1287,7 +1381,10 @@
             "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "timestamp": "2026-02-23 09:55:14"
+            "timestamp": "2026-02-24 10:32:04",
+            "bibliotheque": [
+                "noel"
+            ]
         }
     },
     "la_best": {
