@@ -1,12 +1,17 @@
-import Symbole
 import pygame as pg
 import Donnees
 import unicodedata
-import string
+from dataclasses import dataclass
+
+@dataclass
+class Symbole:
+    """Structure simple pour représenter un caractère avec sa couleur."""
+    couleur: tuple
+    caractere: str
 
 class Mot(object):
     """
-    Mot composé d'objets Symbole.Symbole.
+    Mot composé d'objets Symbole.
     Conventions :
       - position_x : centre horizontal (centre X) du mot
       - position_y : bottom (bas) du mot (coordonnée Y du bas)
@@ -18,8 +23,8 @@ class Mot(object):
         self._position_y = int(y)   # bottom Y
         # normaliser symboles en liste
         if isinstance(symboles, list):
-            self._symboles = [s for s in symboles if isinstance(s, Symbole.Symbole)]
-        elif isinstance(symboles, Symbole.Symbole):
+            self._symboles = symboles
+        elif isinstance(symboles, Symbole):
             self._symboles = [symboles]
         else:
             self._symboles = []
@@ -50,21 +55,20 @@ class Mot(object):
     @symboles.setter
     def symboles(self, value):
         if isinstance(value, list):
-            self._symboles = [s for s in value if isinstance(s, Symbole.Symbole)]
-        elif isinstance(value, Symbole.Symbole):
+            self._symboles = value
+        elif isinstance(value, Symbole):
             self._symboles = [value]
     
     def get_texte(self):
         """Retourne le texte complet du mot."""
-        return ''.join([s._symbole for s in self._symboles])
+        return ''.join([s.caractere for s in self._symboles])
     
     def get_largeur(self):
         """Retourne la largeur totale du mot en pixels."""
         font = pg.font.Font(None, Donnees.TAILLE_POLICE)
         total_width = 0
         for s in self._symboles:
-            ch = getattr(s, "symbole", None) or getattr(s, "_symbole", "?")
-            surf = font.render(ch, True, (255, 255, 255))  # Couleur n'importe
+            surf = font.render(s.caractere, True, (255, 255, 255))  # Couleur n'importe
             total_width += surf.get_width()
         return total_width
 
@@ -84,8 +88,8 @@ class Mot(object):
         total_width = 0
         max_height = 0
         for s in self._symboles:
-            ch = getattr(s, "symbole", None) or getattr(s, "_symbole", "?")
-            couleur = getattr(s, "couleur", None) or getattr(s, "_couleur", Donnees.MOT_COULEUR)
+            ch = s.caractere
+            couleur = s.couleur
             
             # Si mode "seulement tapées", ne prendre que les lettres grises
             if afficher_seulement_tapees:
@@ -121,17 +125,16 @@ class Mot(object):
     @staticmethod
     def _conversion_symbole(chaine, couleur=None):
         """
-        Convertit une chaîne en liste d'instances Symbole.Symbole.
+        Convertit une chaîne en liste d'instances Symbole.
         - `chaine` : texte (str) à convertir ; les caractères seront pris tels quels.
         - `couleur` : tuple RGB ou None -> si None, on utilise Donnees.MOT_COULEUR.
-        Retourne une liste d'objets Symbole.Symbole.
+        Retourne une liste d'objets Symbole.
         """
         if couleur is None:
             couleur = Donnees.MOT_COULEUR
         result = []
         for ch in str(chaine):
-            # Symbole.Symbole attend (couleur, symbole) d'après votre Symbole.py
-            result.append(Symbole.Symbole(couleur, ch))
+            result.append(Symbole(couleur, ch))
         return result
 
     @classmethod
@@ -145,7 +148,6 @@ class Mot(object):
         symboles = cls._conversion_symbole(chaine, couleur)
         return cls(x, y, symboles)
         return cls(x, y, symboles)
-
     def process_input(self, events, reset_on_error=True):
         """Surveille le clavier et met a jour l'etat du mot.
         Lorsque la lettre du mot est tapee, elle devient grise.
@@ -178,15 +180,15 @@ class Mot(object):
                     lettre_attendue = None
                     
                     for symbole in self._symboles:
-                        if symbole._couleur != (128, 128, 128):
-                            lettre_attendue = symbole._symbole
+                        if symbole.couleur != (128, 128, 128):
+                            lettre_attendue = symbole.caractere
                             
                             # Verifier si le caractere correspond a ce symbole (avec normalisation Unicode)
-                            symbole_normalized = unicodedata.normalize('NFD', symbole._symbole.lower())
+                            symbole_normalized = unicodedata.normalize('NFD', symbole.caractere.lower())
                             char_normalized = unicodedata.normalize('NFD', char)
                             
                             if symbole_normalized == char_normalized:
-                                symbole._couleur = (128, 128, 128)
+                                symbole.couleur = (128, 128, 128)
                                 found = True
                                 caracteres_corrects += 1
                             break
@@ -201,10 +203,10 @@ class Mot(object):
                         # Réinitialiser le mot uniquement si reset_on_error est True
                         if reset_on_error:
                             for symbole in self._symboles:
-                                symbole._couleur = Donnees.MOT_COULEUR
+                                symbole.couleur = Donnees.MOT_COULEUR
                     
                     # Verifier si tous les symboles sont gris (mot complete)
-                    if all(symbole._couleur == (128, 128, 128) for symbole in self._symboles):
+                    if all(symbole.couleur == (128, 128, 128) for symbole in self._symboles):
                         self._state = False
         
         return erreur, caracteres_corrects, info_erreur

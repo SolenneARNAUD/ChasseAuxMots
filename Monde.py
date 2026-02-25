@@ -37,7 +37,6 @@ class Monde(object):
         self.player_running = False  # Le personnage fait l'animation run
         self.player_move_to_enemy = False  # Le personnage se déplace vers le méchant
         self.background_paused = False  # Le fond/sol est en pause
-        self.player_slashing_distance = 100  # Distance à laquelle commencer le slashing
         self.player_backing_away = False  # Le personnage recule après le slashing
         self.player_depart_x = None  # Position de départ du personnage (pour le recul)
         
@@ -53,9 +52,7 @@ class Monde(object):
         self.donnees_frappe = []  # Liste des données de frappe: {'temps_frappe': ms, 'caracteres_tapes': int}
         
         # Variables pour le niveau 4
-        self.niveau = None
         self.print_disparition_affiche = False  # Pour éviter d'afficher le print plusieurs fois
-        self.mot_entierement_visible = False  # Pour tracker si le mot est entièrement entré dans la fenêtre
         self.temps_entree_complete = None  # Temps où le mot est devenu entièrement visible
         self.afficher_seulement_lettres_tapees = False  # Pour n'afficher que les lettres tapées
     
@@ -68,7 +65,6 @@ class Monde(object):
             total_mots: Nombre total de mots pour ce niveau
             personnage_id: ID du personnage jouable à utiliser
         """
-        self.niveau = niveau  # Stocker le niveau actuel
         self.univers = univers  # Stocker l'univers choisi
         
         # Mettre à jour le personnage si fourni
@@ -341,18 +337,10 @@ class Monde(object):
         """Retourne le nombre total de caractères tapés (corrects + erreurs)."""
         return sum(d['caracteres_tapes'] for d in self.donnees_frappe)
     
-    def get_obstacle_actuel_config(self):
-        return self.obstacle_actuel_config
-    
     # Getters et Setters pour l'animation du personnage jouable
-    def get_player_walking(self):
-        return self.player_walking
     
     def set_player_walking(self, value):
         self.player_walking = value
-    
-    def get_player_running(self):
-        return self.player_running
     
     def set_player_running(self, value):
         self.player_running = value

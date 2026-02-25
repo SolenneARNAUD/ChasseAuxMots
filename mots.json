@@ -974,6 +974,41 @@
                 "une tradition de Noël",
                 "carotte"
             ]
+        },
+        "jeux_vidos": {
+            "nom": "Jeux vidéos",
+            "description": "",
+            "mots": [
+                "jeu",
+                "vidéo",
+                "tir",
+                "personnage",
+                "monstres",
+                "gagner",
+                "console",
+                "ordinateur",
+                "souris",
+                "écran",
+                "plateforme",
+                "étoile",
+                "niveau",
+                "mario",
+                "pokémon",
+                "roblox",
+                "peach",
+                "champignon",
+                "une sauvegarde",
+                "un niveau réussi",
+                "un tir manqué",
+                "des points",
+                "esquiver",
+                "accélérer",
+                "une cinématique",
+                "sauter",
+                "un jeu vidéo",
+                "une princesse",
+                "une course de kart"
+            ]
         }
     }
 }
