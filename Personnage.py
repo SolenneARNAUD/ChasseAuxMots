@@ -85,7 +85,7 @@ class Personnage(object):
             self.image = skin
             self.rect = self.image.get_rect(midbottom=(self._position_x, self._position_y))
 
-    def set_skin_preserve_size(self, skin):
+    def _set_skin_preserve_size(self, skin):
         """Charge un nouveau sprite en conservant la taille actuelle du personnage."""
         if isinstance(skin, str):
             # Conserver la taille actuelle
@@ -160,7 +160,7 @@ class Personnage(object):
         
         # Charger le premier sprite immédiatement
         if animation_frames and len(animation_frames) > 0:
-            self.set_skin_preserve_size(animation_frames[0])
+            self._set_skin_preserve_size(animation_frames[0])
 
     def update_animation(self):
         """Met à jour l'animation en cours. À appeler à chaque frame."""
@@ -178,18 +178,18 @@ class Personnage(object):
                     # Recommencer l'animation depuis le début et charger le premier sprite
                     self._animation_frame = 0
                     if len(self._animation_frames) > 0:
-                        self.set_skin_preserve_size(self._animation_frames[0])
+                        self._set_skin_preserve_size(self._animation_frames[0])
                 else:
                     # Arrêter l'animation et revenir au sprite par défaut (avec flip si nécessaire)
                     self._is_animating = False
                     self._animation_frame = 0
                     # Ne pas changer _is_flipped ici si on veut garder le flip après animation
-                    self.set_skin_preserve_size(self._skin_base)
+                    self._set_skin_preserve_size(self._skin_base)
                     return
             
             # Charger le prochain sprite en conservant la taille et le flip
             sprite_path = self._animation_frames[self._animation_frame]
-            self.set_skin_preserve_size(sprite_path)
+            self._set_skin_preserve_size(sprite_path)
 
     def is_animating(self):
         """Retourne True si une animation est en cours."""
@@ -203,11 +203,6 @@ class Personnage(object):
             self.image = pg.transform.flip(self.image, True, False) if flip else self.image
             # Recharger depuis la peau actuelle avec le nouveau flip
             if len(self._animation_frames) > 0:
-                self.set_skin_preserve_size(self._animation_frames[self._animation_frame])
+                self._set_skin_preserve_size(self._animation_frames[self._animation_frame])
             else:
-                self.set_skin_preserve_size(self._skin_base)
-    
-    def initialisation_personnage(self):
-        """Réinitialise la position du personnage à sa position de départ."""
-        self.position_x = self._position_x
-        self.position_y = self._position_y
+                self._set_skin_preserve_size(self._skin_base)

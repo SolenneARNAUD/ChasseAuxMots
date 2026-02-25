@@ -92,7 +92,7 @@ class Obstacles(object):
             print(f"Erreur chargement frame {frame_path}: {e}")
             return False
 
-    def update_animation(self):
+    def _update_animation(self):
         """Gère l'avancement de l'animation."""
         if not self._animation_active or not self.animation_frames:
             return
@@ -144,7 +144,7 @@ class Obstacles(object):
             self.rect.centerx = self._position_x
         
         # Gère l'animation
-        self.update_animation()
+        self._update_animation()
         
         # Réinitialiser la position si l'obstacle sort de l'écran
         if self._position_x < -100:

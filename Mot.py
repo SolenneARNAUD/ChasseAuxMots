@@ -118,8 +118,8 @@ class Mot(object):
                 x += surf.get_width()
                 surf_idx += 1
 
- 
-    def conversion_symbole(chaine, couleur=None):
+    @staticmethod
+    def _conversion_symbole(chaine, couleur=None):
         """
         Convertit une chaîne en liste d'instances Symbole.Symbole.
         - `chaine` : texte (str) à convertir ; les caractères seront pris tels quels.
@@ -142,7 +142,8 @@ class Mot(object):
         - chaine : texte à transformer en symboles
         - couleur : optionnelle, couleur des symboles
         """
-        symboles = cls.conversion_symbole(chaine, couleur)
+        symboles = cls._conversion_symbole(chaine, couleur)
+        return cls(x, y, symboles)
         return cls(x, y, symboles)
 
     def process_input(self, events, reset_on_error=True):

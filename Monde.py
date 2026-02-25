@@ -1,4 +1,3 @@
-from pygame.sprite import Sprite
 import Obstacles
 import Donnees
 import Sol
@@ -16,33 +15,22 @@ class Monde(object):
         Args:
             personnage_id: ID du personnage jouable à utiliser (ex: 'fallen_angels_1')
         """
-        self.fond = None
         self.sol_gauche = None
         self.sol_droite = None
         self.personnage = None
-        self.obstacle_actuel_type = None
         self.obstacle_actuel_config = None
-        self.personnage_type = personnage_id  # Utiliser le personnage sélectionné
-        self.personnage_animation = "slashing"  # Animation par défaut (attaque)
-        self.univers = "foret_bleue"  # Univers par défaut
-
-    
+        self.personnage_type = personnage_id
+        self.univers = "foret_bleue"
+        
         self.mot = None
         self.total_mots = None
         self.liste_mots = None
         
         # Variables de jeu
         self.compteur_mot = 0
-        self.frame_counter = 0
-        self.num_img = 1
-        
         self.mot_state_precedent = True
         self.mot_visible = True
-        
-        self.mechant_move_to_man = False
         self.animation_in_progress = False
-        self.delai_nouveau_mot = 0
-        self.distance_mechant_man = 150
         
         # Variables pour l'animation du personnage jouable
         self.player_walking = False  # Le personnage fait l'animation walk
@@ -126,7 +114,7 @@ class Monde(object):
         self.liste_mots = random.sample(all_words, self.total_mots)
         
         # Initialiser la liste d'obstacles aléatoires
-        self.liste_obstacles = self.initialiser_liste_obstacles()
+        self.liste_obstacles = self._initialiser_liste_obstacles()
 
         # Créer le premier obstacle
         self.mechant = self.creer_obstacle(0)  # Index 0 pour le premier
@@ -138,7 +126,7 @@ class Monde(object):
             self.liste_mots[0],
             Donnees.MOT_COULEUR)
         
-    def initialiser_liste_obstacles(self):
+    def _initialiser_liste_obstacles(self):
         """Génère une liste aléatoire de méchants de l'univers pour le niveau."""
         # Récupérer la liste des méchants disponibles dans l'univers
         mechants_disponibles = BaseDonnees.get_mechants_univers(self.univers)
@@ -174,7 +162,6 @@ class Monde(object):
             
             if config and 'frames' in config:
                 # Stocker la configuration de l'obstacle actuel
-                self.obstacle_actuel_type = obstacle_type
                 self.obstacle_actuel_config = config
                 
                 # Le premier obstacle spawn dans la fenêtre, les autres hors écran
@@ -197,7 +184,6 @@ class Monde(object):
             config = BaseDonnees.OBSTACLES_CONFIG[obstacle_type]
             
             # Stocker la configuration de l'obstacle actuel
-            self.obstacle_actuel_type = obstacle_type
             self.obstacle_actuel_config = config
             
             # Le premier obstacle spawn dans la fenêtre, les autres hors écran
@@ -240,25 +226,9 @@ class Monde(object):
         "Renvoie la liste des mots du niveau."
         return self.liste_mots
     
-    def get_liste_mots(self):
-        "Renvoie la liste des mots du monde."
-        return self.liste_mots
-    
     def get_personnage_type(self):
         "Renvoie le type de personnage actuel."
         return self.personnage_type
-    
-    def set_personnage_type(self, type):
-        "Définit le type de personnage."
-        self.personnage_type = type
-    
-    def get_personnage_animation(self):
-        "Renvoie le nom de l'animation du personnage."
-        return self.personnage_animation
-    
-    def set_personnage_animation(self, animation):
-        "Définit l'animation du personnage."
-        self.personnage_animation = animation
     
     # Getters et setters pour les variables de jeu
     def get_compteur_mot(self):
@@ -269,18 +239,6 @@ class Monde(object):
     
     def get_total_mots(self):
         return self.total_mots
-    
-    def get_frame_counter(self):
-        return self.frame_counter
-    
-    def set_frame_counter(self, value):
-        self.frame_counter = value
-    
-    def get_num_img(self):
-        return self.num_img
-    
-    def set_num_img(self, value):
-        self.num_img = value
     
     def get_mot_state_precedent(self):
         return self.mot_state_precedent
@@ -294,26 +252,11 @@ class Monde(object):
     def set_mot_visible(self, value):
         self.mot_visible = value
     
-    def get_mechant_move_to_man(self):
-        return self.mechant_move_to_man
-    
-    def set_mechant_move_to_man(self, value):
-        self.mechant_move_to_man = value
-    
     def get_animation_in_progress(self):
         return self.animation_in_progress
     
     def set_animation_in_progress(self, value):
         self.animation_in_progress = value
-    
-    def get_delai_nouveau_mot(self):
-        return self.delai_nouveau_mot
-    
-    def set_delai_nouveau_mot(self, value):
-        self.delai_nouveau_mot = value
-    
-    def get_distance_mechant_man(self):
-        return self.distance_mechant_man
     
     def get_nb_erreurs(self):
         return self.nb_erreurs
@@ -341,9 +284,6 @@ class Monde(object):
     def get_total_caracteres(self):
         return self.total_caracteres
     
-    def set_total_caracteres(self, value):
-        self.total_caracteres = value
-    
     def increment_total_caracteres(self, amount):
         self.total_caracteres += amount
     
@@ -359,10 +299,9 @@ class Monde(object):
         import pygame
         self.temps_apparition_mot = temps_actuel if temps_actuel else pygame.time.get_ticks()
         self.caracteres_tapes_mot_actuel = 0
-        self.print_disparition_affiche = False  # Réinitialiser pour le nouveau mot
-        self.mot_entierement_visible = False  # Réinitialiser le flag de visibilité
-        self.temps_entree_complete = None  # Réinitialiser le temps d'entrée complète
-        self.afficher_seulement_lettres_tapees = False  # Réinitialiser le mode d'affichage
+        self.print_disparition_affiche = False
+        self.temps_entree_complete = None
+        self.afficher_seulement_lettres_tapees = False
     
     def ajouter_caractere_tape(self):
         """Incrémente le compteur de caractères tapés pour le mot actuel."""
@@ -430,12 +369,6 @@ class Monde(object):
     def set_background_paused(self, value):
         self.background_paused = value
     
-    def get_player_slashing_distance(self):
-        return self.player_slashing_distance
-    
-    def set_player_slashing_distance(self, value):
-        self.player_slashing_distance = value
-    
     def get_player_backing_away(self):
         return self.player_backing_away
     
@@ -447,9 +380,6 @@ class Monde(object):
     
     def set_player_depart_x(self, value):
         self.player_depart_x = value
-
-    def get_obstacle_actuel_type(self):
-        return self.obstacle_actuel_type
     
     def faire_disparaitre_mot(self):
         """Fait disparaître le mot de l'écran (pour le niveau 4)."""

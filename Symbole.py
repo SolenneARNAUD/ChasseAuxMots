@@ -1,7 +1,3 @@
-from ctypes.wintypes import COLORREF
-import string
-
-
 class Symbole(object):
     """
     Cette classe a pour objectif d'encoder les lettres/symboles
@@ -34,17 +30,17 @@ class Symbole(object):
         return self._couleur
     @couleur.setter
     def couleur(self, value):
-        if (isinstance(value, COLORREF)):
+        if isinstance(value, tuple) and len(value) == 3:
             self._couleur = value
     
     @property
     def symbole(self):
         return self._symbole
+    
     @symbole.setter
     def symbole(self, value):
-        if (isinstance(value, str)):
+        if isinstance(value, str):
             self._symbole = value
-
 
 
 
