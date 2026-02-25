@@ -59,11 +59,13 @@ class Mot(object):
         elif isinstance(value, Symbole):
             self._symboles = [value]
     
-    def get_texte(self):
+    @property
+    def texte(self):
         """Retourne le texte complet du mot."""
         return ''.join([s.caractere for s in self._symboles])
     
-    def get_largeur(self):
+    @property
+    def largeur(self):
         """Retourne la largeur totale du mot en pixels."""
         font = pg.font.Font(None, Donnees.TAILLE_POLICE)
         total_width = 0
@@ -147,7 +149,7 @@ class Mot(object):
         """
         symboles = cls._conversion_symbole(chaine, couleur)
         return cls(x, y, symboles)
-        return cls(x, y, symboles)
+    
     def process_input(self, events, reset_on_error=True):
         """Surveille le clavier et met a jour l'etat du mot.
         Lorsque la lettre du mot est tapee, elle devient grise.

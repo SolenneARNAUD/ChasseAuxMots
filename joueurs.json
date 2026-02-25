@@ -1301,6 +1301,17 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 23,
                         "caracteres_tapes": 23
+                    },
+                    {
+                        "timestamp": "2026-02-25 13:59:46",
+                        "erreurs": [],
+                        "vitesse_frappe": 2.58,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 5,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 31,
+                        "caracteres_tapes": 31
                     }
                 ],
                 "niveau_4": [
@@ -1398,6 +1409,28 @@
                         "vitesse_defilement": 100,
                         "reset_mots_actif": true,
                         "score": 3
+                    },
+                    {
+                        "timestamp": "2026-02-25 14:00:27",
+                        "erreurs": [
+                            {
+                                "mot": "du sable chaud",
+                                "lettre_attendue": "d",
+                                "lettre_tapee": "u"
+                            },
+                            {
+                                "mot": "du sable chaud",
+                                "lettre_attendue": "s",
+                                "lettre_tapee": "d"
+                            }
+                        ],
+                        "vitesse_frappe": 3.74,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 5,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 62,
+                        "caracteres_tapes": 64
                     }
                 ]
             },
@@ -1411,11 +1444,14 @@
         },
         "pseudo": "arnaud_solenne",
         "parametres_actuels": {
-            "vitesse_defilement": 100,
+            "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "personnage_id": "valkyrie_2",
-            "timestamp": "2026-02-25 11:41:29"
+            "personnage_id": "fallen_angels_1",
+            "timestamp": "2026-02-25 14:01:13",
+            "bibliotheque": [
+                "dinosaure"
+            ]
         }
     },
     "la_best": {

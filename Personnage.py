@@ -67,10 +67,12 @@ class Personnage(object):
             if self.rect:
                 self.rect.bottom = self._position_y
 
-    def get_skin(self):
+    @property
+    def skin(self):
         return self._skin
 
-    def set_skin(self, skin):
+    @skin.setter
+    def skin(self, skin):
         # accepter chemin ou Surface
         if isinstance(skin, str):
             self._skin = skin

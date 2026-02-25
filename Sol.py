@@ -76,7 +76,9 @@ class Sol(object):
             debug_rect = pg.Rect(0, 0, 50, 20)
             debug_rect.midbottom = (self._position_x, self._position_y)
             pg.draw.rect(screen, (255, 0, 0), debug_rect)
-    def get_rect(self):
+    
+    @property
+    def rect(self):
         return self._rect
     
     def defiler(self, vitesse):

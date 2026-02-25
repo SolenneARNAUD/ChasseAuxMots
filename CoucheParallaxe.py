@@ -82,3 +82,17 @@ class CoucheParallaxe(object):
         """Définit le facteur de vitesse de la couche."""
         if 0.0 <= value <= 1.0:
             self._vitesse_facteur = value
+
+    @property
+    def position_y(self):
+        """Retourne la position verticale de la couche."""
+        return self._position_y
+
+    @position_y.setter
+    def position_y(self, value):
+        """Définit la position verticale de la couche."""
+        if isinstance(value, (int, float)):
+            self._position_y = int(value)
+            if self._rect1 and self._rect2:
+                self._rect1.y = self._position_y
+                self._rect2.y = self._position_y

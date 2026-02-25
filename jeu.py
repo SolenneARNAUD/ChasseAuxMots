@@ -402,7 +402,7 @@ class Jeu:
                 # Enregistrer l'erreur détaillée si disponible
                 if info_erreur:
                     self.monde.ajouter_erreur_detaillee(
-                        mot=self.mot.get_texte(),
+                        mot=self.mot.texte,
                         lettre_attendue=info_erreur['lettre_attendue'],
                         lettre_tapee=info_erreur['lettre_tapee']
                     )

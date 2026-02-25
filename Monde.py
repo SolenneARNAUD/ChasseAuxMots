@@ -197,36 +197,39 @@ class Monde(object):
         
         return None
     
-    # Getter et Setter
+    # ========== Properties (accès pythonic aux attributs) ==========
+    # Note: Les anciennes méthodes get_xxx/set_xxx sont conservées ci-dessous
+    # pour compatibilité, mais les properties sont l'approche recommandée
+    
+    # Getters/setters classiques (conservés pour compatibilité)
     def get_sol_gauche(self):
-        "Renvoie le sol gauche du monde."
+        """Renvoie le sol gauche du monde."""
         return self.sol_gauche
     
     def get_sol_droite(self):
-        "Renvoie le sol droite du monde."
+        """Renvoie le sol droite du monde."""
         return self.sol_droite
     
     def get_personnage(self):
-        "Renvoie le personnage du monde."
+        """Renvoie le personnage du monde."""
         return self.personnage
     
     def get_mechant(self):
-        "Renvoie le méchant du monde."
+        """Renvoie le méchant du monde."""
         return self.mechant
     
     def get_mot(self):
-        "Renvoie le mot du monde."
+        """Renvoie le mot du monde."""
         return self.mot
     
     def get_liste_mots(self):
-        "Renvoie la liste des mots du niveau."
+        """Renvoie la liste des mots du niveau."""
         return self.liste_mots
     
     def get_personnage_type(self):
-        "Renvoie le type de personnage actuel."
+        """Renvoie le type de personnage actuel."""
         return self.personnage_type
     
-    # Getters et setters pour les variables de jeu
     def get_compteur_mot(self):
         return self.compteur_mot
     
