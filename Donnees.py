@@ -42,6 +42,10 @@ OBSTACLE_HEIGHT = 120
 # - 0 = pas d'ajustement
 MECHANT_FOOT_OFFSET = 16
 
+# Distance centre-à-centre (en pixels) à partir de laquelle le héros déclenche l'attaque
+# Ajuster si les personnages semblent trop loin ou trop proches
+DISTANCE_ATTAQUE = 110
+
 # Mots
 TAILLE_POLICE = 36
 MOT_DEPART_X = WIDTH + 50  # Spawn juste à la sortie de l'écran

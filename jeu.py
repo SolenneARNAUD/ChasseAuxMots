@@ -89,6 +89,10 @@ class Jeu:
         self.liste_mots = self.monde.get_liste_mots()
         self.jeu_demarre = False # Le jeu commence après la première touche du joueur
         
+        # Aligner les pieds du héros sur les pieds du méchant
+        if self.mechant and self.mechant.rect:
+            self.man.position_y = self.mechant.rect.bottom
+        
         # Sauvegarder la position de départ du personnage pour le recul après slashing
         self.monde.set_player_depart_x(Donnees.PERSONNAGE_DEPART_X)
     
@@ -438,34 +442,32 @@ class Jeu:
                     self.mechant.position_y = self.mechant_position_saved[1]
                 
                 distance_x = self.mechant.position_x - self.man.position_x
-                distance = abs(distance_x)
                 
-                # Continuer le running jusqu'à atteindre 200px du méchant
-                if distance > 200:
-                    # Toujours en train de courir - s'il n'animation n'est pas active, la relancer
+                # Condition d'arrêt : distance centre-à-centre <= seuil visuel
+                # (les rects varient avec les frames d'animation, centre = stable)
+                bords_proches = abs(distance_x) <= Donnees.DISTANCE_ATTAQUE
+                
+                if not bords_proches:
+                    # Toujours en train de courir - si l'animation n'est pas active, la relancer
                     if not self.man.is_animating():
                         self._demarrer_animation_personnage("running")
                     
                     # Avancer vers le méchant
                     if distance_x > 0:
-                        # Méchant à droite, se déplacer à droite
                         self.man.position_x += 6 * self.multiplier
                     else:
-                        # Méchant à gauche, se déplacer à gauche
                         self.man.position_x -= 6 * self.multiplier
                     
-                    # Recalculer la distance après le mouvement
+                    # Recalculer après le mouvement
                     distance_x = self.mechant.position_x - self.man.position_x
-                    distance = abs(distance_x)
+                    bords_proches = abs(distance_x) <= Donnees.DISTANCE_ATTAQUE
                 
-                # Vérifier après le mouvement si on doit passer au slashing
-                if distance <= 200 and self.monde.get_player_move_to_enemy():
-                    # Distance <= 200px - le personnage doit attaquer
+                # Passer au slashing dès que les bords sont proches
+                if bords_proches and self.monde.get_player_move_to_enemy():
+                    # Bords proches — le personnage attaque
                     self.monde.set_player_move_to_enemy(False)
                     self.monde.set_player_running(False)
                     self.monde.set_animation_in_progress(True)
-                    
-                    # Le personnage reste à sa position (200px du méchant) - pas de repositionner
                     
                     # Lancer l'animation du personnage en slashing
                     self._demarrer_animation_personnage("slashing")

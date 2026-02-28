@@ -137,11 +137,11 @@ class Personnage(object):
         if self.rect is None or not hasattr(obstacle, 'rect') or obstacle.rect is None:
             return False
         
-        # Créer une copie du rect du personnage réduite pour diminuer la tolérance
-        # On diminue la taille de 10 pixels de chaque côté (20 pixels au total par dimension)
+        # Réduire le rect du héros légèrement, et fortement celui du méchant
+        # (les PNG d'animation contiennent beaucoup d'espace transparent)
         rect_tolerance = self.rect.inflate(-20, -20)
-        # Vérifier la collision avec la zone élargie
-        return rect_tolerance.colliderect(obstacle.rect)
+        rect_obstacle = obstacle.rect.inflate(-obstacle.rect.width // 2, -20)
+        return rect_tolerance.colliderect(rect_obstacle)
 
     def start_animation(self, animation_frames, animation_delay=5, loop=False, flip=False):
         """Démarre une animation du personnage.

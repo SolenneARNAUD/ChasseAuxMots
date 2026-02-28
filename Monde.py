@@ -146,8 +146,8 @@ class Monde(object):
         
         obstacle_type = self.liste_obstacles[index]
         
-        # Utiliser la position_y du personnage pour aligner les pieds
-        position_y = self.personnage.position_y if self.personnage else Donnees.OBSTACLE_DEPART_Y
+        # Toujours utiliser la constante fixe pour la position Y (évite la dérive cumulative)
+        position_y = Donnees.OBSTACLE_DEPART_Y
         
         # Essayer de charger avec la configuration d'univers
         mechants_disponibles = BaseDonnees.get_mechants_univers(self.univers)

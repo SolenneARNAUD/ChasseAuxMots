@@ -505,6 +505,17 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 20,
                         "caracteres_tapes": 36
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:04:35",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.47,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 71,
+                        "caracteres_tapes": 71
                     }
                 ],
                 "niveau_3": [
@@ -1084,6 +1095,17 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 18,
                         "caracteres_tapes": 18
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:00:15",
+                        "erreurs": [],
+                        "vitesse_frappe": 0.66,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 9,
+                        "caracteres_tapes": 9
                     }
                 ],
                 "niveau_3": [
@@ -1444,14 +1466,11 @@
         },
         "pseudo": "arnaud_solenne",
         "parametres_actuels": {
-            "vitesse_defilement": 100,
+            "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
             "personnage_id": "fallen_angels_1",
-            "timestamp": "2026-02-28 18:48:57",
-            "bibliotheque": [
-                "dinosaure"
-            ]
+            "timestamp": "2026-02-28 19:04:35"
         }
     },
     "la_best": {
