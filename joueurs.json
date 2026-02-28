@@ -1444,11 +1444,11 @@
         },
         "pseudo": "arnaud_solenne",
         "parametres_actuels": {
-            "vitesse_defilement": 500,
+            "vitesse_defilement": 100,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
             "personnage_id": "fallen_angels_1",
-            "timestamp": "2026-02-25 14:01:13",
+            "timestamp": "2026-02-28 18:48:57",
             "bibliotheque": [
                 "dinosaure"
             ]

@@ -381,7 +381,7 @@ class Jeu:
             # Niveau réussi : Si tous les mots ont été complétés
             if self.monde.get_compteur_mot() >= self.monde.get_total_mots():
                 return self._gerer_niveau_reussi()
-            
+
             # Filtrer les événements Tab pour qu'ils ne soient pas traités comme des entrées de texte
             events_filtres = [e for e in events if not (e.type == pygame.KEYDOWN and e.key == pygame.K_TAB)]
             
@@ -476,59 +476,61 @@ class Jeu:
                     self.mechant.position_x = self.mechant_position_saved[0]
                     self.mechant.position_y = self.mechant_position_saved[1]
             
-            # Gestion du recul du personnage après le slashing
+            # Retour après le slashing : le héros recule en idle, le sol et la parallaxe
+            # défilent dans la même direction à la même vitesse → effet caméra
             if self.monde.get_player_backing_away():
-                depart_x = self.monde.get_player_depart_x()
-                if depart_x is not None:
-                    # Reculer progressivement vers la position de départ
-                    distance_to_travel = self.man.position_x - depart_x
-                    if abs(distance_to_travel) > 2:  # 2px de tolérance
-                        if self.man.position_x > depart_x:
-                            # Reculer à gauche
-                            self.man.position_x -= 3
-                        else:
-                            # Reculer à droite
-                            self.man.position_x += 3
+                vitesse_retour = 8 * self.multiplier  # Vitesse élevée pour fluidité
+                
+                if self.man.position_x > Donnees.PERSONNAGE_DEPART_X:
+                    # Déplacer le héros vers la gauche
+                    self.man.position_x -= vitesse_retour
+                    # Sol et parallaxe défilent dans la même direction (gauche) à la même vitesse
+                    self.sol_gauche.defiler(vitesse_retour)
+                    self.sol_droite.defiler(vitesse_retour)
+                    self.fenetre.defiler_parallaxe(vitesse_retour)
+                    # Éviter de dépasser la position de départ
+                    if self.man.position_x < Donnees.PERSONNAGE_DEPART_X:
+                        self.man.position_x = Donnees.PERSONNAGE_DEPART_X
+                else:
+                    # Retour terminé
+                    self.man.position_x = Donnees.PERSONNAGE_DEPART_X
+                    self.monde.set_player_backing_away(False)
+                    self.monde.set_animation_in_progress(False)
+                    
+                    if self.monde.get_compteur_mot() < self.monde.get_total_mots():
+                        self.mechant = self.monde.creer_obstacle(self.monde.get_compteur_mot())
+                        
+                        # Créer le nouveau mot
+                        self.mot = Mot.Mot.from_string(
+                            Donnees.MOT_DEPART_X,
+                            Donnees.MOT_DEPART_Y,
+                            self.liste_mots[self.monde.get_compteur_mot()],
+                            Donnees.MOT_COULEUR
+                        )
+                        
+                        # Démarrer le tracking de frappe pour le nouveau mot
+                        self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
                     else:
-                        # Position de départ atteinte - créer le nouvel obstacle et mot
-                        self.man.position_x = depart_x
-                        self.monde.set_player_backing_away(False)
-                        self.monde.set_animation_in_progress(False)
-                        
-                        if self.monde.get_compteur_mot() < self.monde.get_total_mots():
-                            self.mechant = self.monde.creer_obstacle(self.monde.get_compteur_mot())
-                            
-                            # Créer le nouveau mot
-                            self.mot = Mot.Mot.from_string(
-                                Donnees.MOT_DEPART_X,
-                                Donnees.MOT_DEPART_Y,
-                                self.liste_mots[self.monde.get_compteur_mot()],
-                                Donnees.MOT_COULEUR
-                            )
-                            
-                            # Démarrer le tracking de frappe pour le nouveau mot
-                            self.monde.demarrer_nouveau_mot(pygame.time.get_ticks())
-                        else:
-                            # Fin de partie : tous les mots ont été complétés
-                            print(f"[INFO] Partie terminée : {self.monde.get_compteur_mot()} mots complétés")
-                        
-                        self.monde.set_mot_visible(True)
-                        
-                        # Reprendre le défilement du fond et recommencer l'animation walk
-                        self.monde.set_background_paused(False)
-                        self.monde.set_player_move_to_enemy(False)
-                        self.monde.set_player_running(False)
-                        self.monde.set_player_walking(True)
-                        
-                        # Redémarrer l'animation walking du personnage
-                        self._demarrer_animation_personnage("walking", loop=True)
+                        # Fin de partie : tous les mots ont été complétés
+                        print(f"[INFO] Partie terminée : {self.monde.get_compteur_mot()} mots complétés")
+                    
+                    self.monde.set_mot_visible(True)
+                    
+                    # Reprendre le défilement du fond et recommencer l'animation walk
+                    self.monde.set_background_paused(False)
+                    self.monde.set_player_move_to_enemy(False)
+                    self.monde.set_player_running(False)
+                    self.monde.set_player_walking(True)
+                    
+                    # Redémarrer l'animation walking du personnage
+                    self._demarrer_animation_personnage("walking", loop=True)
             if self.monde.get_animation_in_progress() and not self.monde.get_player_backing_away():
                 if not self.man.is_animating():
-                    # L'animation de slashing vient de finir - faire disparaître le méchant et déclencher le recul
+                    # L'animation de slashing vient de finir - faire disparaître le méchant
                     self.mechant.position_x = -500  # Placer le méchant hors de l'écran
                     
-                    # Lancer l'animation running inversée pour le backing away
-                    self._demarrer_animation_personnage("running", loop=True, flip=True)
+                    # Passer en idle : le héros recule avec le sol dans la même direction
+                    self._demarrer_animation_personnage("idle", loop=True)
                     
                     self.monde.set_player_backing_away(True)
             

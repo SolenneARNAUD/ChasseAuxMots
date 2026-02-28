@@ -376,3 +376,4 @@ class Monde(object):
         """Fait disparaître le mot de l'écran (pour le niveau 4)."""
         # Ne pas cacher complètement, mais activer le mode "seulement lettres tapées"
         self.afficher_seulement_lettres_tapees = True
+
