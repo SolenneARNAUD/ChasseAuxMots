@@ -87,6 +87,17 @@
                         "delai_niveau4": 1500,
                         "caracteres_justes": 58,
                         "caracteres_tapes": 58
+                    },
+                    {
+                        "timestamp": "2026-03-14 11:58:27",
+                        "erreurs": [],
+                        "vitesse_frappe": 1.71,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 20,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 76,
+                        "caracteres_tapes": 76
                     }
                 ],
                 "niveau_3": [
@@ -1469,8 +1480,8 @@
             "vitesse_defilement": 500,
             "reset_mots_actif": true,
             "delai_niveau4": 1500,
-            "personnage_id": "fallen_angels_1",
-            "timestamp": "2026-02-28 19:04:35"
+            "personnage_id": "valkyrie_2",
+            "timestamp": "2026-03-14 12:01:35"
         }
     },
     "la_best": {
@@ -1884,7 +1895,282 @@
                     }
                 ],
                 "niveau_4": [],
-                "niveau_5": []
+                "niveau_5": [
+                    {
+                        "timestamp": "2026-02-28 19:06:03",
+                        "erreurs": [
+                            {
+                                "mot": "une longue queue",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": " "
+                            },
+                            {
+                                "mot": "une longue queue",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 5.64,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 24,
+                        "caracteres_tapes": 26
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:06:19",
+                        "erreurs": [
+                            {
+                                "mot": "un crâne",
+                                "lettre_attendue": "â",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "un crâne",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "un crâne",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 1.73,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 5,
+                        "caracteres_tapes": 8
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:06:42",
+                        "erreurs": [
+                            {
+                                "mot": "un squelette",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "un squelette",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "un squelette",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "q"
+                            },
+                            {
+                                "mot": "un squelette",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 3.09,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 2,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 34,
+                        "caracteres_tapes": 38
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:07:07",
+                        "erreurs": [
+                            {
+                                "mot": "un nid de dinosaure",
+                                "lettre_attendue": "o",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "un nid de dinosaure",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "s"
+                            },
+                            {
+                                "mot": "un nid de dinosaure",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "un nid de dinosaure",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "un nid de dinosaure",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 2.53,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 1,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 22,
+                        "caracteres_tapes": 27
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:07:38",
+                        "erreurs": [
+                            {
+                                "mot": "une patte puissante",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "z"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "ï",
+                                "lettre_tapee": "i"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "d"
+                            },
+                            {
+                                "mot": "un astéroïde géant",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 2.74,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 49,
+                        "caracteres_tapes": 53
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:08:19",
+                        "erreurs": [
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "r",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": " ",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "o"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "g"
+                            },
+                            {
+                                "mot": "une tortue géante",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "é"
+                            }
+                        ],
+                        "vitesse_frappe": 4.18,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 0,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 11,
+                        "caracteres_tapes": 20
+                    },
+                    {
+                        "timestamp": "2026-02-28 19:09:02",
+                        "erreurs": [
+                            {
+                                "mot": "une trace",
+                                "lettre_attendue": " ",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "une trace",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "une trace",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "a"
+                            },
+                            {
+                                "mot": "une trace",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "c"
+                            },
+                            {
+                                "mot": "une trace",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "e",
+                                "lettre_tapee": "r"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "t",
+                                "lettre_tapee": "u"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "t"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "e"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "u",
+                                "lettre_tapee": "n"
+                            },
+                            {
+                                "mot": "une tortue",
+                                "lettre_attendue": "n",
+                                "lettre_tapee": "e"
+                            }
+                        ],
+                        "vitesse_frappe": 3.81,
+                        "vitesse_defilement": 500,
+                        "reset_mots_actif": true,
+                        "score": 3,
+                        "delai_niveau4": 1500,
+                        "caracteres_justes": 74,
+                        "caracteres_tapes": 85
+                    }
+                ]
             },
             "foret_violette": {
                 "niveau_1": [],
@@ -1994,6 +2280,16 @@
                 "niveau_4": [],
                 "niveau_5": []
             }
+        },
+        "parametres_actuels": {
+            "vitesse_defilement": 500,
+            "reset_mots_actif": false,
+            "delai_niveau4": 1500,
+            "personnage_id": "fallen_angels_1",
+            "timestamp": "2026-02-28 19:09:12",
+            "bibliotheque": [
+                "dinosaure"
+            ]
         }
     },
     "kyky": {
